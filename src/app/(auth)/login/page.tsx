@@ -3,7 +3,18 @@
 import { useState, useTransition, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { UtensilsCrossed, ArrowLeft, Mail, Lock, CheckCircle2, ArrowRight } from "lucide-react";
+import { 
+  UtensilsCrossed, 
+  ArrowLeft, 
+  Mail, 
+  Lock, 
+  CheckCircle2, 
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Sparkles,
+  ShieldCheck
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +29,7 @@ function LoginForm() {
   const [activeTab, setActiveTab] = useState<"customer" | "staff">(initialTab);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSentMagicLink, setIsSentMagicLink] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -68,7 +80,7 @@ function LoginForm() {
         });
 
         if (error) {
-          toast.error("Email atau password salah.");
+          toast.error("Email atau kata sandi tidak sesuai.");
           return;
         }
 
@@ -91,7 +103,7 @@ function LoginForm() {
     <div className="w-full max-w-md space-y-6">
       {/* Brand Header */}
       <div className="flex flex-col items-center text-center space-y-2">
-        <Link href="/" className="flex items-center gap-2 group mb-2">
+        <Link href="/" className="flex items-center gap-2 group mb-1">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#006948] text-white shadow-md transition-transform group-hover:scale-105">
             <UtensilsCrossed className="h-6 w-6" />
           </div>
@@ -100,7 +112,7 @@ function LoginForm() {
         <p className="text-xs text-[#6d7a72]">Platform Reservasi & Pre-Order Kuliner</p>
       </div>
 
-      {/* Tab Switcher */}
+      {/* Segmented Tab Switcher */}
       <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#eaedff] p-1 text-xs font-semibold">
         <button
           type="button"
@@ -132,37 +144,43 @@ function LoginForm() {
         </button>
       </div>
 
-      {/* Main Card */}
+      {/* Main Form Card */}
       <div className="rounded-2xl border border-[#bccac0]/40 bg-white p-6 sm:p-8 shadow-sm">
         {activeTab === "customer" ? (
+          /* Customer Flow: Magic Link */
           isSentMagicLink ? (
-            <div className="text-center space-y-4 py-4">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                <CheckCircle2 className="h-7 w-7" />
+            <div className="text-center space-y-4 py-3">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <CheckCircle2 className="h-8 w-8" />
               </div>
-              <h2 className="text-lg font-bold text-[#131b2e]">Periksa Email Anda</h2>
-              <p className="text-xs text-[#6d7a72] leading-relaxed">
-                Kami telah mengirimkan link masuk ke <strong>{email}</strong>. Klik link di email tersebut untuk langsung masuk.
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsSentMagicLink(false)}
-                className="w-full text-xs"
-              >
-                Gunakan Email Lain
-              </Button>
+              <div className="space-y-1">
+                <h2 className="text-base font-bold text-[#131b2e]">Periksa Email Anda</h2>
+                <p className="text-xs text-[#6d7a72] leading-relaxed">
+                  Kami telah mengirimkan link masuk ke <strong>{email}</strong>. Buka email dan klik tombol masuk.
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsSentMagicLink(false)}
+                  className="w-full text-xs"
+                >
+                  Gunakan Email Lain
+                </Button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleCustomerLogin} className="space-y-4">
               <div className="space-y-1 text-left">
-                <h2 className="text-lg font-bold text-[#131b2e]">Masuk atau Daftar</h2>
+                <h2 className="text-base font-bold text-[#131b2e]">Masuk atau Daftar</h2>
                 <p className="text-xs text-[#6d7a72]">
                   Tidak perlu password — kami kirim link masuk instan ke email Anda.
                 </p>
               </div>
 
-              <div className="space-y-2 text-left">
+              <div className="space-y-1.5 text-left">
                 <label className="text-xs font-semibold text-[#131b2e]">Alamat Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6d7a72]" />
@@ -180,36 +198,38 @@ function LoginForm() {
               <Button
                 type="submit"
                 isLoading={isPending}
-                className="w-full bg-[#006948] hover:bg-[#005137] text-white font-semibold gap-1.5"
+                className="w-full bg-[#006948] hover:bg-[#005137] text-white font-semibold text-xs h-11 gap-1.5"
               >
                 <span>Kirim Magic Link</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
 
-              <p className="text-[11px] text-center text-[#6d7a72] pt-2">
-                Belum punya akun? Link ini akan otomatis membuat akun baru untuk Anda.
-              </p>
+              <div className="flex items-center gap-2 rounded-xl bg-[#faf8ff] p-3 border border-[#bccac0]/30 text-[11px] text-[#6d7a72]">
+                <Sparkles className="h-4 w-4 text-[#006948] shrink-0" />
+                <span>Belum punya akun? Link ini akan otomatis membuat akun baru untuk Anda.</span>
+              </div>
             </form>
           )
         ) : (
+          /* Staff / Owner Flow: Email + Password */
           <form onSubmit={handleStaffLogin} className="space-y-4">
             <div className="space-y-1 text-left">
-              <h2 className="text-lg font-bold text-[#131b2e]">Masuk ke Dashboard</h2>
+              <h2 className="text-base font-bold text-[#131b2e]">Masuk ke Dashboard</h2>
               <p className="text-xs text-[#6d7a72]">
-                Akses portal operasional kasir, KDS dapur, dan laporan keuangan.
+                Akses portal kasir, antrean dapur (KDS), dan laporan keuangan resto.
               </p>
             </div>
 
             <div className="space-y-3 text-left">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#131b2e]">Email Staf / Owner</label>
+                <label className="text-xs font-semibold text-[#131b2e]">Email Staf / Pemilik Resto</label>
                 <div className="relative">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6d7a72]" />
                   <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="staf@resto.com"
+                    placeholder="staf@restoran.com"
                     required
                     className="pl-10"
                   />
@@ -221,13 +241,20 @@ function LoginForm() {
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6d7a72]" />
                   <Input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="pl-10"
+                    className="pl-10 pr-10"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6d7a72] hover:text-[#131b2e]"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
             </div>
@@ -235,11 +262,16 @@ function LoginForm() {
             <Button
               type="submit"
               isLoading={isPending}
-              className="w-full bg-[#006948] hover:bg-[#005137] text-white font-semibold gap-1.5"
+              className="w-full bg-[#006948] hover:bg-[#005137] text-white font-semibold text-xs h-11 gap-1.5"
             >
               <span>Masuk ke Dashboard</span>
               <ArrowRight className="h-4 w-4" />
             </Button>
+
+            <div className="flex items-center gap-1.5 justify-center text-[11px] text-[#6d7a72] pt-1">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#006948]" />
+              <span>Akses terlindungi multi-tenant dengan RLS</span>
+            </div>
           </form>
         )}
       </div>
@@ -248,7 +280,7 @@ function LoginForm() {
       <div className="text-center">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-[#6d7a72] hover:text-[#006948] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#6d7a72] hover:text-[#006948] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Kembali ke Halaman Utama</span>
