@@ -1,5 +1,5 @@
 // src/features/menu/menu-data.ts
-// Tipe data dan dataset master menu resto untuk manajemen katalog & stok
+// Tipe data dan dataset master menu resto mendukung multiple galeri foto hidangan
 
 export type MenuCategory =
   | "Semua"
@@ -28,7 +28,8 @@ export interface DashboardMenuItem {
   price: number;
   prepTimeMinutes: number;
   description: string;
-  imageUrl: string;
+  imageUrl: string; // Foto cover utama
+  imageUrls: string[]; // Galeri multi-foto (1-5 foto)
   isAvailable: boolean; // Out-of-stock toggle state
   variants: MenuVariantGroup[];
 }
@@ -41,7 +42,12 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 45000,
     prepTimeMinutes: 15,
     description: "Daging ayam pilihan dengan bumbu kacang lembut gurih dan kecap manis khas.",
-    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=800&auto=format&fit=crop&q=80",
+    ],
     isAvailable: true,
     variants: [
       {
@@ -74,7 +80,11 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 65000,
     prepTimeMinutes: 18,
     description: "Daging kambing muda empuk tanpa aroma prengus dengan cocolan bumbu kecap bawang tomat.",
-    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=80",
+    ],
     isAvailable: true,
     variants: [
       {
@@ -96,7 +106,11 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 55000,
     prepTimeMinutes: 12,
     description: "Nasi goreng bumbu rempah tradisional dengan potongan babat sapi empuk dan telur mata sapi.",
-    imageUrl: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+    ],
     isAvailable: true,
     variants: [
       {
@@ -128,8 +142,11 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 38000,
     prepTimeMinutes: 10,
     description: "Dadar tahu telur renyah disiram saus petis udang gurih manis dan taburan tauge kacang.",
-    imageUrl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80",
-    isAvailable: false, // Out of stock example
+    imageUrl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+    ],
+    isAvailable: false,
     variants: [
       {
         id: "v-pedas",
@@ -151,7 +168,11 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 28000,
     prepTimeMinutes: 5,
     description: "Cendol tepung beras kenyal dengan santan segar, gula aren organik, dan daging buah durian asli.",
-    imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&auto=format&fit=crop&q=80",
+    ],
     isAvailable: true,
     variants: [
       {
@@ -173,7 +194,10 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 10000,
     prepTimeMinutes: 3,
     description: "Seduhan teh melati wangi dengan es batu kristal dan gula cair tebu murni.",
-    imageUrl: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&auto=format&fit=crop&q=80",
+    ],
     isAvailable: true,
     variants: [
       {
@@ -195,7 +219,10 @@ export const INITIAL_MENU_ITEMS: DashboardMenuItem[] = [
     price: 22000,
     prepTimeMinutes: 8,
     description: "Bakwan jagung manis renyah dengan bumbu bawang putih dan cabai rawit hijau utuh.",
-    imageUrl: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&auto=format&fit=crop&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&auto=format&fit=crop&q=80",
+    ],
     isAvailable: true,
     variants: [],
   },

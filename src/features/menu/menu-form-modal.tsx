@@ -1,10 +1,10 @@
 "use client";
 // src/features/menu/menu-form-modal.tsx
-// Modal formulir tambah atau ubah menu hidangan dengan upload foto otomatis auto-crop & kompresi
+// Modal formulir tambah/ubah menu dengan upload multi-foto otomatis (1-5 foto per hidangan)
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { X, Upload, RefreshCw, CheckCircle2, Sparkles } from "lucide-react";
+import { X, Upload, RefreshCw, CheckCircle2, Sparkles, Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { processAndCompressImage } from "@/lib/image-compressor";
@@ -25,7 +25,8 @@ const CATEGORIES: Array<Exclude<MenuCategory, "Semua">> = [
   "Camilan",
 ];
 
-const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80";
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=80";
 
 export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +36,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
   const [price, setPrice] = useState("");
   const [prepTime, setPrepTime] = useState("15");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState(DEFAULT_IMAGE);
+  const [images, setImages] = useState<string[]>([DEFAULT_IMAGE]);
   const [isAvailable, setIsAvailable] = useState(true);
   const [isProcessingImage, setIsProcessingImage] = useState(false);
 
@@ -46,7 +47,10 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
       setPrice(itemToEdit.price.toString());
       setPrepTime(itemToEdit.prepTimeMinutes.toString());
       setDescription(itemToEdit.description);
-      setImageUrl(itemToEdit.imageUrl);
+      const list = itemToEdit.imageUrls && itemToEdit.imageUrls.length > 0
+        ? itemToEdit.imageUrls
+        : [itemToEdit.imageUrl || DEFAULT_IMAGE];
+      setImages(list);
       setIsAvailable(itemToEdit.isAvailable);
     } else {
       setName("");
@@ -54,27 +58,41 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
       setPrice("");
       setPrepTime("15");
       setDescription("");
-      setImageUrl(DEFAULT_IMAGE);
+      setImages([DEFAULT_IMAGE]);
       setIsAvailable(true);
     }
   }, [itemToEdit, isOpen]);
 
   if (!isOpen) return null;
 
-  // Handle File Upload dengan Auto-Crop & Auto-Compress
+  // Handle Multi-File Upload dengan Auto-Crop & Auto-Compress
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    const file = files[0];
 
     setIsProcessingImage(true);
     try {
-      // Auto crop ke rasio 1:1 (800x800) dan kompres ke < 100KB
-      const compressedData = await processAndCompressImage(file, 800, 800, 0.82);
-      setImageUrl(compressedData);
-      toast.success("Foto berhasil diunggah & disesuaikan ke ukuran ideal (800×800 px).", {
-        id: "upload-toast",
-      });
+      const newCompressedList: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        if (images.length + newCompressedList.length >= 5) {
+          toast.warning("Maksimal 5 foto per hidangan.", { id: "upload-toast" });
+          break;
+        }
+        const compressed = await processAndCompressImage(files[i], 800, 800, 0.82);
+        newCompressedList.push(compressed);
+      }
+
+      if (newCompressedList.length > 0) {
+        // Jika sebelumnya hanya gambar default, gantikan
+        setImages((prev) => {
+          const filtered = prev.filter((img) => img !== DEFAULT_IMAGE);
+          return [...filtered, ...newCompressedList];
+        });
+        toast.success(
+          `${newCompressedList.length} foto berhasil diunggah & dipotong ideal (800×800 px).`,
+          { id: "upload-toast" }
+        );
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memproses foto.";
       toast.error(msg, { id: "upload-toast" });
@@ -84,9 +102,28 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
     }
   };
 
+  const handleSetPrimary = (index: number) => {
+    if (index === 0) return;
+    setImages((prev) => {
+      const copy = [...prev];
+      const selected = copy.splice(index, 1)[0];
+      return [selected, ...copy];
+    });
+    toast.success("Foto utama berhasil diperbarui.", { id: "primary-photo-toast" });
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    setImages((prev) => {
+      const updated = prev.filter((_, i) => i !== index);
+      return updated.length > 0 ? updated : [DEFAULT_IMAGE];
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !price) return;
+
+    const finalImages = images.length > 0 ? images : [DEFAULT_IMAGE];
 
     onSave(
       {
@@ -95,7 +132,8 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
         price: parseInt(price, 10) || 0,
         prepTimeMinutes: parseInt(prepTime, 10) || 15,
         description: description.trim(),
-        imageUrl: imageUrl.trim() || DEFAULT_IMAGE,
+        imageUrl: finalImages[0],
+        imageUrls: finalImages,
         isAvailable,
       },
       itemToEdit ? itemToEdit.id : undefined
@@ -105,7 +143,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-[#bccac0]/30 overflow-hidden space-y-4 max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-150">
+      <div className="w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#bccac0]/30 overflow-hidden space-y-4 max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#bccac0]/30 bg-[#faf8ff] shrink-0">
           <h2 className="text-base font-extrabold text-[#131b2e]">
@@ -122,57 +160,95 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4 overflow-y-auto flex-1">
-          {/* UPLOAD FOTO SECTION DENGAN AUTO-CROP */}
+          {/* MULTI-FOTO UPLOAD GALLERY SECTION */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-[#131b2e] block">
-              Foto Menu Hidangan
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-[#131b2e]">
+                Galeri Foto Menu ({images.length}/5 Foto)
+              </label>
+              <span className="text-[10px] text-[#6d7a72]">Foto pertama adalah foto sampul (cover).</span>
+            </div>
 
-            <div className="flex items-center gap-4 rounded-xl border border-[#bccac0]/40 bg-[#faf8ff] p-3">
-              {/* Preview Box */}
-              <div className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden border border-[#bccac0]/60 bg-slate-200">
-                <Image
-                  src={imageUrl}
-                  alt="Preview"
-                  fill
-                  className="object-cover"
-                  unoptimized={imageUrl.startsWith("data:")}
-                />
-                {isProcessingImage && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white">
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  </div>
-                )}
-              </div>
+            {/* Photo Thumbnails Strip */}
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 p-3 rounded-2xl border border-[#bccac0]/40 bg-[#faf8ff]">
+              {images.map((imgUrl, idx) => (
+                <div
+                  key={idx}
+                  className={`relative aspect-square rounded-xl overflow-hidden border bg-slate-200 group ${
+                    idx === 0 ? "border-[#006948] ring-2 ring-[#006948]/30" : "border-[#bccac0]/60"
+                  }`}
+                >
+                  <Image
+                    src={imgUrl}
+                    alt={`Foto ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    unoptimized={imgUrl.startsWith("data:")}
+                  />
 
-              {/* Upload Controls & Guidelines */}
-              <div className="flex-1 space-y-1.5">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
+                  {/* Primary Badge */}
+                  {idx === 0 ? (
+                    <span className="absolute bottom-1 left-1 flex items-center gap-0.5 rounded-md bg-[#006948] px-1.5 py-0.5 text-[8px] font-black text-white shadow-xs">
+                      <Star className="h-2 w-2 fill-white" />
+                      Sampul
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSetPrimary(idx)}
+                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[9px] font-bold transition-opacity p-1 text-center"
+                    >
+                      Jadikan Sampul
+                    </button>
+                  )}
 
-                <Button
+                  {/* Delete Thumbnail Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePhoto(idx)}
+                    className="absolute top-1 right-1 h-5 w-5 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+                    title="Hapus foto ini"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Add Photo Button Tile */}
+              {images.length < 5 && (
+                <button
                   type="button"
-                  size="sm"
-                  variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isProcessingImage}
-                  className="text-xs h-8 px-3 gap-1.5 font-bold text-[#006948] border-[#006948]/30 hover:bg-emerald-50"
+                  className="aspect-square rounded-xl border-2 border-dashed border-[#006948]/40 hover:border-[#006948] bg-emerald-50/50 hover:bg-emerald-50 flex flex-col items-center justify-center text-[#006948] transition-colors p-2"
                 >
-                  <Upload className="h-3.5 w-3.5" />
-                  <span>{imageUrl === DEFAULT_IMAGE ? "Pilih Foto dari Galeri" : "Ganti Foto"}</span>
-                </Button>
-
-                <p className="text-[10px] text-[#6d7a72] leading-tight flex items-center gap-1">
-                  <Sparkles className="h-3 w-3 text-[#006948] shrink-0" />
-                  <span>Foto apa saja otomatis dipotong &amp; disesuaikan ke ukuran ideal 800×800 px (Rasio 1:1).</span>
-                </p>
-              </div>
+                  {isProcessingImage ? (
+                    <RefreshCw className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Plus className="h-5 w-5" />
+                      <span className="text-[9px] font-bold mt-1 text-center leading-tight">
+                        + Tambah Foto
+                      </span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+              className="hidden"
+            />
+
+            <p className="text-[10px] text-[#6d7a72] leading-tight flex items-center gap-1 pt-0.5">
+              <Sparkles className="h-3 w-3 text-[#006948] shrink-0" />
+              <span>Semua foto otomatis dipotong tengah ke rasio persegi 800×800 px (di bawah 100KB).</span>
+            </p>
           </div>
 
           {/* Name & Category */}

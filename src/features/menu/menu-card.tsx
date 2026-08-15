@@ -1,9 +1,18 @@
 "use client";
 // src/features/menu/menu-card.tsx
-// Komponen kartu menu restoran dengan toggle switch ketersediaan stok instan
+// Komponen kartu menu restoran dengan dukungan slider multi-foto dan switch toggle ketersediaan stok
 
+import { useState } from "react";
 import Image from "next/image";
-import { Clock, Edit3, Trash2, SlidersHorizontal, AlertCircle } from "lucide-react";
+import {
+  Clock,
+  Edit3,
+  Trash2,
+  SlidersHorizontal,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import type { DashboardMenuItem } from "@/features/menu/menu-data";
@@ -23,7 +32,25 @@ export function MenuCard({
   onManageVariants,
   onDelete,
 }: Props) {
+  const [photoIndex, setPhotoIndex] = useState(0);
+
+  const images = item.imageUrls && item.imageUrls.length > 0
+    ? item.imageUrls
+    : [item.imageUrl];
+
+  const totalPhotos = images.length;
+  const currentPhoto = images[photoIndex] || item.imageUrl;
   const variantCount = item.variants.length;
+
+  const handlePrevPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIndex((prev) => (prev > 0 ? prev - 1 : totalPhotos - 1));
+  };
+
+  const handleNextPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIndex((prev) => (prev < totalPhotos - 1 ? prev + 1 : 0));
+  };
 
   return (
     <div
@@ -33,17 +60,17 @@ export function MenuCard({
           : "border-red-200 bg-red-50/20 opacity-90"
       }`}
     >
-      {/* Image Thumbnail (1:1 Square Frame) & Category */}
+      {/* Image Thumbnail (1:1 Square Frame) with Multi-Photo Slider */}
       <div className="relative aspect-square w-full bg-slate-100 overflow-hidden">
         <Image
-          src={item.imageUrl}
-          alt={item.name}
+          src={currentPhoto}
+          alt={`${item.name} - Foto ${photoIndex + 1}`}
           fill
           className={`object-cover transition-transform duration-300 group-hover:scale-105 ${
             !item.isAvailable ? "grayscale contrast-125" : ""
           }`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          unoptimized={item.imageUrl.startsWith("data:")}
+          unoptimized={currentPhoto.startsWith("data:")}
         />
 
         {/* Category Badge */}
@@ -55,6 +82,51 @@ export function MenuCard({
             {item.category}
           </Badge>
         </div>
+
+        {/* Multi-photo Counter Badge */}
+        {totalPhotos > 1 && (
+          <div className="absolute top-3 right-3">
+            <span className="rounded-full bg-black/65 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-xs">
+              {photoIndex + 1}/{totalPhotos}
+            </span>
+          </div>
+        )}
+
+        {/* Slider Chevrons (Visible on Hover if >1 photo) */}
+        {totalPhotos > 1 && (
+          <div className="absolute inset-y-0 inset-x-1.5 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              type="button"
+              onClick={handlePrevPhoto}
+              className="h-7 w-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-xs transition-colors"
+              title="Foto sebelumnya"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={handleNextPhoto}
+              className="h-7 w-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-xs transition-colors"
+              title="Foto berikutnya"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Dots Indicator */}
+        {totalPhotos > 1 && (
+          <div className="absolute bottom-2 inset-x-0 flex items-center justify-center gap-1">
+            {images.map((_, i) => (
+              <span
+                key={i}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === photoIndex ? "w-4 bg-white" : "w-1.5 bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Out-of-Stock Overlay Indicator */}
         {!item.isAvailable && (
@@ -119,7 +191,7 @@ export function MenuCard({
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             <span>
-              {variantCount > 0 ? `${variantCount} Opsi Varian` : "Atur Varian"}
+              {variantCount > 0 ? `${variantCount} Kelompok Pilihan` : "Atur Pilihan"}
             </span>
           </button>
 

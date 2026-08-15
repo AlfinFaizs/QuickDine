@@ -16,6 +16,7 @@ export interface MenuItemDetail {
   price: number;
   description: string;
   imageUrl: string;
+  imageUrls?: string[];
   isPopular?: boolean;
   isSpicy?: boolean;
   optionGroups?: MenuItemOptionGroup[];

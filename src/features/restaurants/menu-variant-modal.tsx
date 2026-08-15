@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { MenuItemDetail, MenuItemOption } from "./restaurant-details-data";
-import { X, Plus, Minus, Check, MessageSquare } from "lucide-react";
+import { X, Plus, Minus, Check, MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/utils";
 import { SelectedVariant } from "@/features/orders/cart-store";
@@ -26,7 +26,25 @@ export function MenuVariantModal({
   onClose,
   onAddToCart,
 }: MenuVariantModalProps) {
+  const [photoIndex, setPhotoIndex] = useState(0);
+
   if (!isOpen || !item) return null;
+
+  const images = item.imageUrls && item.imageUrls.length > 0
+    ? item.imageUrls
+    : [item.imageUrl];
+  const totalPhotos = images.length;
+  const currentPhoto = images[photoIndex] || item.imageUrl;
+
+  const handlePrevPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIndex((prev) => (prev > 0 ? prev - 1 : totalPhotos - 1));
+  };
+
+  const handleNextPhoto = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIndex((prev) => (prev < totalPhotos - 1 ? prev + 1 : 0));
+  };
 
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<
@@ -77,20 +95,69 @@ export function MenuVariantModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl bg-white shadow-2xl overflow-hidden">
-        {/* Modal Header (Aspect 4:3) */}
-        <div className="relative aspect-4/3 max-h-60 sm:max-h-72 w-full bg-slate-100 overflow-hidden">
+        {/* Modal Header (Aspect 4:3) with Multi-Photo Carousel */}
+        <div className="relative aspect-4/3 max-h-60 sm:max-h-72 w-full bg-slate-100 overflow-hidden group">
           <img
-            src={item.imageUrl}
-            alt={item.name}
-            className="h-full w-full object-cover"
+            src={currentPhoto}
+            alt={`${item.name} - Foto ${photoIndex + 1}`}
+            className="h-full w-full object-cover transition-all duration-300"
           />
+
+          {/* Close Button */}
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+            className="absolute top-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
+
+          {/* Photo Counter Badge */}
+          {totalPhotos > 1 && (
+            <div className="absolute top-3 left-3 z-10">
+              <span className="rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-xs">
+                {photoIndex + 1} / {totalPhotos} Foto
+              </span>
+            </div>
+          )}
+
+          {/* Prev / Next Chevrons */}
+          {totalPhotos > 1 && (
+            <div className="absolute inset-y-0 inset-x-2 flex items-center justify-between pointer-events-none">
+              <button
+                type="button"
+                onClick={handlePrevPhoto}
+                className="pointer-events-auto h-8 w-8 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-xs transition-transform active:scale-95"
+                title="Foto sebelumnya"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNextPhoto}
+                className="pointer-events-auto h-8 w-8 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-xs transition-transform active:scale-95"
+                title="Foto berikutnya"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Dots Indicator */}
+          {totalPhotos > 1 && (
+            <div className="absolute bottom-2.5 inset-x-0 flex items-center justify-center gap-1.5 z-10">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setPhotoIndex(i)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === photoIndex ? "w-5 bg-white shadow-xs" : "w-1.5 bg-white/60"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Modal Scrollable Body */}
