@@ -14,7 +14,8 @@ import {
   Clock, 
   Check, 
   AlertTriangle,
-  CalendarClock
+  CalendarClock,
+  Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -277,8 +278,9 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
                   </div>
                 )}
 
-                <p className="text-[10px] text-emerald-800 bg-emerald-50/60 p-2.5 rounded-lg border border-emerald-200/50">
-                  💡 <strong>Koki Dapur:</strong> Makanan mulai dimasak tepat <strong>15 menit</strong> sebelum jam tiba agar tersaji hangat saat Anda duduk.
+                <p className="text-[10px] text-emerald-900 bg-emerald-50/70 p-2.5 rounded-lg border border-emerald-200/50 flex items-start gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span><strong>Koki Dapur:</strong> Makanan mulai dimasak tepat <strong>15 menit</strong> sebelum jam tiba agar tersaji hangat saat Anda duduk.</span>
                 </p>
               </div>
             </div>

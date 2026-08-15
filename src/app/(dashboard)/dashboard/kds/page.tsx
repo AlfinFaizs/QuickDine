@@ -18,25 +18,25 @@ export default function KdsPage() {
   ) => {
     if (next === "completed") {
       setOrders((prev) => prev.filter((o) => o.id !== orderId));
-      toast.success("✅ Pesanan selesai & dihapus dari KDS.");
+      toast.success("Pesanan selesai dan dihapus dari antrean KDS.");
       return;
     }
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status: next } : o))
     );
     const label = next === "cooking" ? "Mulai Masak" : "Siap Saji";
-    toast.success(`🍳 Status pesanan diperbarui: ${label}`);
+    toast.success(`Status pesanan diperbarui: ${label}`);
   };
 
   const handleCheckIn = (orderId: string) => {
     setOrders((prev) => prev.filter((o) => o.id !== orderId));
-    toast.success("✅ Tamu tiba! Pesanan diserahkan ke meja. Status meja → OCCUPIED.");
+    toast.success("Tamu tiba. Pesanan diserahkan ke meja (Status: OCCUPIED).");
   };
 
   const handleNoShow = (orderId: string) => {
     setOrders((prev) => prev.filter((o) => o.id !== orderId));
     toast.warning(
-      "📦 No-Show: Pesanan dikemas (takeaway). Meja dikembalikan ke VACANT."
+      "No-Show: Pesanan dikemas takeaway. Meja dikembalikan ke status VACANT."
     );
   };
 

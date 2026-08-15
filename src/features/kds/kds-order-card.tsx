@@ -3,7 +3,7 @@
 // Kartu pesanan individual untuk KDS Dapur
 
 import { useEffect, useState } from "react";
-import { Clock, Flame, Sparkles, Check, PackageOpen, PhoneCall } from "lucide-react";
+import { Clock, Flame, Sparkles, Check, PackageOpen, PhoneCall, AlertTriangle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { KdsOrder } from "@/features/kds/kds-data";
@@ -78,16 +78,19 @@ export function KdsOrderCard({ order, onUpdateStatus, onCheckIn, onNoShow }: Pro
           className={`flex items-center justify-between gap-2 rounded-t-2xl px-4 py-2 text-xs font-semibold ${
             gracePassed
               ? "bg-red-500 text-white"
-              : "bg-yellow-400 text-yellow-900"
+              : "bg-amber-400 text-amber-950"
           }`}
         >
-          <span>
+          <span className="flex items-center gap-1.5">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
             {gracePassed
-              ? `🔴 Lewat Batas Toleransi (+${lateMinutes} menit)`
-              : `🟡 Tamu Terlambat (+${lateMinutes} menit)`}
+              ? `Lewat Batas Toleransi (+${lateMinutes} menit)`
+              : `Tamu Terlambat (+${lateMinutes} menit)`}
           </span>
           {gracePassed && (
-            <span className="text-[10px] font-bold animate-pulse">Ambil Tindakan!</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded">
+              Ambil Tindakan
+            </span>
           )}
         </div>
       )}
@@ -162,8 +165,9 @@ export function KdsOrderCard({ order, onUpdateStatus, onCheckIn, onNoShow }: Pro
                 <span className="font-semibold text-[#131b2e]">{item.name}</span>
               </div>
               {item.notes && (
-                <p className="mt-0.5 ml-4 text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-medium border-l-2 border-amber-400">
-                  📝 {item.notes}
+                <p className="mt-1 ml-4 text-[11px] text-amber-900 bg-amber-50 px-2 py-1 rounded font-medium border-l-2 border-amber-500 flex items-start gap-1.5">
+                  <FileText className="h-3 w-3 text-amber-600 mt-0.5 shrink-0" />
+                  <span>{item.notes}</span>
                 </p>
               )}
             </div>
@@ -196,10 +200,10 @@ export function KdsOrderCard({ order, onUpdateStatus, onCheckIn, onNoShow }: Pro
             <div className="grid grid-cols-2 gap-2">
               <Button
                 onClick={() => onCheckIn(order.id)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs h-10 gap-1"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs h-10 gap-1.5"
               >
                 <Check className="h-4 w-4" />
-                Tamu Tiba ✓
+                Tamu Tiba
               </Button>
               <Button
                 onClick={() => onUpdateStatus(order.id, "completed")}

@@ -2,7 +2,7 @@
 // src/features/tables/table-card.tsx
 // Kartu meja individual untuk Denah Meja Kasir
 
-import { Users, Clock, PhoneCall, ChevronRight } from "lucide-react";
+import { Users, Clock, PhoneCall, ChevronRight, CheckCircle2 } from "lucide-react";
 import { STATUS_CONFIG, type DashboardTable } from "@/features/tables/tables-data";
 
 interface Props {
@@ -68,8 +68,9 @@ export function TableCard({ table, onClick }: Props) {
 
       {/* Vacant hint */}
       {table.status === "vacant" && (
-        <p className="text-[11px] text-emerald-700 font-medium">
-          ✅ Siap untuk tamu walk-in atau reservasi
+        <p className="text-[11px] text-emerald-700 font-medium flex items-center gap-1.5">
+          <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
+          <span>Siap untuk tamu walk-in atau reservasi</span>
         </p>
       )}
     </button>
