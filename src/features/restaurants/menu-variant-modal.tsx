@@ -77,8 +77,8 @@ export function MenuVariantModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl bg-white shadow-2xl overflow-hidden">
-        {/* Modal Header */}
-        <div className="relative aspect-16/9 w-full bg-slate-100 overflow-hidden">
+        {/* Modal Header (1:1 Ratio Frame) */}
+        <div className="relative aspect-square max-h-72 w-full bg-slate-100 overflow-hidden">
           <img
             src={item.imageUrl}
             alt={item.name}

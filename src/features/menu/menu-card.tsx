@@ -33,8 +33,8 @@ export function MenuCard({
           : "border-red-200 bg-red-50/20 opacity-90"
       }`}
     >
-      {/* Image Thumbnail & Category */}
-      <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
+      {/* Image Thumbnail (1:1 Aspect Ratio Matching 800x800) */}
+      <div className="relative aspect-square w-full bg-slate-100 overflow-hidden">
         <Image
           src={item.imageUrl}
           alt={item.name}
