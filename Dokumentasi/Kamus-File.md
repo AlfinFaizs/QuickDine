@@ -50,7 +50,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/lib/supabase/server.ts`](file:///c:/My_Koding/QuickDine/src/lib/supabase/server.ts) | Branch-0 | 38 | Factory instansiasi Supabase Server Client (`createServerClient`) berbasis Next.js `cookies()` untuk Server Components, Server Actions, dan Route Handlers. |
 | [`src/lib/supabase/admin.ts`](file:///c:/My_Koding/QuickDine/src/lib/supabase/admin.ts) | Branch-0 | 16 | Factory instansiasi Supabase Admin Client dengan `SUPABASE_SERVICE_ROLE_KEY` (bypass RLS) untuk webhook pembayaran dan pendaftaran akun mitra. |
 | [`src/lib/supabase/middleware.ts`](file:///c:/My_Koding/QuickDine/src/lib/supabase/middleware.ts) | Branch-0 | 68 | Helper middleware untuk me-refresh cookie auth token dan memproteksi rute privat (`/dashboard/*`, `/super-admin/*`, `/pesanan-saya`). |
-| [`src/middleware.ts`](file:///c:/My_Koding/QuickDine/src/middleware.ts) | Branch-0 | 12 | Root Edge Middleware Next.js yang meneruskan setiap request ke `updateSession()`. |
+| [`src/proxy.ts`](file:///c:/My_Koding/QuickDine/src/proxy.ts) | **Branch-5** | 20 | Root Edge Proxy/Auth Handler Next.js 16 yang meneruskan setiap request ke `updateSession()`. |
 
 ---
 

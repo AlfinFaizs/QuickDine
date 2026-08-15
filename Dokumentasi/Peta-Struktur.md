@@ -149,7 +149,7 @@ QuickDine/
 │   ├── types/                                // DEFINISI TIPE GLOBAL TYPESCRIPT
 │   │   └── index.ts                          // OrderStatus, TableStatus, Restaurant, dll.
 │   │
-│   └── middleware.ts                         // Root Next.js Edge Middleware
+│   └── proxy.ts                              // Edge Network Proxy / Auth Middleware (Konvensi Next.js 16)
 │
 ├── supabase/                                 // STRUKTUR DATABASE POSTGRESQL
 │   └── schema.sql                            // DDL 7 tabel, fungsi RPC atomik, RLS policies
