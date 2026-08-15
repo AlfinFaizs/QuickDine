@@ -13,7 +13,8 @@ import {
   Table2, 
   ShoppingBag,
   Sparkles,
-  Info
+  Info,
+  Images
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -206,17 +207,20 @@ export default function RestoDetailPage({ params }: RestoPageProps) {
                 .filter((i) => i.menuId === menu.id)
                 .reduce((acc, curr) => acc + curr.quantity, 0);
 
+              const photoCount = menu.imageUrls?.length || 1;
+
               return (
                 <div
                   key={menu.id}
-                  className="flex gap-4 rounded-2xl border border-[#bccac0]/40 bg-white p-4 shadow-2xs hover:border-[#006948]/50 transition-all"
+                  onClick={() => setActiveModalItem(menu)}
+                  className="flex gap-4 rounded-2xl border border-[#bccac0]/40 bg-white p-4 shadow-2xs hover:border-[#006948]/60 hover:shadow-md transition-all cursor-pointer group"
                 >
                   {/* Menu Image */}
                   <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100">
                     <img
                       src={menu.imageUrl}
                       alt={menu.name}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     {menu.isPopular && (
                       <span className="absolute top-1.5 left-1.5 flex items-center gap-0.5 rounded-full bg-amber-400 px-1.5 py-0.5 text-[9px] font-black text-black">
@@ -224,12 +228,18 @@ export default function RestoDetailPage({ params }: RestoPageProps) {
                         <span>Best</span>
                       </span>
                     )}
+                    {photoCount > 1 && (
+                      <span className="absolute bottom-1.5 right-1.5 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-[8px] font-bold text-white backdrop-blur-xs">
+                        <Images className="h-2.5 w-2.5" />
+                        <span>{photoCount}</span>
+                      </span>
+                    )}
                   </div>
 
                   {/* Menu Info */}
                   <div className="flex flex-1 flex-col justify-between space-y-2">
                     <div>
-                      <h3 className="text-sm font-bold text-[#131b2e] line-clamp-1">
+                      <h3 className="text-sm font-bold text-[#131b2e] group-hover:text-[#006948] transition-colors line-clamp-1">
                         {menu.name}
                       </h3>
                       <p className="text-[11px] text-[#6d7a72] line-clamp-2 leading-relaxed mt-0.5">
@@ -244,7 +254,10 @@ export default function RestoDetailPage({ params }: RestoPageProps) {
 
                       <Button
                         size="sm"
-                        onClick={() => setActiveModalItem(menu)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveModalItem(menu);
+                        }}
                         className="h-8 bg-[#006948] hover:bg-[#005137] text-white text-xs font-bold px-3 gap-1 rounded-xl shadow-2xs"
                       >
                         <Plus className="h-3.5 w-3.5" />
