@@ -96,11 +96,22 @@ QuickDine/
 │   │       └── skeleton.tsx                  // Primitive shimmer skeleton loader pulse
 │   │
 │   ├── features/                             // LOGIKA BISNIS PER DOMAIN (Feature-Based)
+│   │   ├── finance/                          // Modul Keuangan & Ledger Omset Restoran
+│   │   │   ├── finance-data.ts               // Tipe data transaksi & ringkasan omset
+│   │   │   ├── finance-kpi-cards.tsx         // 4 Kartu KPI metrik omset & payout
+│   │   │   └── finance-ledger-table.tsx      // Tabel buku kas transaksi & rincian fee
+│   │   │
 │   │   ├── kds/                              // Modul Kitchen Display System (Dapur)
 │   │   │   ├── kds-data.ts                   // Tipe data & mock order dapur realtime
 │   │   │   ├── kds-header-stats.tsx          // Bar metrik 4 status order dapur
 │   │   │   ├── kds-order-card.tsx            // Kartu pesanan dapur + alarm & grace timer
 │   │   │   └── kds-skeleton.tsx              // Skeleton shimmer loader antrean kartu KDS
+│   │   │
+│   │   ├── menu/                             // Modul Manajemen Master Menu & Varian
+│   │   │   ├── menu-card.tsx                 // Kartu hidangan + Out-of-Stock switch toggle
+│   │   │   ├── menu-data.ts                  // Tipe data menu, opsi varian, & mock items
+│   │   │   ├── menu-form-modal.tsx           // Modal tambah & edit menu hidangan
+│   │   │   └── menu-variant-modal.tsx        // Modal pengatur opsi varian & ekstra topping
 │   │   │
 │   │   ├── orders/                           // Modul Pesanan & Keranjang Belanja
 │   │   │   ├── actions.ts                    // Server actions pembuatan order atomik
@@ -137,6 +148,7 @@ QuickDine/
 │   │       └── midtrans.service.ts           // Adapter Midtrans Snap API
 │   │
 │   ├── lib/                                  // UTILITY & SINGLETON CORE
+│   │   ├── excel-export.ts                   // Generator berkas Microsoft Excel (.xlsx) resmi
 │   │   ├── prisma.ts                         // Singleton Prisma Client v7 (@prisma/adapter-pg)
 │   │   ├── sanitize.ts                       // Utility sanitasi input & pencegahan XSS
 │   │   ├── utils.ts                          // Helper formatting Rupiah & clsx merge

@@ -1,56 +1,123 @@
 "use client";
+// src/app/(dashboard)/dashboard/finance/page.tsx
+// Halaman Rekap Omset, Buku Kas Keuangan, & Ekspor Microsoft Excel (.xlsx)
 
-import { DollarSign, Download, TrendingUp, Calendar, CreditCard } from "lucide-react";
+import { useState } from "react";
+import { FileSpreadsheet, Download, Landmark, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatRupiah } from "@/lib/utils";
+import { FinanceKPICards } from "@/features/finance/finance-kpi-cards";
+import { FinanceLedgerTable } from "@/features/finance/finance-ledger-table";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  INITIAL_TRANSACTIONS,
+  INITIAL_FINANCE_SUMMARY,
+  type FinanceTransaction,
+} from "@/features/finance/finance-data";
+import { exportFinanceToExcel } from "@/lib/excel-export";
 import { toast } from "sonner";
 
-export default function FinancePage() {
-  const handleExportCsv = () => {
-    toast.success("File CSV rekap payout H+1 berhasil diunduh.");
+export default function FinanceDashboardPage() {
+  const [transactions] = useState<FinanceTransaction[]>(INITIAL_TRANSACTIONS);
+  const [summary] = useState(INITIAL_FINANCE_SUMMARY);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isPayoutModalOpen, setIsPayoutModalOpen] = useState(false);
+
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      await exportFinanceToExcel({
+        restaurantName: "Sate Khas Senayan",
+        reportPeriod: "14 - 15 Agustus 2026",
+        totalGross: summary.totalGross,
+        totalFee: summary.totalFee,
+        totalNet: summary.totalNet,
+        transactions: transactions.map((t) => ({
+          id: t.orderNumber,
+          createdAt: t.createdAt,
+          customerName: t.customerName,
+          paymentMethod: t.paymentMethod,
+          grossAmount: t.grossAmount,
+          platformFee: t.platformFee,
+          netAmount: t.netAmount,
+          status: t.payoutStatus === "paid_out" ? "Sudah Cair" : "Menunggu H+1",
+        })),
+      });
+
+      toast.success("File Microsoft Excel (.xlsx) rekap omset berhasil diunduh.", {
+        id: "excel-export-toast",
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal mengunduh Excel.";
+      toast.error(msg, { id: "excel-export-toast" });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleManualPayoutRequest = () => {
+    toast.success("Permintaan percepatan pencairan saldo diproses ke bank mitra.", {
+      id: "payout-request-toast",
+    });
+    setIsPayoutModalOpen(false);
   };
 
   return (
     <div className="space-y-6">
+      {/* Header & Export Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#131b2e] flex items-center gap-2">
-            <DollarSign className="h-6 w-6 text-[#006948]" />
-            <span>Laporan Keuangan & Saldo</span>
+          <h1 className="text-xl sm:text-2xl font-black text-[#131b2e]">
+            Laporan Keuangan &amp; Rekap Omset
           </h1>
-          <p className="text-xs text-[#6d7a72]">
-            Rekap omset harian, ledger saldo, dan ekspor CSV untuk pencairan payout manual H+1.
+          <p className="text-xs sm:text-sm text-[#6d7a72] mt-0.5">
+            Rekapitulasi pendapatan penjualan, potongan platform fee transparan, dan pencairan saldo H+1.
           </p>
         </div>
-        <Button onClick={handleExportCsv} className="bg-[#006948] hover:bg-[#005137] text-white text-xs h-9 gap-1.5">
-          <Download className="h-4 w-4" />
-          <span>Ekspor CSV Payout H+1</span>
-        </Button>
-      </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-5 shadow-2xs space-y-2">
-          <span className="text-xs text-[#6d7a72]">Total Saldo Siap Payout</span>
-          <p className="text-2xl font-black text-[#006948]">{formatRupiah(2450000)}</p>
-          <span className="text-[11px] text-emerald-700 font-medium">100% utuh tanpa potongan komisi makanan</span>
-        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsPayoutModalOpen(true)}
+            className="text-xs h-10 px-3.5 font-bold text-[#131b2e] gap-1.5 border-[#bccac0]"
+          >
+            <Landmark className="h-4 w-4 text-[#006948]" />
+            <span>Pencairan Cepat</span>
+          </Button>
 
-        <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-5 shadow-2xs space-y-2">
-          <span className="text-xs text-[#6d7a72]">Omset Kotor Hari Ini</span>
-          <p className="text-2xl font-black text-[#131b2e]">{formatRupiah(890000)}</p>
-          <span className="text-[11px] text-[#6d7a72]">Dari 28 pesanan selesai</span>
-        </div>
-
-        <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-5 shadow-2xs space-y-2">
-          <span className="text-xs text-[#6d7a72]">Status Kemitraan Resto</span>
-          <div className="flex items-center gap-2">
-            <p className="text-lg font-bold text-emerald-700">Aktif</p>
-            <span className="text-xs text-[#6d7a72]">• Rp 200.000 / bln</span>
-          </div>
-          <span className="text-[11px] text-[#6d7a72]">Berlaku s/d 28 Feb 2026</span>
+          {/* Export to Styled Excel */}
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleExportExcel}
+            isLoading={isExporting}
+            className="bg-[#006948] hover:bg-[#005137] text-white font-bold text-xs h-10 px-4 gap-1.5 shadow-sm"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            <span>Export Rekap Excel (.xlsx)</span>
+          </Button>
         </div>
       </div>
+
+      {/* 4 KPI Cards */}
+      <FinanceKPICards summary={summary} />
+
+      {/* Ledger Table */}
+      <FinanceLedgerTable transactions={transactions} />
+
+      {/* Payout Acceleration Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isPayoutModalOpen}
+        title="Ajukan Percepatan Pencairan Saldo?"
+        description={`Saldo bersih sebesar Rp ${summary.totalNet.toLocaleString(
+          "id-ID"
+        )} akan ditransfer instan ke ${summary.payoutBankAccount}. Biaya transfer antar-bank berlaku sesuai ketentuan.`}
+        confirmLabel="Ya, Cairkan Sekarang"
+        variant="primary"
+        onConfirm={handleManualPayoutRequest}
+        onClose={() => setIsPayoutModalOpen(false)}
+      />
     </div>
   );
 }
