@@ -297,6 +297,38 @@ export default function LandingPage() {
           })}
         </div>
       </section>
+
+      {/* B2B Partner Call-To-Action Banner Section */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#006948] to-[#005137] p-8 sm:p-12 text-white shadow-xl">
+          <div className="relative z-10 max-w-2xl space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-xs font-semibold text-white backdrop-blur-md border border-white/20">
+              <Sparkles className="h-3.5 w-3.5 text-[#fea619]" />
+              <span>Kemitraan Restoran QuickDine</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+              Punya Kafe atau Resto? <br />
+              <span className="text-[#fea619]">Tingkatkan Omset & Kurangi Meja Kosong.</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+              Bergabung bersama puluhan mitra resto modern. Terima pesanan & reservasi live otomatis tanpa potongan komisi makanan. Langganan flat Rp200.000/bulan dengan <strong>Free Trial 14 Hari</strong>.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Link href="/daftar-mitra">
+                <Button size="lg" className="w-full sm:w-auto bg-white hover:bg-emerald-50 text-[#006948] font-bold text-xs h-12 px-6 shadow-md gap-1.5">
+                  <span>Daftarkan Resto Anda Sekarang</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/login?portal=staff">
+                <Button size="lg" variant="ghost" className="w-full sm:w-auto text-white hover:bg-white/10 text-xs h-12 px-5 font-semibold">
+                  <span>Sudah Jadi Mitra? Masuk Portal</span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

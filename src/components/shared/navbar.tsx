@@ -78,7 +78,7 @@ export function Navbar({ userRole, userEmail }: NavbarProps) {
                   <span>Masuk</span>
                 </Button>
               </Link>
-              <Link href="/login?tab=staff">
+              <Link href="/daftar-mitra">
                 <Button size="sm" className="text-xs h-9 bg-[#006948] hover:bg-[#005137]">
                   Daftarkan Resto
                 </Button>
