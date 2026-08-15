@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# env files (keep template only)
 .env*
 !.env.example
 
@@ -44,6 +44,14 @@ next-env.d.ts
 # prisma generated
 /src/generated/prisma
 
-# editor & AI skills
+# Internal project documentation & PRD
+PRD/
+Dokumentasi/
+
+# AI agent configurations & tools
+AGENTS.md
+CLAUDE.md
+.agents/
 .claude/
 .windsurf/
+skills-lock.json
