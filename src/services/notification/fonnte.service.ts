@@ -46,7 +46,7 @@ export class FonnteNotificationService implements INotificationService {
       .map((item) => `- ${item.quantity}x ${item.name}${item.notes ? ` (${item.notes})` : ""}`)
       .join("\n");
 
-    const message = `🔔 *PESANAN BARU TERBAYAR*\nResto: *${payload.restaurantName}*\nMeja: *${payload.tableNumber || "Tanpa Meja"}*\nPelanggan: ${payload.customerName} (${payload.customerPhone})\nJam Tiba: ${payload.arrivalTime}\n\n*Item Pesanan:*\n${itemList}\n\n*Total: ${formatRupiah(payload.totalAmount)}*\n_Silakan proses persiapan di KDS._`;
+    const message = `*PESANAN BARU TERBAYAR*\nResto: *${payload.restaurantName}*\nMeja: *${payload.tableNumber || "Tanpa Meja"}*\nPelanggan: ${payload.customerName} (${payload.customerPhone})\nJam Tiba: ${payload.arrivalTime}\n\n*Item Pesanan:*\n${itemList}\n\n*Total: ${formatRupiah(payload.totalAmount)}*\n_Silakan proses persiapan di KDS._`;
 
     return this.send(groupId, message);
   }
@@ -56,13 +56,13 @@ export class FonnteNotificationService implements INotificationService {
       .map((item) => `- ${item.quantity}x ${item.name} (${formatRupiah(item.price)})`)
       .join("\n");
 
-    const message = `🧾 *STRUK PEMESANAN QUICKDINE*\nTerima kasih, *${payload.customerName}*!\n\nRestoran: *${payload.restaurantName}*\nMeja: *${payload.tableNumber || "-"}*\nEstimasi Tiba: *${payload.arrivalTime}*\n\n*Rincian Menu:*\n${itemList}\nSubtotal: ${formatRupiah(payload.subtotal)}\nBiaya Layanan: ${formatRupiah(payload.platformFee)}\n*Total Bayar: ${formatRupiah(payload.total)}*\n\n📍 *Pantau Status Masak Real-Time:*\n${payload.trackingUrl}\n\n_Harap tiba tepat waktu. Makanan mulai dimasak sebelum jam kedatangan Anda._`;
+    const message = `*STRUK PEMESANAN QUICKDINE*\nTerima kasih, *${payload.customerName}*.\n\nRestoran: *${payload.restaurantName}*\nMeja: *${payload.tableNumber || "-"}*\nEstimasi Tiba: *${payload.arrivalTime}*\n\n*Rincian Menu:*\n${itemList}\nSubtotal: ${formatRupiah(payload.subtotal)}\nBiaya Layanan: ${formatRupiah(payload.platformFee)}\n*Total Bayar: ${formatRupiah(payload.total)}*\n\n*Pantau Status Masak Real-Time:*\n${payload.trackingUrl}\n\n_Harap tiba tepat waktu. Makanan mulai dimasak sebelum jam kedatangan Anda._`;
 
     return this.send(phone, message);
   }
 
   async sendDailyOwnerReport(ownerPhone: string, summary: DailySummaryPayload): Promise<boolean> {
-    const message = `📊 *REKAP HARIAN OMSET RESTO*\nTanggal: ${summary.date}\nRestoran: *${summary.restaurantName}*\n\nTotal Pesanan Selesai: *${summary.totalOrders} order*\nTotal Omset Kotor: *${formatRupiah(summary.totalRevenue)}*\nEstimasi Payout Bersih: *${formatRupiah(summary.payoutAmount)}*\n\n_Rekap detail & ekspor CSV dapat diakses di dashboard keuangan QuickDine._`;
+    const message = `*REKAP HARIAN OMSET RESTORAN*\nTanggal: ${summary.date}\nRestoran: *${summary.restaurantName}*\n\nTotal Pesanan Selesai: *${summary.totalOrders} order*\nTotal Omset Kotor: *${formatRupiah(summary.totalRevenue)}*\nEstimasi Payout Bersih: *${formatRupiah(summary.payoutAmount)}*\n\n_Rekap detail & ekspor CSV dapat diakses di dashboard keuangan QuickDine._`;
 
     return this.send(ownerPhone, message);
   }

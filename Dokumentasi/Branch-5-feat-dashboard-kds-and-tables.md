@@ -18,22 +18,22 @@ Branch ini mengimplementasikan **Portal Operasional Restoran** yang berfokus pad
   - Nama customer, no HP, dan rincian menu + catatan khusus koki (notes highlighting).
   - **Hitung Mundur Estimasi Kedatangan Tamu**: Menghitung selisih waktu tiba secara real-time.
   - **Grace Period (Toleransi Keterlambatan Tamu 15 Menit)**:
-    - 🟡 *Tamu Terlambat (+X menit)*: Banner kuning otomatis jika melewati jam tiba.
-    - 🔴 *Lewat Batas Toleransi (+X menit)*: Banner merah berkedip jika melewati 15 menit keterlambatan.
+    - *Tamu Terlambat (+X menit)*: Banner kuning otomatis jika melewati jam tiba.
+    - *Lewat Batas Toleransi (+X menit)*: Banner merah berkedip jika melewati 15 menit keterlambatan.
   - **Tombol Aksi Dapur**:
     - `[Mulai Masak Sekarang]` (status: `received` → `cooking`)
     - `[Tandai Siap Saji]` (status: `cooking` → `ready`)
-    - `[Tamu Tiba ✓]` (Check-in customer saat tiba di meja)
+    - `[Tamu Tiba]` (Check-in customer saat tiba di meja)
     - `[Bungkus & Lepas Meja]` (No-Show trigger: bungkus makanan dan bebaskan meja)
     - `[Beri Toleransi Lagi]` (Memberikan toleransi waktu ekstra bagi tamu)
 - **Tombol Reset Demo**: Mengembalikan pesanan demo ke kondisi awal untuk simulasi.
 
 ### 2. Denah Meja Live — Kasir (`/dashboard/tables`)
 - **Indikator 4 Status Penuh**:
-  - 🟢 **VACANT (Kosong)**: Meja siap pakai.
-  - 🟡 **LOCKED (Sedang Checkout)**: Meja dikunci 10 menit oleh sistem customer.
-  - 🔵 **RESERVED (Sudah Bayar)**: Tamu sudah pre-order & bayar, menunggu jam kedatangan.
-  - ⚪ **OCCUPIED (Sedang Makan)**: Tamu aktif berada di meja.
+  - **VACANT (Kosong)**: Meja siap pakai.
+  - **LOCKED (Sedang Checkout)**: Meja dikunci 10 menit oleh sistem customer.
+  - **RESERVED (Sudah Bayar)**: Tamu sudah pre-order & bayar, menunggu jam kedatangan.
+  - **OCCUPIED (Sedang Makan)**: Tamu aktif berada di meja.
 - **Legend & Ringkasan Metrik**: Bar kartu jumlah meja per masing-masing status.
 - **Kartu Meja Interaktif (`table-card.tsx`)**:
   - Visual status color-coded, nomor meja, kapasitas kursi.
@@ -100,7 +100,7 @@ Layout dashboard resto dengan counter pesanan aktif pada sidebar, status live on
 | `(dashboard)/dashboard/tables/page.tsx` | 192 |
 | `(dashboard)/dashboard/layout.tsx` | 143 |
 
-Seluruh file berada jauh di bawah batas 500 baris. ✅
+Seluruh file berada jauh di bawah batas 500 baris.
 
 ---
 

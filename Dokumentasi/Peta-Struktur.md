@@ -1,15 +1,15 @@
-# 🗺️ Peta Struktur Folder & Arsitektur Proyek QuickDine
+# Peta Struktur Folder & Arsitektur Proyek QuickDine
 
 Dokumen ini berisi **peta struktur folder, pembagian domain arsitektur, dan alur data modular** pada repositori **QuickDine** per Agustus 2026 (pasca **Branch-0 s/d Branch-5: Dashboard KDS & Tables**).
 
-Proyek ini mengadopsi arsitektur **Feature-Driven Modular Monolith** dipadukan dengan **Route Groups Next.js 16 (App Router)** untuk memastikan skalabilitas tinggi, kemudahan pelacakan kode, dan isolasi domain yang rapi bagi solo developer maupun tim.
+Proyek ini mengadopsi arsitektur **Feature-Driven Modular Monolith** dipadukan dengan **Route Groups Next.js 16 (App Router)** untuk memastikan skalabilitas tinggi, kemudahan pelacakan kode, dan isolasi domain yang rapi bagi developer maupun tim.
 
-> 📖 **Kamus Lengkap File Proyek:** Untuk rincian ensiklopedis setiap file kode (peran, fungsi, baris, dan branch asal), silakan buka dokumen khusus:  
-> 👉 [`Dokumentasi/Kamus-File.md`](file:///c:/My_Koding/QuickDine/Dokumentasi/Kamus-File.md)
+> **Kamus Lengkap File Proyek:** Untuk rincian ensiklopedis setiap file kode (peran, fungsi, baris, dan branch asal), silakan buka dokumen khusus:  
+> [Dokumentasi/Kamus-File.md](file:///c:/My_Koding/QuickDine/Dokumentasi/Kamus-File.md)
 
 ---
 
-## 🌳 1. Peta Kasar Folder (ASCII Tree Map)
+## 1. Peta Struktur Folder (ASCII Tree Map)
 
 ```text
 QuickDine/
@@ -34,13 +34,13 @@ QuickDine/
 │
 ├── src/
 │   ├── app/                                  // Next.js App Router (Route Groups)
-│   │   ├── (marketing)/                      // 🏢 PORTAL PUBLIK & MARKETING
+│   │   ├── (marketing)/                      // PORTAL PUBLIK & MARKETING
 │   │   │   ├── layout.tsx                    // Navbar & Footer publik wrapper
 │   │   │   ├── page.tsx                      // Landing page marketing (Cara Kerja, 4 featured, B2B)
 │   │   │   └── daftar-mitra/
 │   │   │       └── page.tsx                  // 4-Step wizard pendaftaran mitra resto
 │   │   │
-│   │   ├── (customer)/                       // 📱 ALUR PEMESANAN CUSTOMER (Mobile First)
+│   │   ├── (customer)/                       // ALUR PEMESANAN CUSTOMER (Mobile First)
 │   │   │   ├── jelajah/
 │   │   │   │   └── page.tsx                  // Shell Suspense wrapper halaman katalog /jelajah
 │   │   │   ├── [restoSlug]/
@@ -52,11 +52,11 @@ QuickDine/
 │   │   │   └── pesanan-saya/
 │   │   │       └── page.tsx                  // Riwayat & status pesanan aktif customer
 │   │   │
-│   │   ├── (auth)/                           // 🔐 OTENTIKASI PENGGUNA TERPADU
+│   │   ├── (auth)/                           // OTENTIKASI PENGGUNA TERPADU
 │   │   │   └── login/
 │   │   │       └── page.tsx                  // Login Google 1-click, register, & staf portal
 │   │   │
-│   │   ├── (dashboard)/                      // 👨‍🍳 PORTAL OPERASIONAL RESTO & MITRA
+│   │   ├── (dashboard)/                      // PORTAL OPERASIONAL RESTO & MITRA
 │   │   │   └── dashboard/
 │   │   │       ├── layout.tsx                // Sidebar navigasi resto & header mobile
 │   │   │       ├── kds/page.tsx              // Kitchen Display System (Realtime Dapur)
@@ -65,11 +65,11 @@ QuickDine/
 │   │   │       ├── finance/page.tsx          // Rekap omset bersih & payout bank H+1
 │   │   │       └── settings/page.tsx         // Pengaturan jam operasional & cook time
 │   │   │
-│   │   ├── (super-admin)/                    // 👑 PORTAL SUPER ADMIN PLATFORM
+│   │   ├── (super-admin)/                    // PORTAL SUPER ADMIN PLATFORM
 │   │   │   └── super-admin/
 │   │   │       └── page.tsx                  // Metrik GMV, langganan mitra, revenue SaaS
 │   │   │
-│   │   ├── api/                              // ⚡ REST API & WEBHOOKS
+│   │   ├── api/                              // REST API & WEBHOOKS
 │   │   │   ├── cron/cleanup-locks/route.ts   // Cron un-lock meja expired (>10 mnt)
 │   │   │   └── webhooks/midtrans/route.ts    // Webhook verifikasi pembayaran Midtrans
 │   │   │
@@ -80,7 +80,7 @@ QuickDine/
 │   │   ├── layout.tsx                        // Root layout HTML & Font Inter
 │   │   └── providers.tsx                     // TanStack Query & Toaster provider
 │   │
-│   ├── components/                           // 🧩 KOMPONEN UI GLOBAL & SHARED
+│   ├── components/                           // KOMPONEN UI GLOBAL & SHARED
 │   │   ├── shared/                           // Komponen layout & modul bersama
 │   │   │   ├── brand-logo.tsx                // Logo resmi QuickDine responsif
 │   │   │   ├── footer.tsx                    // Footer halaman publik
@@ -93,7 +93,7 @@ QuickDine/
 │   │       ├── card.tsx                      // Kontainer kartu modular
 │   │       └── input.tsx                     // Input form standar
 │   │
-│   ├── features/                             // 💼 LOGIKA BISNIS PER DOMAIN (Feature-Based)
+│   ├── features/                             // LOGIKA BISNIS PER DOMAIN (Feature-Based)
 │   │   ├── kds/                              // Modul Kitchen Display System (Dapur)
 │   │   │   ├── kds-data.ts                   // Tipe data & mock order dapur realtime
 │   │   │   ├── kds-header-stats.tsx          // Bar metrik 4 status order dapur
@@ -122,7 +122,7 @@ QuickDine/
 │   │       ├── table-walkin-modal.tsx        // Modal input walk-in offline tamu
 │   │       └── tables-data.ts                // Tipe data & mock denah meja kasir
 │   │
-│   ├── services/                             // 🔌 INTEGRASI PIHAK KETIGA (Adapter Pattern)
+│   ├── services/                             // INTEGRASI PIHAK KETIGA (Adapter Pattern)
 │   │   ├── notification/                     // Layanan Notifikasi WhatsApp
 │   │   │   ├── fonnte.service.ts             // Adapter Fonnte WA Gateway
 │   │   │   ├── index.ts                      // Factory instance notifikasi
@@ -131,7 +131,7 @@ QuickDine/
 │   │       ├── fee-calculator.ts             // Kalkulator fee QRIS (Rp1.500) & VA (Rp5.500)
 │   │       └── midtrans.service.ts           // Adapter Midtrans Snap API
 │   │
-│   ├── lib/                                  // ⚙️ UTILITY & SINGLETON CORE
+│   ├── lib/                                  // UTILITY & SINGLETON CORE
 │   │   ├── prisma.ts                         // Singleton Prisma Client v7 (@prisma/adapter-pg)
 │   │   ├── utils.ts                          // Helper formatting Rupiah & clsx merge
 │   │   └── supabase/                         // Konfigurasi Supabase
@@ -140,12 +140,12 @@ QuickDine/
 │   │       ├── middleware.ts                 // Session refresh & route guard
 │   │       └── server.ts                     // Server Component / Server Action Client
 │   │
-│   ├── types/                                // 📝 DEFINISI TIPE GLOBAL TYPESCRIPT
+│   ├── types/                                // DEFINISI TIPE GLOBAL TYPESCRIPT
 │   │   └── index.ts                          // OrderStatus, TableStatus, Restaurant, dll.
 │   │
 │   └── middleware.ts                         // Root Next.js Edge Middleware
 │
-├── supabase/                                 // 🗄️ STRUKTUR DATABASE POSTGRESQL
+├── supabase/                                 // STRUKTUR DATABASE POSTGRESQL
 │   └── schema.sql                            // DDL 7 tabel, fungsi RPC atomik, RLS policies
 │
 ├── AGENTS.md                                 // Panduan dan aturan koding AI pair-programming
@@ -155,7 +155,7 @@ QuickDine/
 
 ---
 
-## 🏗️ 2. Hubungan Antar Lapisan Arsitektur (Data Flow)
+## 2. Hubungan Antar Lapisan Arsitektur (Data Flow)
 
 Sistem QuickDine memisahkan tanggung jawab menjadi 4 lapisan terisolasi:
 
@@ -199,8 +199,8 @@ Sistem QuickDine memisahkan tanggung jawab menjadi 4 lapisan terisolasi:
 
 ---
 
-## 📋 3. Panduan Pemeliharaan & Aturan Rekayasa
+## 3. Panduan Pemeliharaan & Aturan Rekayasa
 
 1. **Batas Panjang File:** Setiap file kode wajib di bawah **500 baris** (*Single Responsibility Principle*).
-2. **Kamus File Terpusat:** Setiap penambahan file baru di branch baru wajib dicatat ke [`Dokumentasi/Kamus-File.md`](file:///c:/My_Koding/QuickDine/Dokumentasi/Kamus-File.md).
+2. **Kamus File Terpusat:** Setiap penambahan file baru di branch baru wajib dicatat ke [Dokumentasi/Kamus-File.md](file:///c:/My_Koding/QuickDine/Dokumentasi/Kamus-File.md).
 3. **Pemisahan Logika:** Domain logic selalu ditaruh di `src/features/[feature]/` dan integrasi eksternal selalu menggunakan pola adapter di `src/services/[service]/`.

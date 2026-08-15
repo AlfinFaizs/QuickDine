@@ -15,7 +15,8 @@ import {
   Check, 
   AlertTriangle,
   CalendarClock,
-  Info
+  Info,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -222,24 +223,26 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
                   <button
                     type="button"
                     onClick={() => setArrivalMode("quick")}
-                    className={`rounded-lg py-1.5 transition-all ${
+                    className={`rounded-lg py-1.5 transition-all flex items-center justify-center gap-1.5 ${
                       arrivalMode === "quick"
-                        ? "bg-white text-[#006948] shadow-2xs"
+                        ? "bg-white text-[#006948] shadow-2xs font-semibold"
                         : "text-[#6d7a72] hover:text-[#131b2e]"
                     }`}
                   >
-                    ⚡ Pilihan Cepat
+                    <Zap className="h-3.5 w-3.5" />
+                    <span>Pilihan Cepat</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setArrivalMode("custom")}
-                    className={`rounded-lg py-1.5 transition-all ${
+                    className={`rounded-lg py-1.5 transition-all flex items-center justify-center gap-1.5 ${
                       arrivalMode === "custom"
-                        ? "bg-white text-[#006948] shadow-2xs"
+                        ? "bg-white text-[#006948] shadow-2xs font-semibold"
                         : "text-[#6d7a72] hover:text-[#131b2e]"
                     }`}
                   >
-                    🕒 Pilih Jam Spesifik
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>Pilih Jam Spesifik</span>
                   </button>
                 </div>
 

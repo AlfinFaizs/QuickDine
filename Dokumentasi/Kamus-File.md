@@ -1,31 +1,31 @@
-# 📖 Kamus File Proyek QuickDine (Ensiklopedia Modul)
+# Kamus File Proyek QuickDine (Ensiklopedia Modul)
 
 Dokumen ini berisi **kamus file proyek lengkap dan ensiklopedia modul** pada repositori **QuickDine** per Agustus 2026 (pasca **Branch-0 s/d Branch-5: Dashboard KDS & Tables**).
 
 Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan antar-modul, branch asal, serta status batas panjang baris (<500 baris).
 
-> ⚠️ **Aturan Koding (`AGENTS.md`):** Seluruh file kode wajib berada di bawah batas **500 baris**. Jika ada modul yang berkembang melebihi batas, lakukan pemecahan (*refactoring*) ke sub-modul terisolasi.
+> **Aturan Koding (`AGENTS.md`):** Seluruh file kode wajib berada di bawah batas **500 baris**. Jika ada modul yang berkembang melebihi batas, lakukan pemecahan (*refactoring*) ke sub-modul terisolasi.
 
 ---
 
-## 🗂️ 1. Index Kamus File per Kelompok Modul
+## 1. Index Kamus File per Kelompok Modul
 
 ```text
-1. 🗄️ Database & Persistence Layer (supabase/, prisma/)
-2. 📝 Tipe Data Global TypeScript (src/types/)
-3. ⚙️ Core Libraries & Singletons (src/lib/)
-4. 🔌 External Services & Adapters (src/services/)
-5. 💼 Domain Features & Business Logic (src/features/)
-6. 🧩 UI Primitives & Shared Layout (src/components/)
-7. 🏢 Presentation Layer / App Routes (src/app/)
-8. 🎨 Aset Publik & Konfigurasi Root (public/, root config)
+1. Database & Persistence Layer (supabase/, prisma/)
+2. Tipe Data Global TypeScript (src/types/)
+3. Core Libraries & Singletons (src/lib/)
+4. External Services & Adapters (src/services/)
+5. Domain Features & Business Logic (src/features/)
+6. UI Primitives & Shared Layout (src/components/)
+7. Presentation Layer / App Routes (src/app/)
+8. Aset Publik & Konfigurasi Root (public/, root config)
 ```
 
 ---
 
 ## 2. Rincian Detail Kamus File
 
-### 🗄️ A. Database & Persistence Layer
+### A. Database & Persistence Layer
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`supabase/schema.sql`](file:///c:/My_Koding/QuickDine/supabase/schema.sql) | Branch-0 | 327 | Master DDL PostgreSQL berisi 7 tabel inti (`restaurants`, `subscriptions`, `restaurant_tables`, `menu_items`, `orders`, `order_items`, `balance_ledgers`), fungsi atomik `lock_table_for_checkout`, Row Level Security (RLS) multi-tenant, dan indexes performa. |
@@ -33,14 +33,14 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-### 📝 B. Tipe Data Global TypeScript
+### B. Tipe Data Global TypeScript
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/types/index.ts`](file:///c:/My_Koding/QuickDine/src/types/index.ts) | Branch-0 | 82 | Kontrak tipe data global sistem: `OrderStatus` (`pending`, `received`, `cooking`, `ready`, `completed`, `converted_takeaway`), `TableStatus` (`vacant`, `locked`, `occupied`, `reserved`), interface `Restaurant`, `Order`, `OrderItem`, `CustomJWTPayload`, dan `AuthUserRole`. |
 
 ---
 
-### ⚙️ C. Core Libraries & Singletons
+### C. Core Libraries & Singletons
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/lib/prisma.ts`](file:///c:/My_Koding/QuickDine/src/lib/prisma.ts) | Branch-0 | 25 | Inisialisasi singleton Prisma Client generasi ke-7 dengan `@prisma/adapter-pg` untuk mencegah kebocoran koneksi database pada lingkungan Next.js dev & prod. |
@@ -53,7 +53,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-### 🔌 D. External Services & Adapters (Adapter Pattern)
+### D. External Services & Adapters (Adapter Pattern)
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/services/notification/notification.interface.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/notification.interface.ts) | Branch-0 | 18 | Interface kontrak pengiriman notifikasi (WhatsApp/SMS/Email) agar mudah diganti penyedianya tanpa merusak kode pemanggil. |
@@ -64,7 +64,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-### 💼 E. Domain Features & Business Logic
+### E. Domain Features & Business Logic
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | **Fitur: Orders & Checkout** | | | |
@@ -77,7 +77,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | **Fitur: Restaurant Catalog & Tables** | | | |
 | [`src/features/restaurants/mock-data.ts`](file:///c:/My_Koding/QuickDine/src/features/restaurants/mock-data.ts) | Branch-2 | 221 | Dataset modular 11 restoran & kafe populer Indonesia beserta filter 11 kategori kuliner dan status meja live. |
 | [`src/features/restaurants/restaurant-details-data.ts`](file:///c:/My_Koding/QuickDine/src/features/restaurants/restaurant-details-data.ts) | Branch-3 | 401 | Database mock detail menu makanan, harga, opsi varian (suhu, level pedas, gula, topping), dan denah meja untuk seluruh 11 restoran. |
-| [`src/features/restaurants/table-map.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/table-map.tsx) | Branch-3 | 135 | Komponen interaktif visual denah meja dengan 3 indikator status: 🟢 *Tersedia*, 🟡 *Sedang Dipesan (Timer)*, dan ⚪ *Terisi*. |
+| [`src/features/restaurants/table-map.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/table-map.tsx) | Branch-3 | 135 | Komponen interaktif visual denah meja dengan 3 indikator status (Tersedia, Sedang Dipesan, Terisi). |
 | [`src/features/restaurants/menu-variant-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/menu-variant-modal.tsx) | Branch-3 | 217 | Modal pop-up kustomisasi varian makanan, counter jumlah, catatan koki, dan tombol tambah ke keranjang. |
 | [`src/features/restaurants/jelajah-content.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/jelajah-content.tsx) | Branch-4 | 282 | Komponen konten utama halaman `/jelajah`. Berisi logika search real-time, sort 4 opsi, filter kategori pill, grid restoran 3 kolom, pagination "Tampilkan Lebih Banyak", dan empty state. Dipisah dari `page.tsx` agar bisa dibungkus `<Suspense>` (wajib Next.js 16 karena menggunakan `useSearchParams()`). |
 | **Fitur: Kitchen Display System (KDS)** | | | |
@@ -93,7 +93,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-### 🧩 F. UI Primitives & Shared Components
+### F. UI Primitives & Shared Components
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/components/shared/brand-logo.tsx`](file:///c:/My_Koding/QuickDine/src/components/shared/brand-logo.tsx) | Branch-2 | 61 | Komponen logo resmi QuickDine dengan shield hijau transparan multi-size (`sm`, `md`, `lg`, `xl`) dan teks brand adaptif. |
@@ -108,7 +108,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-### 🏢 G. Presentation Layer (App Router Routes)
+### G. Presentation Layer (App Router Routes)
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | **Portal Publik `(marketing)`** | | | |
@@ -142,7 +142,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-## 🎨 H. Aset Publik & Konfigurasi Root
+### H. Aset Publik & Konfigurasi Root
 | File | Branch | Peran & Rincian Fungsi |
 |---|---|---|
 | [`public/favicon.ico`](file:///c:/My_Koding/QuickDine/public/favicon.ico) | Branch-2 | Favicon browser format ico. |
@@ -154,9 +154,9 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ---
 
-## 📊 3. Rekapitulasi Audit Batas Baris Kode
+## 3. Rekapitulasi Audit Batas Baris Kode
 
 - **Total File Kode:** 48 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
-- **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (492 baris).
+- **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
 - **Status Kompilasi `npx next build`:** **0 Error (19/19 Rute Lolos Sukses)**.

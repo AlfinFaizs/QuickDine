@@ -445,7 +445,7 @@ function LoginForm() {
             className="inline-flex items-center gap-1.5 text-xs text-[#6d7a72] hover:text-[#006948] font-medium transition-colors"
           >
             <Store className="h-3.5 w-3.5" />
-            <span>Masuk sebagai Staf / Pemilik Resto →</span>
+            <span>Masuk sebagai Staf / Pemilik Resto</span>
           </button>
         ) : (
           <button
@@ -459,7 +459,7 @@ function LoginForm() {
             className="inline-flex items-center gap-1.5 text-xs text-[#6d7a72] hover:text-[#006948] font-medium transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>← Kembali ke Login Pelanggan</span>
+            <span>Kembali ke Login Pelanggan</span>
           </button>
         )}
 

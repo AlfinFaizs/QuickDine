@@ -148,8 +148,9 @@ export default function RestoDetailPage({ params }: RestoPageProps) {
               </h2>
             </div>
             {selectedTable && (
-              <span className="text-xs font-bold text-[#006948] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                ✓ Meja {selectedTable.number} Terpilih
+              <span className="text-xs font-bold text-[#006948] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5" />
+                <span>Meja {selectedTable.number} Terpilih</span>
               </span>
             )}
           </div>

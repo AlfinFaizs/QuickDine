@@ -2,7 +2,7 @@
 // src/features/tables/table-detail-modal.tsx
 // Modal aksi detail meja — check-in, no-show, kosongkan
 
-import { X, UserCheck, PackageOpen, Trash2 } from "lucide-react";
+import { X, UserCheck, PackageOpen, Trash2, Clock, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STATUS_CONFIG, type DashboardTable } from "@/features/tables/tables-data";
 
@@ -40,16 +40,22 @@ export function TableDetailModal({ table, onClose, onAction }: Props) {
         <div className="p-5 space-y-4">
           {/* Guest Info */}
           {table.guestName && (
-            <div className="rounded-xl bg-[#f2f3ff] p-3 space-y-1 text-sm">
+            <div className="rounded-xl bg-[#f2f3ff] p-3 space-y-1.5 text-sm">
               <span className="font-bold text-[#131b2e] block">{table.guestName}</span>
               {table.eta && (
-                <span className="text-xs text-[#6d7a72]">⏰ ETA: {table.eta}</span>
+                <span className="text-xs text-[#6d7a72] flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5 text-[#006948]" />
+                  <span>ETA: {table.eta}</span>
+                </span>
               )}
               {table.phone && (
-                <span className="text-xs text-[#6d7a72] block">📞 {table.phone}</span>
+                <span className="text-xs text-[#6d7a72] flex items-center gap-1.5">
+                  <PhoneCall className="h-3.5 w-3.5 text-[#006948]" />
+                  <span>{table.phone}</span>
+                </span>
               )}
               {table.orderId && (
-                <span className="text-[10px] font-mono text-[#006948]">
+                <span className="text-[10px] font-mono text-[#006948] block">
                   #{table.orderId}
                 </span>
               )}
