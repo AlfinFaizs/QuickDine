@@ -1,14 +1,17 @@
 "use client";
 // src/app/(super-admin)/super-admin/tenants/page.tsx
-// Halaman Khusus Direktori Mitra Restoran & Kontrol Status Kemitraan
+// Halaman Manajemen Mitra Restoran & Verifikasi Tenant Pendaftar Baru
 
 import { useState } from "react";
-import { FileSpreadsheet, Store, CheckCircle2, Ban } from "lucide-react";
+import { FileSpreadsheet, Store, Clock, CheckCircle2, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TenantApprovalQueue } from "@/features/super-admin/tenant-approval-queue";
 import { TenantDirectoryTable } from "@/features/super-admin/tenant-directory-table";
 import {
   INITIAL_SUPER_ADMIN_TENANTS,
+  INITIAL_PENDING_APPLICATIONS,
   type SuperAdminTenant,
+  type PendingPartnerApplication,
   type TenantStatus,
 } from "@/features/super-admin/super-admin-data";
 import { exportSuperAdminTenantsToExcel } from "@/lib/excel-export";
@@ -16,6 +19,9 @@ import { toast } from "sonner";
 
 export default function SuperAdminTenantsPage() {
   const [tenants, setTenants] = useState<SuperAdminTenant[]>(INITIAL_SUPER_ADMIN_TENANTS);
+  const [pendingApps, setPendingApps] = useState<PendingPartnerApplication[]>(
+    INITIAL_PENDING_APPLICATIONS
+  );
   const [isExporting, setIsExporting] = useState(false);
 
   // Statistics
@@ -23,6 +29,43 @@ export default function SuperAdminTenantsPage() {
   const activeCount = tenants.filter((t) => t.status === "active").length;
   const suspendedCount = tenants.filter((t) => t.status === "suspended").length;
   const totalGmvSum = tenants.reduce((acc, t) => acc + t.totalGmv, 0);
+
+  // Approve Partner Application
+  const handleApprovePartner = (app: PendingPartnerApplication) => {
+    const newTenant: SuperAdminTenant = {
+      id: `resto-${Date.now()}`,
+      name: app.restaurantName,
+      category: app.category,
+      ownerName: app.ownerName,
+      phone: app.ownerPhone,
+      address: app.address,
+      tableCount: app.tableCount,
+      totalGmv: 0,
+      bankName: app.bankName,
+      bankAccount: app.bankAccount,
+      accountHolder: app.accountHolder,
+      joinedDate: new Date().toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+      status: "active",
+    };
+
+    setTenants((prev) => [newTenant, ...prev]);
+    setPendingApps((prev) => prev.filter((a) => a.id !== app.id));
+    toast.success(`Kemitraan "${app.restaurantName}" berhasil disetujui & diaktifkan.`, {
+      id: "partner-approve-toast",
+    });
+  };
+
+  // Reject Partner Application
+  const handleRejectPartner = (app: PendingPartnerApplication) => {
+    setPendingApps((prev) => prev.filter((a) => a.id !== app.id));
+    toast.info(`Pendaftaran kemitraan "${app.restaurantName}" telah ditolak.`, {
+      id: "partner-reject-toast",
+    });
+  };
 
   // Toggle Active / Suspended
   const handleToggleTenantStatus = (tenantId: string, nextStatus: TenantStatus) => {
@@ -81,10 +124,10 @@ export default function SuperAdminTenantsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-[#131b2e]">
-            Direktori Seluruh Mitra Restoran
+            Manajemen Mitra Restoran &amp; Verifikasi Tenant
           </h1>
           <p className="text-xs sm:text-sm text-[#6d7a72] mt-0.5">
-            Daftar seluruh restoran mitra terintegrasi, pemantauan volume omset per resto, dan kontrol pembekuan akun.
+            Verifikasi pendaftaran restoran baru, pantau performa omset mitra, dan kontrol status kemitraan aktif.
           </p>
         </div>
 
@@ -101,14 +144,24 @@ export default function SuperAdminTenantsPage() {
       </div>
 
       {/* Stats Metric Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-3.5 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-[#131b2e]">
             <Store className="h-4 w-4" />
           </div>
           <div>
-            <span className="text-[10px] text-[#6d7a72] font-semibold block">Total Mitra Terdaftar</span>
-            <span className="text-base font-extrabold text-[#131b2e]">{totalTenants} Restoran</span>
+            <span className="text-[10px] text-[#6d7a72] font-semibold block">Total Mitra</span>
+            <span className="text-base font-extrabold text-[#131b2e]">{totalTenants} Resto</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-3.5 flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white">
+            <Clock className="h-4 w-4" />
+          </div>
+          <div>
+            <span className="text-[10px] text-amber-900 font-semibold block">Menunggu Verifikasi</span>
+            <span className="text-base font-extrabold text-amber-950">{pendingApps.length} Pendaftar</span>
           </div>
         </div>
 
@@ -117,8 +170,8 @@ export default function SuperAdminTenantsPage() {
             <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
-            <span className="text-[10px] text-[#006948] font-semibold block">Mitra Aktif Beroperasi</span>
-            <span className="text-base font-extrabold text-[#006948]">{activeCount} Restoran</span>
+            <span className="text-[10px] text-[#006948] font-semibold block">Mitra Aktif</span>
+            <span className="text-base font-extrabold text-[#006948]">{activeCount} Resto</span>
           </div>
         </div>
 
@@ -127,11 +180,18 @@ export default function SuperAdminTenantsPage() {
             <Ban className="h-4 w-4" />
           </div>
           <div>
-            <span className="text-[10px] text-red-600 font-semibold block">Mitra Ditangguhkan</span>
-            <span className="text-base font-extrabold text-red-700">{suspendedCount} Restoran</span>
+            <span className="text-[10px] text-red-600 font-semibold block">Ditangguhkan</span>
+            <span className="text-base font-extrabold text-red-700">{suspendedCount} Resto</span>
           </div>
         </div>
       </div>
+
+      {/* Pending Partner Approval Queue */}
+      <TenantApprovalQueue
+        applications={pendingApps}
+        onApprove={handleApprovePartner}
+        onReject={handleRejectPartner}
+      />
 
       {/* All Tenants Directory Table */}
       <TenantDirectoryTable

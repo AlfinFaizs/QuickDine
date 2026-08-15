@@ -154,11 +154,9 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/app/(dashboard)/dashboard/finance/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/finance/page.tsx) | **Branch-6** | 130 | **[Branch-6: Dirombak]** Halaman rekapitulasi omset bersih, potongan platform fee transparan, riwayat payout H+1, dan generator ekspor Microsoft Excel (.xlsx) resmi. |
 | [`src/app/(dashboard)/dashboard/settings/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/settings/page.tsx) | **Branch-6** | 220 | **[Branch-6: Dirombak]** Halaman konfigurasi resto, jam operasional, parameter alarm masak $T_{\text{cook}}$ (slider menit), rekening payout bank, dan Fonnte WhatsApp. |
 | **Portal Platform `(super-admin)`** | | | |
-| [`src/app/(super-admin)/super-admin/layout.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/layout.tsx) | **Branch-7** | 145 | Layout pembungkus Super Admin dengan Sidebar navigasi kiri permanen, badge portal, dan link keluar. |
-| [`src/app/(super-admin)/super-admin/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/page.tsx) | **Branch-7** | 165 | **[Branch-7: Dirombak]** Portal ringkasan eksekutif Super Admin: 4 metrik KPI GMV/profit, status sistem, dan shortcut manajemen. |
-| [`src/app/(super-admin)/super-admin/verifikasi/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/verifikasi/page.tsx) | **Branch-7** | 65 | **[BARU]** Halaman khusus antrean verifikasi & persetujuan pendaftar mitra baru dari form mandiri `/daftar-mitra`. |
-| [`src/app/(super-admin)/super-admin/tenants/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/tenants/page.tsx) | **Branch-7** | 145 | **[BARU]** Halaman master direktori mitra resto, kontrol pembekuan status aktif, dan ekspor data mitra Excel (.xlsx). |
-| [`src/app/(super-admin)/super-admin/transaksi/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/transaksi/page.tsx) | **Branch-7** | 195 | **[BARU]** Halaman khusus log transaksi nasional masuk real-time dan generator unduh Master Ledger Excel (.xlsx). |
+| [`src/app/(super-admin)/super-admin/layout.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/layout.tsx) | **Branch-7** | 85 | Layout pembungkus Super Admin dengan header bar korporat, navigasi tab interaktif, dan brand badge. |
+| [`src/app/(super-admin)/super-admin/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/page.tsx) | **Branch-7** | 175 | **[Branch-7: Dirombak]** Portal master super admin platform: 4 metrik KPI GMV/profit, log transaksi nasional live, dan ekspor Master Ledger (.xlsx). |
+| [`src/app/(super-admin)/super-admin/tenants/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/tenants/page.tsx) | **Branch-7** | 190 | **[BARU]** Halaman manajemen mitra resto, antrean verifikasi pendaftar baru, dan ekspor master direktori mitra Excel (.xlsx). |
 | **API Endpoints & Root** | | | |
 | [`src/app/api/cron/cleanup-locks/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/cron/cleanup-locks/route.ts) | Branch-0 | 26 | Cron API endpoint untuk membersihkan meja yang melewati batas waktu lock 10 menit kembali menjadi `VACANT`. |
 | [`src/app/api/webhooks/midtrans/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/webhooks/midtrans/route.ts) | Branch-0 | 52 | Webhook API endpoint untuk menerima callback notifikasi status pembayaran dari Midtrans. |
@@ -182,7 +180,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ## 3. Rekapitulasi Audit Batas Baris Kode
 
-- **Total File Kode:** 69 file
+- **Total File Kode:** 67 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
 - **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
-- **Status Kompilasi `npx next build`:** **0 Error (21/21 Rute Lolos Sukses)**.
+- **Status Kompilasi `npx next build`:** **0 Error (20/20 Rute Lolos Sukses)**.
