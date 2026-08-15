@@ -24,7 +24,7 @@ export function Footer() {
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#131b2e]">Navigasi</h4>
             <ul className="space-y-1.5 text-xs text-[#6d7a72]">
-              <li><Link href="/" className="hover:text-[#006948] transition-colors">Direktori Restoran</Link></li>
+              <li><Link href="/jelajah" className="hover:text-[#006948] transition-colors">Jelajahi Restoran</Link></li>
               <li><Link href="/pesanan-saya" className="hover:text-[#006948] transition-colors">Pesanan Saya</Link></li>
               <li><Link href="/login" className="hover:text-[#006948] transition-colors">Masuk Customer</Link></li>
             </ul>

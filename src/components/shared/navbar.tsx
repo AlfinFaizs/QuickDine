@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { MapPin, Search, User, ClipboardList, LogIn } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { MapPin, Search, User, ClipboardList, LogIn, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/shared/brand-logo";
 
@@ -13,6 +14,15 @@ interface NavbarProps {
 
 export function Navbar({ userRole, userEmail }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [searchQ, setSearchQ] = useState("");
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQ.trim();
+    router.push(q ? `/jelajah?q=${encodeURIComponent(q)}` : "/jelajah");
+    setSearchQ("");
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#bccac0]/30 bg-[#faf8ff]/90 backdrop-blur-md">
@@ -26,19 +36,34 @@ export function Navbar({ userRole, userEmail }: NavbarProps) {
             <MapPin className="h-3.5 w-3.5 text-[#006948]" />
             <span>Jakarta Selatan</span>
           </div>
+
+          {/* Jelajahi link (Desktop) */}
+          <Link
+            href="/jelajah"
+            className={`hidden md:flex items-center gap-1.5 text-xs font-medium transition-colors ${
+              pathname === "/jelajah"
+                ? "text-[#006948]"
+                : "text-[#131b2e] hover:text-[#006948]"
+            }`}
+          >
+            <UtensilsCrossed className="h-3.5 w-3.5" />
+            <span>Jelajahi Restoran</span>
+          </Link>
         </div>
 
-        {/* Search Bar (Desktop Center) */}
-        <div className="hidden lg:flex flex-1 max-w-md mx-6">
+        {/* Search Bar (Desktop Center — redirect ke /jelajah) */}
+        <form onSubmit={handleSearch} className="hidden lg:flex flex-1 max-w-md mx-6">
           <div className="relative w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6d7a72]" />
             <input
               type="text"
+              value={searchQ}
+              onChange={(e) => setSearchQ(e.target.value)}
               placeholder="Cari kafe, resto, atau menu favorit..."
               className="w-full h-10 rounded-full border border-[#bccac0]/40 bg-white pl-10 pr-4 text-xs text-[#131b2e] placeholder:text-[#6d7a72] focus:border-[#006948] focus:outline-none focus:ring-2 focus:ring-[#006948]/20 transition-all"
             />
           </div>
-        </div>
+        </form>
 
         {/* Right Navigation */}
         <nav className="flex items-center gap-3">
