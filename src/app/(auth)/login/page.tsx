@@ -4,7 +4,6 @@ import { useState, useTransition, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
-  UtensilsCrossed, 
   ArrowLeft, 
   Mail, 
   Lock, 
@@ -20,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleIcon } from "@/components/shared/google-icon";
 import { PasswordChecklist } from "@/components/shared/password-checklist";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -179,13 +179,8 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md space-y-6">
-      <div className="flex flex-col items-center text-center space-y-2">
-        <Link href="/" className="flex items-center gap-2 group mb-1">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#006948] text-white shadow-md transition-transform group-hover:scale-105">
-            <UtensilsCrossed className="h-6 w-6" />
-          </div>
-        </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-[#006948]">QuickDine</h1>
+      <div className="flex flex-col items-center text-center space-y-1.5">
+        <BrandLogo size="lg" />
         <p className="text-xs text-[#6d7a72]">
           {isStaffPortal
             ? "Portal Operasional Mitra Resto"

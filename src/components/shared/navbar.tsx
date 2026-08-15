@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UtensilsCrossed, MapPin, Search, User, ClipboardList, LogIn } from "lucide-react";
+import { MapPin, Search, User, ClipboardList, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/shared/brand-logo";
 
 interface NavbarProps {
   userRole?: string | null;
@@ -18,15 +19,7 @@ export function Navbar({ userRole, userEmail }: NavbarProps) {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#006948] text-white shadow-sm transition-transform group-hover:scale-105">
-              <UtensilsCrossed className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-[#006948]">QuickDine</span>
-              <span className="text-[10px] font-medium tracking-wide uppercase text-[#6d7a72] -mt-1">Pesan Meja & Kuliner</span>
-            </div>
-          </Link>
+          <BrandLogo size="md" />
 
           {/* Location Selector (Desktop) */}
           <div className="hidden md:flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-[#131b2e] border border-[#bccac0]/40 shadow-2xs">

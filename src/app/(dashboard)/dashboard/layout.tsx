@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { 
-  UtensilsCrossed, 
   ChefHat, 
   LayoutGrid, 
   BookOpen, 
@@ -12,6 +11,7 @@ import {
   LogOut,
   Bell
 } from "lucide-react";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -44,14 +44,8 @@ export default function DashboardLayout({
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex w-64 flex-col border-r border-[#bccac0]/30 bg-white">
         {/* Logo Header */}
-        <div className="flex h-16 items-center gap-2 px-6 border-b border-[#bccac0]/20">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#006948] text-white">
-            <UtensilsCrossed className="h-5 w-5" />
-          </div>
-          <div>
-            <span className="font-bold text-sm text-[#006948]">QuickDine Portal</span>
-            <span className="block text-[10px] text-[#6d7a72]">Resto Staff & Owner</span>
-          </div>
+        <div className="flex h-16 items-center px-6 border-b border-[#bccac0]/20">
+          <BrandLogo size="sm" href="/dashboard/kds" />
         </div>
 
         {/* Nav Links */}
@@ -94,11 +88,8 @@ export default function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top Header */}
         <header className="flex h-16 items-center justify-between border-b border-[#bccac0]/30 bg-white px-4 sm:px-6">
-          <div className="flex items-center gap-2 md:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#006948] text-white">
-              <UtensilsCrossed className="h-4 w-4" />
-            </div>
-            <span className="font-bold text-xs text-[#006948]">QuickDine</span>
+          <div className="flex items-center md:hidden">
+            <BrandLogo size="sm" href="/dashboard/kds" />
           </div>
 
           <div className="hidden md:block text-xs font-semibold text-[#131b2e]">

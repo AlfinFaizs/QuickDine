@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { UtensilsCrossed, ShieldCheck, Clock, Zap } from "lucide-react";
+import { ShieldCheck, Clock, Zap } from "lucide-react";
+import { BrandLogo } from "@/components/shared/brand-logo";
 
 export function Footer() {
   return (
@@ -8,12 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand Col */}
           <div className="space-y-3 md:col-span-2">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#006948] text-white">
-                <UtensilsCrossed className="h-5 w-5" />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-[#006948]">QuickDine</span>
-            </div>
+            <BrandLogo size="md" />
             <p className="max-w-sm text-xs leading-relaxed text-[#6d7a72]">
               Platform Reservasi Meja & Pre-Order Kuliner. Pesan meja live tanpa antre, pre-order makanan favorit, dan bayar dengan mudah sebelum tiba.
             </p>

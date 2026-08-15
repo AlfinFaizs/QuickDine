@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
-  UtensilsCrossed, 
   Store, 
   User, 
   CreditCard, 
@@ -22,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { registerPartnerAction } from "@/features/partner/actions";
 import { toast } from "sonner";
 
@@ -125,14 +125,9 @@ export default function DaftarMitraPage() {
     <div className="min-h-screen bg-[#faf8ff] py-10 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-xl space-y-6">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <Link href="/" className="inline-flex items-center gap-2 group mb-1">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#006948] text-white shadow-md">
-              <UtensilsCrossed className="h-5 w-5" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-[#006948]">QuickDine Partner</span>
-          </Link>
-          <h1 className="text-xl font-bold text-[#131b2e]">Daftarkan Restoran Anda</h1>
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <BrandLogo size="lg" textClassName="text-2xl" />
+          <h1 className="text-xl font-bold text-[#131b2e] pt-1">Daftarkan Restoran Anda</h1>
           <p className="text-xs text-[#6d7a72]">
             Dapatkan pelanggan baru, kurangi meja kosong, dan kelola antrean tanpa komisi potongan makanan.
           </p>
