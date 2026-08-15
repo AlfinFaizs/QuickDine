@@ -12,6 +12,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "QuickDine — Pesan Meja & Pre-Order F&B",
   description: "Platform reservasi meja live dan pre-order kuliner tanpa antre.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

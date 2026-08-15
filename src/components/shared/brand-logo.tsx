@@ -11,9 +11,9 @@ interface BrandLogoProps {
 
 const SIZE_MAP = {
   sm: { icon: 28, text: "text-lg", gap: "gap-2" },
-  md: { icon: 36, text: "text-xl", gap: "gap-2.5" },
-  lg: { icon: 48, text: "text-2xl", gap: "gap-3" },
-  xl: { icon: 64, text: "text-3xl", gap: "gap-3.5" },
+  md: { icon: 34, text: "text-xl", gap: "gap-2.5" },
+  lg: { icon: 46, text: "text-2xl", gap: "gap-3" },
+  xl: { icon: 60, text: "text-3xl", gap: "gap-3.5" },
 };
 
 export function BrandLogo({
@@ -27,13 +27,13 @@ export function BrandLogo({
 
   const content = (
     <div className={`inline-flex items-center ${config.gap} group ${className}`}>
-      <div className="relative overflow-hidden rounded-xl bg-[#006948] p-0.5 shadow-xs transition-transform group-hover:scale-105">
+      <div className="relative shrink-0 transition-transform group-hover:scale-105">
         <Image
-          src="/images/logo.jpg"
+          src="/images/logo.png"
           alt="QuickDine Logo"
           width={config.icon}
           height={config.icon}
-          className="rounded-[10px] object-cover"
+          className="object-contain"
           priority
         />
       </div>
