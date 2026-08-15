@@ -1,184 +1,217 @@
 "use client";
 
 import { useState } from "react";
-import { ChefHat, Clock, Check, AlertTriangle, Flame, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { 
+  INITIAL_KDS_ORDERS, 
+  KdsOrder, 
+  KdsOrderStatus 
+} from "@/features/kds/kds-data";
+import { KdsOrderCard } from "@/features/kds/kds-order-card";
+import { KdsHeaderStats } from "@/features/kds/kds-header-stats";
 
-interface KdsOrder {
-  id: string;
-  tableNumber: string;
-  customerName: string;
-  arrivalTime: string;
-  status: "received" | "cooking" | "ready";
-  items: Array<{ name: string; qty: number; notes?: string }>;
-  cookTriggerInMinutes: number;
-}
+type TabFilter = "all" | "received" | "cooking" | "ready" | "alerts" | "history";
 
-const INITIAL_ORDERS: KdsOrder[] = [
-  {
-    id: "ord-1",
-    tableNumber: "04",
-    customerName: "Alfin Faiz",
-    arrivalTime: "12:30 WIB",
-    status: "cooking",
-    cookTriggerInMinutes: 5,
-    items: [
-      { name: "Kopi Kenangan Mantan", qty: 2, notes: "Less Sugar, Ice Normal" },
-      { name: "Roti Coklat Klasik", qty: 1 },
-    ],
-  },
-  {
-    id: "ord-2",
-    tableNumber: "02",
-    customerName: "Budi Santoso",
-    arrivalTime: "12:45 WIB",
-    status: "received",
-    cookTriggerInMinutes: 20,
-    items: [
-      { name: "Avocado Coffee", qty: 1, notes: "Extra Shot Espresso" },
-      { name: "Matcha Latte", qty: 2 },
-    ],
-  },
+const TAB_OPTIONS: { key: TabFilter; label: string }[] = [
+  { key: "all", label: "Semua Pesanan" },
+  { key: "received", label: "Perlu Dimasak" },
+  { key: "cooking", label: "Sedang Dimasak" },
+  { key: "ready", label: "Siap Saji" },
+  { key: "alerts", label: "Peringatan Terlambat" },
+  { key: "history", label: "Riwayat Selesai" },
 ];
 
 export default function KdsPage() {
-  const [orders, setOrders] = useState<KdsOrder[]>(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<KdsOrder[]>(INITIAL_KDS_ORDERS);
+  const [activeTab, setActiveTab] = useState<TabFilter>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
-  const handleUpdateStatus = (orderId: string, nextStatus: "cooking" | "ready" | "completed") => {
-    if (nextStatus === "completed") {
-      setOrders((prev) => prev.filter((o) => o.id !== orderId));
-      toast.success("Pesanan diselesaikan!");
-      return;
+  // Status transitions
+  const handleUpdateStatus = (orderId: string, nextStatus: KdsOrderStatus) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id !== orderId) return o;
+        return {
+          ...o,
+          status: nextStatus,
+          isCookAlarmTriggered: nextStatus === "received",
+        };
+      })
+    );
+
+    if (nextStatus === "cooking") {
+      toast.success("Pesanan mulai dimasak! Estimasi hidangan siap tepat waktu.");
+    } else if (nextStatus === "ready") {
+      toast.success("Hidangan selesai dimasak dan telah siap di meja!");
+    } else if (nextStatus === "completed") {
+      toast.success("Pesanan diselesaikan. Meja dapat dibersihkan.");
+    }
+  };
+
+  // Guest checked in / arrived
+  const handleGuestArrived = (orderId: string) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id !== orderId) return o;
+        return {
+          ...o,
+          arrivalStatus: "arrived",
+          lateMinutes: 0,
+        };
+      })
+    );
+    toast.success("Tamu telah tiba dan duduk di meja. Timer keterlambatan dinonaktifkan.");
+  };
+
+  // Trigger No-Show (convert to Takeaway & Free table)
+  const handleTriggerNoShow = (orderId: string) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id !== orderId) return o;
+        return {
+          ...o,
+          status: "converted_takeaway",
+          arrivalStatus: "tolerance_exceeded",
+        };
+      })
+    );
+    toast.warning("Pesanan dibungkus (Takeaway). Meja telah dikosongkan untuk tamu walk-in.");
+  };
+
+  // Extend tolerance (+10 minutes)
+  const handleExtendTolerance = (orderId: string) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id !== orderId) return o;
+        return {
+          ...o,
+          arrivalStatus: "late_grace",
+        };
+      })
+    );
+    toast.info("Toleransi kedatangan tamu diperpanjang 10 menit.");
+  };
+
+  // Filter orders based on active tab and search query
+  const filteredOrders = orders.filter((order) => {
+    // Search query
+    const q = searchQuery.toLowerCase().trim();
+    const matchSearch =
+      q === "" ||
+      order.tableNumber.toLowerCase().includes(q) ||
+      order.orderNumber.toLowerCase().includes(q) ||
+      order.customerName.toLowerCase().includes(q) ||
+      order.items.some((it) => it.name.toLowerCase().includes(q));
+
+    if (!matchSearch) return false;
+
+    // Tab filter
+    if (activeTab === "all") {
+      return order.status !== "completed";
+    }
+    if (activeTab === "received") {
+      return order.status === "received";
+    }
+    if (activeTab === "cooking") {
+      return order.status === "cooking";
+    }
+    if (activeTab === "ready") {
+      return order.status === "ready";
+    }
+    if (activeTab === "alerts") {
+      return (
+        order.arrivalStatus === "late_grace" ||
+        order.arrivalStatus === "tolerance_exceeded"
+      );
+    }
+    if (activeTab === "history") {
+      return (
+        order.status === "completed" ||
+        order.status === "converted_takeaway"
+      );
     }
 
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: nextStatus } : o))
-    );
-    toast.success(`Status pesanan diperbarui menjadi ${nextStatus}`);
-  };
-
-  const handleTriggerNoShow = (orderId: string) => {
-    setOrders((prev) => prev.filter((o) => o.id !== orderId));
-    toast.warning("Pesanan dikonversi ke Takeaway (No-Show). Meja dikembalikan ke Kosong.");
-  };
+    return true;
+  });
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-[#131b2e] flex items-center gap-2">
-            <ChefHat className="h-6 w-6 text-[#006948]" />
-            <span>Kitchen Display System (KDS)</span>
-          </h1>
-          <p className="text-xs text-[#6d7a72]">
-            Antrean pesanan aktif dapur real-time. Pesanan baru akan berbunyi otomatis.
-          </p>
-        </div>
+      {/* Header and Live Metric Counters */}
+      <KdsHeaderStats
+        orders={orders}
+        soundEnabled={soundEnabled}
+        onToggleSound={() => setSoundEnabled((prev) => !prev)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
-        <div className="flex items-center gap-2">
-          <Badge variant="warning">{orders.filter((o) => o.status === "received").length} Menunggu Masak</Badge>
-          <Badge variant="success">{orders.filter((o) => o.status === "cooking").length} Sedang Dimasak</Badge>
-        </div>
-      </div>
-
-      {/* Orders Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {orders.map((order) => {
-          const isReceived = order.status === "received";
-          const isCooking = order.status === "cooking";
+      {/* Tab Filter Navigation */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-[#bccac0]/30">
+        {TAB_OPTIONS.map((tab) => {
+          const isActive = activeTab === tab.key;
+          let count = 0;
+          if (tab.key === "all") count = orders.filter((o) => o.status !== "completed").length;
+          if (tab.key === "received") count = orders.filter((o) => o.status === "received").length;
+          if (tab.key === "cooking") count = orders.filter((o) => o.status === "cooking").length;
+          if (tab.key === "ready") count = orders.filter((o) => o.status === "ready").length;
+          if (tab.key === "alerts") {
+            count = orders.filter(
+              (o) => o.arrivalStatus === "late_grace" || o.arrivalStatus === "tolerance_exceeded"
+            ).length;
+          }
+          if (tab.key === "history") {
+            count = orders.filter(
+              (o) => o.status === "completed" || o.status === "converted_takeaway"
+            ).length;
+          }
 
           return (
-            <div
-              key={order.id}
-              className={`rounded-2xl border bg-white p-5 shadow-sm space-y-4 transition-all ${
-                isCooking ? "border-amber-400 ring-1 ring-amber-300" : "border-[#bccac0]/50"
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 text-xs font-semibold rounded-t-xl transition-all ${
+                isActive
+                  ? "bg-[#006948] text-white shadow-2xs"
+                  : "bg-transparent text-[#6d7a72] hover:bg-[#f2f3ff] hover:text-[#131b2e]"
               }`}
             >
-              {/* Header */}
-              <div className="flex items-start justify-between border-b border-[#bccac0]/20 pb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-black text-[#006948]">Meja {order.tableNumber}</span>
-                    <Badge variant={isCooking ? "warning" : "default"}>
-                      {isCooking ? "Sedang Dimasak" : "Pesanan Masuk"}
-                    </Badge>
-                  </div>
-                  <span className="text-xs font-semibold text-[#131b2e]">{order.customerName}</span>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-[10px] text-[#6d7a72] block">Estimasi Tiba</span>
-                  <span className="text-xs font-bold text-[#131b2e] flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5 text-[#006948]" />
-                    {order.arrivalTime}
-                  </span>
-                </div>
-              </div>
-
-              {/* Menu Item List */}
-              <div className="space-y-2 py-1">
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="flex items-start justify-between text-xs">
-                    <div>
-                      <span className="font-bold text-[#131b2e]">{item.qty}x </span>
-                      <span className="font-semibold text-[#131b2e]">{item.name}</span>
-                      {item.notes && (
-                        <p className="text-[11px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded mt-0.5 font-medium">
-                          Catatan: {item.notes}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="border-t border-[#bccac0]/20 pt-3 space-y-2">
-                {isReceived && (
-                  <Button
-                    onClick={() => handleUpdateStatus(order.id, "cooking")}
-                    className="w-full bg-[#fea619] hover:bg-[#e59516] text-[#2a1700] font-bold text-xs h-10 gap-1.5"
-                  >
-                    <Flame className="h-4 w-4" />
-                    <span>Mulai Masak</span>
-                  </Button>
-                )}
-
-                {isCooking && (
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      onClick={() => handleUpdateStatus(order.id, "ready")}
-                      className="bg-[#006948] hover:bg-[#005137] text-white font-bold text-xs h-10 gap-1"
-                    >
-                      <Sparkles className="h-4 w-4" />
-                      <span>Siap Saji</span>
-                    </Button>
-                    <Button
-                      onClick={() => handleUpdateStatus(order.id, "completed")}
-                      variant="outline"
-                      className="text-xs h-10 gap-1 font-semibold"
-                    >
-                      <Check className="h-4 w-4 text-[#006948]" />
-                      <span>Selesai</span>
-                    </Button>
-                  </div>
-                )}
-
-                {/* No-Show Trigger Button */}
-                <button
-                  type="button"
-                  onClick={() => handleTriggerNoShow(order.id)}
-                  className="w-full text-center text-[10px] text-red-600 hover:underline pt-1"
-                >
-                  Tamu Terlambat &gt;15 Mnt? Trigger No-Show (Ubah Takeaway)
-                </button>
-              </div>
-            </div>
+              <span>{tab.label}</span>
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                isActive ? "bg-white/20 text-white" : "bg-slate-200 text-[#131b2e]"
+              }`}>
+                {count}
+              </span>
+            </button>
           );
         })}
       </div>
+
+      {/* Orders Grid Display */}
+      {filteredOrders.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#bccac0]/60 bg-white p-12 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3">
+            🍳
+          </div>
+          <h3 className="text-sm font-bold text-[#131b2e]">Tidak ada antrean pesanan pada filter ini</h3>
+          <p className="text-xs text-[#6d7a72] max-w-sm mt-1">
+            Pesanan baru dari customer yang telah menyelesaikan pembayaran akan muncul secara otomatis di sini.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {filteredOrders.map((order) => (
+            <KdsOrderCard
+              key={order.id}
+              order={order}
+              onUpdateStatus={handleUpdateStatus}
+              onGuestArrived={handleGuestArrived}
+              onTriggerNoShow={handleTriggerNoShow}
+              onExtendTolerance={handleExtendTolerance}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
