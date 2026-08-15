@@ -36,15 +36,21 @@ export default function TablesManagementPage() {
       prev.map((t) => {
         if (t.id !== tableId) return t;
         if (action === "checkin") {
-          toast.success(`Tamu tiba. Meja ${t.number} dialihkan ke status OCCUPIED.`);
+          toast.success(`Tamu tiba. Meja ${t.number} dialihkan ke status OCCUPIED.`, {
+            id: `table-action-${tableId}`,
+          });
           return { ...t, status: "occupied" as TableStatus };
         }
         if (action === "noshow") {
-          toast.warning(`No-Show: Meja ${t.number} dibersihkan dan kembali ke status VACANT.`);
+          toast.warning(`No-Show: Meja ${t.number} dibersihkan dan kembali ke status VACANT.`, {
+            id: `table-action-${tableId}`,
+          });
           return { id: t.id, number: t.number, capacity: t.capacity, status: "vacant" as TableStatus };
         }
         if (action === "clear") {
-          toast.success(`Meja ${t.number} berhasil dikosongkan (VACANT).`);
+          toast.success(`Meja ${t.number} berhasil dikosongkan (VACANT).`, {
+            id: `table-action-${tableId}`,
+          });
           return { id: t.id, number: t.number, capacity: t.capacity, status: "vacant" as TableStatus };
         }
         return t;
@@ -67,7 +73,9 @@ export default function TablesManagementPage() {
           : t
       )
     );
-    toast.success(`Tamu walk-in "${guestName}" berhasil check-in ke Meja ${tables.find((t) => t.id === tableId)?.number}.`);
+    toast.success(`Tamu walk-in "${guestName}" berhasil check-in ke Meja ${tables.find((t) => t.id === tableId)?.number}.`, {
+      id: `walkin-${tableId}`,
+    });
     setWalkInTable(null);
   };
 

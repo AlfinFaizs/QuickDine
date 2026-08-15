@@ -23,7 +23,9 @@ export function FloatingCartBar({ restaurantSlug }: FloatingCartBarProps) {
 
   const handleProceed = () => {
     if (!selectedTable) {
-      toast.error("Silakan pilih meja Anda di bagian denah meja terlebih dahulu!");
+      toast.error("Silakan pilih meja Anda di bagian denah meja terlebih dahulu!", {
+        id: "select-table-required",
+      });
       // Scroll to table map
       const el = document.getElementById("table-map-section");
       if (el) el.scrollIntoView({ behavior: "smooth" });

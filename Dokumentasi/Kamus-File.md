@@ -105,6 +105,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/components/ui/input.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/input.tsx) | Branch-0 | 25 | Komponen input teks standar formulir dengan styling terpadu. |
 | [`src/components/ui/badge.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/badge.tsx) | Branch-0 | 36 | Komponen label badge (success, warning, destructive, outline). |
 | [`src/components/ui/card.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/card.tsx) | Branch-0 | 55 | Komponen kontainer kartu modular (CardHeader, CardTitle, CardContent, CardFooter). |
+| [`src/components/ui/confirm-dialog.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/confirm-dialog.tsx) | **Branch-5** | 108 | Dialog modal konfirmasi 2-langkah dengan debounce, keyboard ESC trap, dan varian bahaya/peringatan untuk melindungi aksi destruktif (Kosongkan Meja, No-Show, Selesai). |
 
 ---
 

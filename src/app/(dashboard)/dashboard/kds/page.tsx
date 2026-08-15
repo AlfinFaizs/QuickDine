@@ -18,25 +18,34 @@ export default function KdsPage() {
   ) => {
     if (next === "completed") {
       setOrders((prev) => prev.filter((o) => o.id !== orderId));
-      toast.success("Pesanan selesai dan dihapus dari antrean KDS.");
+      toast.success("Pesanan selesai dan dihapus dari antrean KDS.", {
+        id: `kds-action-${orderId}`,
+      });
       return;
     }
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status: next } : o))
     );
     const label = next === "cooking" ? "Mulai Masak" : "Siap Saji";
-    toast.success(`Status pesanan diperbarui: ${label}`);
+    toast.success(`Status pesanan diperbarui: ${label}`, {
+      id: `kds-action-${orderId}`,
+    });
   };
 
   const handleCheckIn = (orderId: string) => {
     setOrders((prev) => prev.filter((o) => o.id !== orderId));
-    toast.success("Tamu tiba. Pesanan diserahkan ke meja (Status: OCCUPIED).");
+    toast.success("Tamu tiba. Pesanan diserahkan ke meja (Status: OCCUPIED).", {
+      id: `kds-action-${orderId}`,
+    });
   };
 
   const handleNoShow = (orderId: string) => {
     setOrders((prev) => prev.filter((o) => o.id !== orderId));
     toast.warning(
-      "No-Show: Pesanan dikemas takeaway. Meja dikembalikan ke status VACANT."
+      "No-Show: Pesanan dikemas takeaway. Meja dikembalikan ke status VACANT.",
+      {
+        id: `kds-action-${orderId}`,
+      }
     );
   };
 

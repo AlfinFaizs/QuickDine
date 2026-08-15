@@ -70,7 +70,9 @@ export default function RestoDetailPage({ params }: RestoPageProps) {
       selectedVariants: variants,
       notes: notes,
     });
-    toast.success(`${quantity}x ${item.name} ditambahkan ke keranjang`);
+    toast.success(`${quantity}x ${item.name} ditambahkan ke keranjang`, {
+      id: `cart-add-${item.id}`,
+    });
   };
 
   return (
@@ -159,8 +161,11 @@ export default function RestoDetailPage({ params }: RestoPageProps) {
             tables={resto.tables}
             selectedTable={selectedTable}
             onSelectTable={(table) => {
+              if (selectedTable?.id === table.id) return;
               selectTable(table);
-              toast.success(`Meja ${table.number} (${table.capacity} Orang) berhasil dipilih!`);
+              toast.success(`Meja ${table.number} (${table.capacity} Orang) berhasil dipilih!`, {
+                id: "table-select-toast",
+              });
             }}
           />
         </section>

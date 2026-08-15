@@ -55,35 +55,35 @@ function LoginForm() {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextUrl)}`,
         },
       });
-      if (error) toast.error(error.message);
+      if (error) toast.error(error.message, { id: "auth-toast" });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menghubungkan Google.";
-      toast.error(msg);
+      toast.error(msg, { id: "auth-toast" });
     }
   };
 
   const handleCustomerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error("Email dan kata sandi wajib diisi.");
+      toast.error("Email dan kata sandi wajib diisi.", { id: "auth-toast" });
       return;
     }
 
     if (customerMode === "register") {
       if (!fullName.trim()) {
-        toast.error("Nama lengkap wajib diisi.");
+        toast.error("Nama lengkap wajib diisi.", { id: "auth-toast" });
         return;
       }
       if (!hasMinLength) {
-        toast.error("Kata sandi minimal 8 karakter.");
+        toast.error("Kata sandi minimal 8 karakter.", { id: "auth-toast" });
         return;
       }
       if (!hasLetterAndNumber) {
-        toast.error("Kata sandi harus kombinasi huruf dan angka.");
+        toast.error("Kata sandi harus kombinasi huruf dan angka.", { id: "auth-toast" });
         return;
       }
       if (password !== confirmPassword) {
-        toast.error("Konfirmasi kata sandi tidak cocok.");
+        toast.error("Konfirmasi kata sandi tidak cocok.", { id: "auth-toast" });
         return;
       }
     }
@@ -101,17 +101,17 @@ function LoginForm() {
           });
 
           if (error) {
-            toast.error(error.message);
+            toast.error(error.message, { id: "auth-toast" });
             return;
           }
 
           if (data.session) {
-            toast.success("Pendaftaran berhasil! Mengalihkan...");
+            toast.success("Pendaftaran berhasil! Mengalihkan...", { id: "auth-toast" });
             router.push(nextUrl);
             router.refresh();
           } else {
             setIsRegisteredSuccess(true);
-            toast.success("Akun berhasil dibuat! Silakan cek email.");
+            toast.success("Akun berhasil dibuat! Silakan cek email.", { id: "auth-toast" });
           }
         } else {
           const { data, error } = await supabase.auth.signInWithPassword({
@@ -120,11 +120,11 @@ function LoginForm() {
           });
 
           if (error) {
-            toast.error("Email atau kata sandi tidak sesuai.");
+            toast.error("Email atau kata sandi tidak sesuai.", { id: "auth-toast" });
             return;
           }
 
-          toast.success("Login berhasil! Mengalihkan...");
+          toast.success("Login berhasil! Mengalihkan...", { id: "auth-toast" });
           const role = data.user?.app_metadata?.role;
           if (role === "super_admin") {
             router.push("/super-admin");
@@ -137,7 +137,7 @@ function LoginForm() {
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Terjadi kesalahan.";
-        toast.error(msg);
+        toast.error(msg, { id: "auth-toast" });
       }
     });
   };
@@ -145,7 +145,7 @@ function LoginForm() {
   const handleStaffSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error("Email dan kata sandi wajib diisi.");
+      toast.error("Email dan kata sandi wajib diisi.", { id: "auth-toast" });
       return;
     }
 
@@ -157,22 +157,22 @@ function LoginForm() {
         });
 
         if (error) {
-          toast.error("Akses ditolak: Email atau kata sandi salah.");
+          toast.error("Akses ditolak: Email atau kata sandi salah.", { id: "auth-toast" });
           return;
         }
 
         const role = data.user?.app_metadata?.role;
         if (role === "super_admin") {
-          toast.success("Login Super Admin berhasil!");
+          toast.success("Login Super Admin berhasil!", { id: "auth-toast" });
           router.push("/super-admin");
         } else {
-          toast.success("Login Staf Restoran berhasil!");
+          toast.success("Login Staf Restoran berhasil!", { id: "auth-toast" });
           router.push("/dashboard/kds");
         }
         router.refresh();
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Gagal masuk portal staf.";
-        toast.error(msg);
+        toast.error(msg, { id: "auth-toast" });
       }
     });
   };

@@ -91,6 +91,7 @@ QuickDine/
 │   │       ├── badge.tsx                     // Komponen status badge
 │   │       ├── button.tsx                    // Komponen tombol kustom
 │   │       ├── card.tsx                      // Kontainer kartu modular
+│   │       ├── confirm-dialog.tsx            // Dialog konfirmasi 2-langkah aksi krusial/destruktif
 │   │       └── input.tsx                     // Input form standar
 │   │
 │   ├── features/                             // LOGIKA BISNIS PER DOMAIN (Feature-Based)

@@ -114,21 +114,21 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim() || !customerPhone.trim()) {
-      toast.error("Mohon lengkapi nama dan nomor WhatsApp Anda.");
+      toast.error("Mohon lengkapi nama dan nomor WhatsApp Anda.", { id: "checkout-validation" });
       return;
     }
     if (arrivalMode === "custom" && !customArrivalTime) {
-      toast.error("Mohon tentukan jam rencana kedatangan Anda.");
+      toast.error("Mohon tentukan jam rencana kedatangan Anda.", { id: "checkout-validation" });
       return;
     }
     if (!agreedPolicy) {
-      toast.error("Mohon setujui ketentuan pembatalan & toleransi kedatangan.");
+      toast.error("Mohon setujui ketentuan pembatalan & toleransi kedatangan.", { id: "checkout-validation" });
       return;
     }
 
     startTransition(async () => {
       const orderId = `QD-${Date.now().toString().slice(-6)}`;
-      toast.success("Pembayaran berhasil diverifikasi!");
+      toast.success("Pembayaran berhasil diverifikasi!", { id: "checkout-success" });
       clearCart();
       router.push(`/${restoSlug}/order/${orderId}`);
     });
