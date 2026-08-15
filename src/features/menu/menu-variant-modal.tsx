@@ -115,8 +115,8 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-[#131b2e]">{g.name}</span>
-                    <span className="text-[10px] font-semibold text-[#006948] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      {g.type === "single" ? "Pilih 1 (Wajib)" : "Pilih Banyak (Opsional)"}
+                    <span className="text-[10px] font-semibold text-[#006948] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      {g.type === "single" ? "Wajib Pilih 1 Opsi" : "Bisa Pilih Lebih dari 1"}
                     </span>
                   </div>
                   <button
@@ -197,8 +197,8 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                 onChange={(e) => setNewGroupType(e.target.value as "single" | "multiple")}
                 className="rounded-lg border border-[#bccac0]/60 bg-white px-2 py-1 text-xs font-medium text-[#131b2e]"
               >
-                <option value="single">Pilih 1 (Radio)</option>
-                <option value="multiple">Bisa Banyak (Checkbox)</option>
+                <option value="single">Wajib Pilih 1 Saja</option>
+                <option value="multiple">Bisa Pilih Lebih Dari 1</option>
               </select>
             </div>
             <Button

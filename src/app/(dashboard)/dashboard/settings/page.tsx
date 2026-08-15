@@ -127,9 +127,9 @@ export default function DashboardSettingsPage() {
               <Flame className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#131b2e]">Parameter Waktu Masak Dapur (T-Cook)</h2>
+              <h2 className="text-sm font-bold text-[#131b2e]">Estimasi Waktu Persiapan Masak Dapur</h2>
               <p className="text-[11px] text-[#6d7a72]">
-                Menentukan berapa menit sebelum estimasi kedatangan tamu (ETA) alarm KDS berbunyi agar koki menyalakan kompor.
+                Menentukan berapa menit sebelum estimasi kedatangan tamu (ETA) alarm KDS berbunyi agar koki mulai memasak.
               </p>
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function DashboardSettingsPage() {
                 className="h-4 w-4 rounded accent-[#006948]"
               />
               <label htmlFor="autoCookCheck" className="text-xs font-semibold text-[#131b2e]">
-                Otomatis ubah status ke &quot;Sedang Dimasak&quot; saat waktu T-Cook tiba (tanpa klik manual).
+                Otomatis ubah status ke &quot;Sedang Dimasak&quot; saat jadwal masak tiba (tanpa klik manual koki).
               </label>
             </div>
           </div>
@@ -228,13 +228,13 @@ export default function DashboardSettingsPage() {
               <MessageSquare className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#131b2e]">Notifikasi WhatsApp Dapur (Fonnte API)</h2>
-              <p className="text-[11px] text-[#6d7a72]">Nomor bot / grup WhatsApp untuk menerima alarm pesanan masuk dan peringatan no-show.</p>
+              <h2 className="text-sm font-bold text-[#131b2e]">Notifikasi WhatsApp Otomatis ke Dapur</h2>
+              <p className="text-[11px] text-[#6d7a72]">Nomor telepon atau grup WhatsApp staf resto untuk menerima peringatan pesanan baru &amp; kedatangan tamu.</p>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">Nomor WA / Group ID Dapur</label>
+            <label className="text-xs font-bold text-[#131b2e]">Nomor WhatsApp / ID Grup Staf Dapur</label>
             <Input
               value={waGroupNumber}
               onChange={(e) => setWaGroupNumber(e.target.value)}
