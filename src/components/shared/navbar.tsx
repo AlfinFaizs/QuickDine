@@ -42,17 +42,19 @@ export function Navbar({ userRole, userEmail }: NavbarProps) {
 
         {/* Right Navigation */}
         <nav className="flex items-center gap-3">
-          <Link
-            href="/pesanan-saya"
-            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
-              pathname === "/pesanan-saya"
-                ? "text-[#006948] bg-[#006948]/10"
-                : "text-[#131b2e] hover:bg-[#f2f3ff]"
-            }`}
-          >
-            <ClipboardList className="h-4 w-4" />
-            <span className="hidden sm:inline">Pesanan Saya</span>
-          </Link>
+          {userEmail && (
+            <Link
+              href="/pesanan-saya"
+              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
+                pathname === "/pesanan-saya"
+                  ? "text-[#006948] bg-[#006948]/10"
+                  : "text-[#131b2e] hover:bg-[#f2f3ff]"
+              }`}
+            >
+              <ClipboardList className="h-4 w-4" />
+              <span className="hidden sm:inline">Pesanan Saya</span>
+            </Link>
+          )}
 
           {userEmail ? (
             <div className="flex items-center gap-2">
