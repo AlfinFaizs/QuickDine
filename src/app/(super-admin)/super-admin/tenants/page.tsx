@@ -1,10 +1,9 @@
 "use client";
 // src/app/(super-admin)/super-admin/tenants/page.tsx
-// Halaman Khusus Direktori Mitra Restoran Terdaftar & Kontrol Status Kemitraan
+// Halaman Khusus Direktori Mitra Restoran & Kontrol Status Kemitraan
 
 import { useState } from "react";
-import Link from "next/link";
-import { FileSpreadsheet, Store, CheckCircle2, Ban, Table2, ArrowRight } from "lucide-react";
+import { FileSpreadsheet, Store, CheckCircle2, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TenantDirectoryTable } from "@/features/super-admin/tenant-directory-table";
 import {
@@ -19,10 +18,10 @@ export default function SuperAdminTenantsPage() {
   const [tenants, setTenants] = useState<SuperAdminTenant[]>(INITIAL_SUPER_ADMIN_TENANTS);
   const [isExporting, setIsExporting] = useState(false);
 
+  // Statistics
   const totalTenants = tenants.length;
   const activeCount = tenants.filter((t) => t.status === "active").length;
   const suspendedCount = tenants.filter((t) => t.status === "suspended").length;
-  const totalTables = tenants.reduce((acc, t) => acc + t.tableCount, 0);
   const totalGmvSum = tenants.reduce((acc, t) => acc + t.totalGmv, 0);
 
   // Toggle Active / Suspended
@@ -85,7 +84,7 @@ export default function SuperAdminTenantsPage() {
             Direktori Seluruh Mitra Restoran
           </h1>
           <p className="text-xs sm:text-sm text-[#6d7a72] mt-0.5">
-            Daftar master seluruh restoran mitra yang beroperasi di platform QuickDine se-Indonesia.
+            Daftar seluruh restoran mitra terintegrasi, pemantauan volume omset per resto, dan kontrol pembekuan akun.
           </p>
         </div>
 
@@ -102,63 +101,36 @@ export default function SuperAdminTenantsPage() {
       </div>
 
       {/* Stats Metric Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-3.5 flex items-center gap-3 shadow-2xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-3.5 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-[#131b2e]">
-            <Store className="h-4 w-4 text-[#006948]" />
+            <Store className="h-4 w-4" />
           </div>
           <div>
-            <span className="text-[10px] text-[#6d7a72] font-semibold block">Total Restoran</span>
-            <span className="text-base font-extrabold text-[#131b2e]">{totalTenants} Mitra</span>
+            <span className="text-[10px] text-[#6d7a72] font-semibold block">Total Mitra Terdaftar</span>
+            <span className="text-base font-extrabold text-[#131b2e]">{totalTenants} Restoran</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-3.5 flex items-center gap-3 shadow-2xs">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-3.5 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#006948] text-white">
             <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
-            <span className="text-[10px] text-[#006948] font-semibold block">Mitra Aktif</span>
+            <span className="text-[10px] text-[#006948] font-semibold block">Mitra Aktif Beroperasi</span>
             <span className="text-base font-extrabold text-[#006948]">{activeCount} Restoran</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-red-200 bg-red-50/50 p-3.5 flex items-center gap-3 shadow-2xs">
+        <div className="rounded-2xl border border-red-200 bg-red-50/50 p-3.5 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white">
             <Ban className="h-4 w-4" />
           </div>
           <div>
-            <span className="text-[10px] text-red-600 font-semibold block">Ditangguhkan</span>
+            <span className="text-[10px] text-red-600 font-semibold block">Mitra Ditangguhkan</span>
             <span className="text-base font-extrabold text-red-700">{suspendedCount} Restoran</span>
           </div>
         </div>
-
-        <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-3.5 flex items-center gap-3 shadow-2xs">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
-            <Table2 className="h-4 w-4" />
-          </div>
-          <div>
-            <span className="text-[10px] text-[#6d7a72] font-semibold block">Total Meja Live</span>
-            <span className="text-base font-extrabold text-[#131b2e]">{totalTables} Meja</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Banner Shortcut to Verification if needed */}
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-          <span className="text-amber-950 font-semibold">
-            Terdapat 3 permohonan kemitraan restoran baru yang menunggu ditinjau.
-          </span>
-        </div>
-        <Link
-          href="/super-admin/verifikasi"
-          className="flex items-center gap-1 font-bold text-[#006948] hover:underline"
-        >
-          <span>Buka Antrean Verifikasi</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
       </div>
 
       {/* All Tenants Directory Table */}
