@@ -18,7 +18,7 @@ export const INITIAL_TABLES: DashboardTable[] = [
   { id: "1", number: "01", capacity: 2, status: "occupied", guestName: "Dimas Pratama", eta: "Sedang Makan", phone: "08456789012", orderId: "ord-101" },
   { id: "2", number: "02", capacity: 4, status: "reserved", guestName: "Budi Santoso", eta: "13:45", phone: "08234567890", orderId: "ord-102" },
   { id: "3", number: "03", capacity: 2, status: "locked", guestName: "Sedang Checkout", eta: "Sisa 7 mnt" },
-  { id: "4", number: "04", capacity: 4, status: "cooking", guestName: "Alfin Faiz", eta: "12:30", phone: "08123456789", orderId: "ord-103" } as unknown as DashboardTable,
+  { id: "4", number: "04", capacity: 4, status: "reserved", guestName: "Alfin Faiz", eta: "12:30", phone: "08123456789", orderId: "ord-103" },
   { id: "5", number: "05", capacity: 6, status: "vacant" },
   { id: "6", number: "06", capacity: 2, status: "vacant" },
   { id: "7", number: "07", capacity: 4, status: "reserved", guestName: "Citra Dewi", eta: "14:15", phone: "08345678901", orderId: "ord-104" },
