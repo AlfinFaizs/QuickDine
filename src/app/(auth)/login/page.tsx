@@ -9,42 +9,19 @@ import {
   Mail, 
   Lock, 
   User, 
-  ArrowRight,
-  Eye,
-  EyeOff,
-  Store,
-  ShieldCheck,
-  CheckCircle2,
-  Check,
-  X
+  ArrowRight, 
+  Eye, 
+  EyeOff, 
+  Store, 
+  ShieldCheck, 
+  CheckCircle2 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { GoogleIcon } from "@/components/shared/google-icon";
+import { PasswordChecklist } from "@/components/shared/password-checklist";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-
-function GoogleIcon() {
-  return (
-    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
-      <path
-        fill="#4285F4"
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-      />
-    </svg>
-  );
-}
 
 function LoginForm() {
   const router = useRouter();
@@ -52,12 +29,9 @@ function LoginForm() {
   const nextUrl = searchParams.get("next") || "/";
   const initialPortal = searchParams.get("portal") === "staff";
 
-  // State: "customer" vs "staff"
   const [isStaffPortal, setIsStaffPortal] = useState(initialPortal);
-  // State for Customer: "login" vs "register"
   const [customerMode, setCustomerMode] = useState<"login" | "register">("login");
 
-  // Form Fields
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,12 +43,10 @@ function LoginForm() {
 
   const supabase = createClient();
 
-  // Password validation checks for register mode
   const hasMinLength = password.length >= 8;
   const hasLetterAndNumber = /[A-Za-z]/.test(password) && /[0-9]/.test(password);
   const isPasswordMatch = password.length > 0 && password === confirmPassword;
 
-  // 1. Google 1-Click OAuth Login
   const handleGoogleLogin = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -90,7 +62,6 @@ function LoginForm() {
     }
   };
 
-  // 2. Email & Password Customer (Login or Register)
   const handleCustomerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
@@ -108,7 +79,7 @@ function LoginForm() {
         return;
       }
       if (!hasLetterAndNumber) {
-        toast.error("Kata sandi harus mengandung kombinasi huruf dan angka.");
+        toast.error("Kata sandi harus kombinasi huruf dan angka.");
         return;
       }
       if (password !== confirmPassword) {
@@ -140,10 +111,9 @@ function LoginForm() {
             router.refresh();
           } else {
             setIsRegisteredSuccess(true);
-            toast.success("Akun berhasil dibuat! Silakan cek email untuk verifikasi.");
+            toast.success("Akun berhasil dibuat! Silakan cek email.");
           }
         } else {
-          // Login Mode
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -172,7 +142,6 @@ function LoginForm() {
     });
   };
 
-  // 3. Staff / Resto Owner Login
   const handleStaffSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
@@ -210,7 +179,6 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md space-y-6">
-      {/* Brand Header */}
       <div className="flex flex-col items-center text-center space-y-2">
         <Link href="/" className="flex items-center gap-2 group mb-1">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#006948] text-white shadow-md transition-transform group-hover:scale-105">
@@ -225,12 +193,8 @@ function LoginForm() {
         </p>
       </div>
 
-      {/* Main Card */}
       <div className="rounded-2xl border border-[#bccac0]/40 bg-white p-6 sm:p-8 shadow-sm space-y-5">
         {!isStaffPortal ? (
-          /* ============================================================ */
-          /* CUSTOMER FLOW (Google 1-Click + Email Password / Register)  */
-          /* ============================================================ */
           isRegisteredSuccess ? (
             <div className="text-center space-y-4 py-3">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -258,7 +222,6 @@ function LoginForm() {
             </div>
           ) : (
             <>
-              {/* Google 1-Click Button */}
               <button
                 type="button"
                 onClick={handleGoogleLogin}
@@ -268,7 +231,6 @@ function LoginForm() {
                 <span>Lanjutkan dengan Google</span>
               </button>
 
-              {/* Horizontal Divider with Centered Label */}
               <div className="relative flex items-center py-1">
                 <div className="flex-grow border-t border-[#bccac0]/30" />
                 <span className="shrink-0 px-3 text-[11px] font-medium text-[#6d7a72] whitespace-nowrap">
@@ -277,7 +239,6 @@ function LoginForm() {
                 <div className="flex-grow border-t border-[#bccac0]/30" />
               </div>
 
-              {/* Login / Register Toggle Tabs */}
               <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#eaedff] p-1 text-xs font-semibold">
                 <button
                   type="button"
@@ -311,7 +272,6 @@ function LoginForm() {
                 </button>
               </div>
 
-              {/* Customer Form */}
               <form onSubmit={handleCustomerSubmit} className="space-y-3.5">
                 {customerMode === "register" && (
                   <div className="space-y-1.5 text-left">
@@ -368,7 +328,6 @@ function LoginForm() {
                   </div>
                 </div>
 
-                {/* Confirm Password (Only in Register Mode) */}
                 {customerMode === "register" && (
                   <>
                     <div className="space-y-1.5 text-left">
@@ -393,24 +352,13 @@ function LoginForm() {
                       </div>
                     </div>
 
-                    {/* Password Requirements Checklist */}
                     {password.length > 0 && (
-                      <div className="rounded-xl bg-[#faf8ff] p-3 border border-[#bccac0]/30 space-y-1.5 text-[11px]">
-                        <div className={`flex items-center gap-1.5 ${hasMinLength ? "text-emerald-700 font-medium" : "text-[#6d7a72]"}`}>
-                          {hasMinLength ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <X className="h-3.5 w-3.5 text-slate-400" />}
-                          <span>Minimal 8 karakter</span>
-                        </div>
-                        <div className={`flex items-center gap-1.5 ${hasLetterAndNumber ? "text-emerald-700 font-medium" : "text-[#6d7a72]"}`}>
-                          {hasLetterAndNumber ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <X className="h-3.5 w-3.5 text-slate-400" />}
-                          <span>Kombinasi huruf dan angka</span>
-                        </div>
-                        {confirmPassword.length > 0 && (
-                          <div className={`flex items-center gap-1.5 ${isPasswordMatch ? "text-emerald-700 font-medium" : "text-red-600"}`}>
-                            {isPasswordMatch ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <X className="h-3.5 w-3.5 text-red-500" />}
-                            <span>{isPasswordMatch ? "Konfirmasi kata sandi cocok" : "Kata sandi belum sama"}</span>
-                          </div>
-                        )}
-                      </div>
+                      <PasswordChecklist
+                        hasMinLength={hasMinLength}
+                        hasLetterAndNumber={hasLetterAndNumber}
+                        isPasswordMatch={isPasswordMatch}
+                        confirmPasswordLength={confirmPassword.length}
+                      />
                     )}
                   </>
                 )}
@@ -427,9 +375,6 @@ function LoginForm() {
             </>
           )
         ) : (
-          /* ============================================================ */
-          /* RESTO STAFF / OWNER PORTAL FLOW                              */
-          /* ============================================================ */
           <form onSubmit={handleStaffSubmit} className="space-y-4">
             <div className="flex items-center gap-2 rounded-xl bg-amber-50 p-3 border border-amber-200 text-amber-900 text-xs">
               <Store className="h-4 w-4 text-amber-700 shrink-0" />
@@ -492,7 +437,6 @@ function LoginForm() {
         )}
       </div>
 
-      {/* Switch Portal & Back Links */}
       <div className="space-y-3 text-center">
         {!isStaffPortal ? (
           <button
