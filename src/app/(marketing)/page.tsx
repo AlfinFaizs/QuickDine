@@ -125,7 +125,7 @@ export default function LandingPage() {
             {/* Value Tag */}
             <div className="inline-flex items-center gap-2 rounded-full bg-[#006948]/10 px-4 py-1.5 text-xs font-semibold text-[#006948] border border-[#006948]/20 shadow-2xs">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>SaaS Reservasi Meja & Pre-Order No. 1 di Indonesia</span>
+              <span>Platform Reservasi Meja & Pre-Order Kuliner No. 1 di Indonesia</span>
             </div>
 
             {/* Headline */}

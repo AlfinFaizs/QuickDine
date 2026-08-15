@@ -43,7 +43,7 @@ export default function FinancePage() {
         </div>
 
         <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-5 shadow-2xs space-y-2">
-          <span className="text-xs text-[#6d7a72]">Status Langganan SaaS</span>
+          <span className="text-xs text-[#6d7a72]">Status Kemitraan Resto</span>
           <div className="flex items-center gap-2">
             <p className="text-lg font-bold text-emerald-700">Aktif</p>
             <span className="text-xs text-[#6d7a72]">• Rp 200.000 / bln</span>

@@ -333,7 +333,7 @@ export default function DaftarMitraPage() {
               <div className="space-y-1">
                 <h2 className="text-base font-bold text-[#131b2e] flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-[#006948]" />
-                  <span>Rekening Pencairan Saldo (Payout H+1)</span>
+                  <span>Rekening Pencairan Saldo</span>
                 </h2>
                 <p className="text-xs text-[#6d7a72]">Hasil penjualan pesanan customer dicairkan 100% utuh tanpa potongan komisi makanan.</p>
               </div>

@@ -15,7 +15,7 @@ export function Footer() {
               <span className="text-xl font-bold tracking-tight text-[#006948]">QuickDine</span>
             </div>
             <p className="max-w-sm text-xs leading-relaxed text-[#6d7a72]">
-              SaaS Reservasi Meja & Pre-Order F&B. Pesan meja live tanpa antre, pre-order makanan favorit, dan bayar dengan mudah sebelum tiba.
+              Platform Reservasi Meja & Pre-Order Kuliner. Pesan meja live tanpa antre, pre-order makanan favorit, dan bayar dengan mudah sebelum tiba.
             </p>
             <div className="flex items-center gap-4 text-xs text-[#6d7a72] pt-2">
               <span className="flex items-center gap-1"><Zap className="h-3.5 w-3.5 text-[#006948]" /> Live Table Lock</span>
