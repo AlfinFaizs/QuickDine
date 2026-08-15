@@ -149,6 +149,7 @@ QuickDine/
 │   │
 │   ├── lib/                                  // UTILITY & SINGLETON CORE
 │   │   ├── excel-export.ts                   // Generator berkas Microsoft Excel (.xlsx) resmi
+│   │   ├── image-compressor.ts               // Auto-crop & kompresi foto makanan ke 800x800 px (<100KB)
 │   │   ├── prisma.ts                         // Singleton Prisma Client v7 (@prisma/adapter-pg)
 │   │   ├── sanitize.ts                       // Utility sanitasi input & pencegahan XSS
 │   │   ├── utils.ts                          // Helper formatting Rupiah & clsx merge

@@ -44,6 +44,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/lib/excel-export.ts`](file:///c:/My_Koding/QuickDine/src/lib/excel-export.ts) | **Branch-6** | 192 | Generator berkas spreadsheet Microsoft Excel (.xlsx) resmi berbasis `exceljs` lengkap dengan judul laporan, header hijau zamrud `#006948`, format Rupiah otomatis, border rapi, dan auto-fit width kolom. |
+| [`src/lib/image-compressor.ts`](file:///c:/My_Koding/QuickDine/src/lib/image-compressor.ts) | **Branch-6** | 68 | Utilitas kompresi foto dan auto-center-crop berbasis HTML5 Canvas di browser untuk mengubah foto kamera/galeri apa saja ke rasio ideal 800×800 px (<100KB). |
 | [`src/lib/prisma.ts`](file:///c:/My_Koding/QuickDine/src/lib/prisma.ts) | Branch-0 | 25 | Inisialisasi singleton Prisma Client generasi ke-7 dengan `@prisma/adapter-pg` untuk mencegah kebocoran koneksi database pada lingkungan Next.js dev & prod. |
 | [`src/lib/sanitize.ts`](file:///c:/My_Koding/QuickDine/src/lib/sanitize.ts) | **Branch-5** | 27 | Utilitas sanitasi input teks dan escaping HTML untuk mencegah serangan XSS serta injeksi konten pada form catatan koki & identitas tamu. |
 | [`src/lib/utils.ts`](file:///c:/My_Koding/QuickDine/src/lib/utils.ts) | Branch-0 | 16 | Fungsi utilitas umum: `formatRupiah(number)` untuk format mata uang IDR dan helper `cn()` (clsx + tailwind-merge) untuk manipulasi class Tailwind. |
@@ -172,7 +173,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ## 3. Rekapitulasi Audit Batas Baris Kode
 
-- **Total File Kode:** 61 file
+- **Total File Kode:** 62 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
 - **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
 - **Status Kompilasi `npx next build`:** **0 Error (19/19 Rute Lolos Sukses)**.

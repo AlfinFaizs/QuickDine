@@ -1,14 +1,15 @@
 "use client";
 // src/features/menu/menu-form-modal.tsx
-// Modal form tambah atau edit menu dengan upload foto langsung dari perangkat
+// Modal formulir tambah atau ubah menu hidangan dengan upload foto otomatis auto-crop & kompresi
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { X, UploadCloud, Trash2, RefreshCw, Link as LinkIcon } from "lucide-react";
+import { X, Upload, RefreshCw, CheckCircle2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { DashboardMenuItem, MenuCategory } from "@/features/menu/menu-data";
+import { processAndCompressImage } from "@/lib/image-compressor";
 import { toast } from "sonner";
+import type { DashboardMenuItem, MenuCategory } from "@/features/menu/menu-data";
 
 interface Props {
   isOpen: boolean;
@@ -24,20 +25,19 @@ const CATEGORIES: Array<Exclude<MenuCategory, "Semua">> = [
   "Camilan",
 ];
 
-const DEFAULT_FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80";
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&auto=format&fit=crop&q=80";
 
 export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState<Exclude<MenuCategory, "Semua">>("Makanan Utama");
   const [price, setPrice] = useState("");
   const [prepTime, setPrepTime] = useState("15");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(DEFAULT_IMAGE);
   const [isAvailable, setIsAvailable] = useState(true);
-  const [showUrlInput, setShowUrlInput] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
 
   useEffect(() => {
     if (itemToEdit) {
@@ -48,48 +48,40 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
       setDescription(itemToEdit.description);
       setImageUrl(itemToEdit.imageUrl);
       setIsAvailable(itemToEdit.isAvailable);
-      setShowUrlInput(false);
     } else {
       setName("");
       setCategory("Makanan Utama");
       setPrice("");
       setPrepTime("15");
       setDescription("");
-      setImageUrl(DEFAULT_FALLBACK_IMAGE);
+      setImageUrl(DEFAULT_IMAGE);
       setIsAvailable(true);
-      setShowUrlInput(false);
     }
   }, [itemToEdit, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Handle File Upload dengan Auto-Crop & Auto-Compress
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Mohon pilih berkas gambar (JPG, PNG, atau WebP).", {
-        id: "img-upload-error",
+    setIsProcessingImage(true);
+    try {
+      // Auto crop ke rasio 1:1 (800x800) dan kompres ke < 100KB
+      const compressedData = await processAndCompressImage(file, 800, 800, 0.82);
+      setImageUrl(compressedData);
+      toast.success("Foto berhasil diunggah & disesuaikan ke ukuran ideal (800×800 px).", {
+        id: "upload-toast",
       });
-      return;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal memproses foto.";
+      toast.error(msg, { id: "upload-toast" });
+    } finally {
+      setIsProcessingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Ukuran foto maksimal 5 MB.", { id: "img-upload-error" });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      if (result) {
-        setImageUrl(result);
-        toast.success(`Foto "${file.name}" berhasil diunggah.`, {
-          id: "img-upload-success",
-        });
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -103,7 +95,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
         price: parseInt(price, 10) || 0,
         prepTimeMinutes: parseInt(prepTime, 10) || 15,
         description: description.trim(),
-        imageUrl: imageUrl.trim() || DEFAULT_FALLBACK_IMAGE,
+        imageUrl: imageUrl.trim() || DEFAULT_IMAGE,
         isAvailable,
       },
       itemToEdit ? itemToEdit.id : undefined
@@ -117,7 +109,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#bccac0]/30 bg-[#faf8ff] shrink-0">
           <h2 className="text-base font-extrabold text-[#131b2e]">
-            {itemToEdit ? "Edit Menu Hidangan" : "Tambah Menu Hidangan Baru"}
+            {itemToEdit ? "Ubah Data Menu Hidangan" : "Tambah Menu Hidangan Baru"}
           </h2>
           <button
             type="button"
@@ -130,93 +122,56 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4 overflow-y-auto flex-1">
-          {/* Foto Menu Upload Area */}
+          {/* UPLOAD FOTO SECTION DENGAN AUTO-CROP */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-[#131b2e] block">
-              Foto Hidangan
+              Foto Menu Hidangan
             </label>
 
-            {imageUrl ? (
-              <div className="relative rounded-2xl overflow-hidden border border-[#bccac0]/40 bg-slate-100 h-44 group">
+            <div className="flex items-center gap-4 rounded-xl border border-[#bccac0]/40 bg-[#faf8ff] p-3">
+              {/* Preview Box */}
+              <div className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden border border-[#bccac0]/60 bg-slate-200">
                 <Image
                   src={imageUrl}
-                  alt="Pratinjau Foto"
+                  alt="Preview"
                   fill
                   className="object-cover"
+                  unoptimized={imageUrl.startsWith("data:")}
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="bg-white text-[#131b2e] hover:bg-white/90 text-xs h-8 px-3 font-bold gap-1"
-                  >
-                    <RefreshCw className="h-3.5 w-3.5" />
-                    <span>Ganti Foto</span>
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => setImageUrl("")}
-                    className="text-xs h-8 px-3 font-bold gap-1"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    <span>Hapus</span>
-                  </Button>
-                </div>
+                {isProcessingImage && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                  </div>
+                )}
               </div>
-            ) : (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-[#bccac0] hover:border-[#006948] rounded-2xl p-6 text-center cursor-pointer bg-[#faf8ff] transition-colors space-y-2"
-              >
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-[#006948]">
-                  <UploadCloud className="h-5 w-5" />
-                </div>
-                <p className="text-xs font-bold text-[#131b2e]">
-                  Pilih Foto dari Galeri / Komputer
-                </p>
-                <p className="text-[11px] text-[#6d7a72]">
-                  Format PNG, JPG, atau WebP (Maks. 5 MB)
+
+              {/* Upload Controls & Guidelines */}
+              <div className="flex-1 space-y-1.5">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isProcessingImage}
+                  className="text-xs h-8 px-3 gap-1.5 font-bold text-[#006948] border-[#006948]/30 hover:bg-emerald-50"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  <span>{imageUrl === DEFAULT_IMAGE ? "Pilih Foto dari Galeri" : "Ganti Foto"}</span>
+                </Button>
+
+                <p className="text-[10px] text-[#6d7a72] leading-tight flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 text-[#006948] shrink-0" />
+                  <span>Foto apa saja otomatis dipotong &amp; disesuaikan ke ukuran ideal 800×800 px (Rasio 1:1).</span>
                 </p>
               </div>
-            )}
-
-            {/* Hidden File Input */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-
-            {/* URL Toggle Fallback */}
-            <div className="pt-1">
-              <button
-                type="button"
-                onClick={() => setShowUrlInput(!showUrlInput)}
-                className="text-[11px] text-[#006948] font-semibold hover:underline inline-flex items-center gap-1"
-              >
-                <LinkIcon className="h-3 w-3" />
-                <span>
-                  {showUrlInput
-                    ? "Tutup input link URL"
-                    : "Atau gunakan link foto internet"}
-                </span>
-              </button>
-
-              {showUrlInput && (
-                <div className="mt-1.5">
-                  <Input
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
-                    className="text-xs h-8"
-                  />
-                </div>
-              )}
             </div>
           </div>
 
@@ -234,7 +189,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#131b2e]">Kategori *</label>
+              <label className="text-xs font-bold text-[#131b2e]">Kategori Hidangan *</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as Exclude<MenuCategory, "Semua">)}
@@ -264,7 +219,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
           {/* Prep Time */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-[#131b2e]">
-              Estimasi Waktu Memasak (Menit)
+              Estimasi Waktu Memasak di Dapur (Menit)
             </label>
             <Input
               type="number"
@@ -272,24 +227,25 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
               onChange={(e) => setPrepTime(e.target.value)}
               min="1"
               max="120"
+              placeholder="15"
               className="text-xs h-10"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">Deskripsi Menu</label>
+            <label className="text-xs font-bold text-[#131b2e]">Deskripsi &amp; Rasa</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              placeholder="Jelaskan bahan dan cita rasa hidangan..."
+              placeholder="Jelaskan bahan utama dan keunikan cita rasa hidangan..."
               className="w-full rounded-xl border border-[#bccac0]/60 p-3 text-xs text-[#131b2e] focus:border-[#006948] focus:ring-1 focus:ring-[#006948]"
             />
           </div>
 
-          {/* Stock Availability Toggle */}
-          <div className="flex items-center gap-2 pt-1 border-t border-[#bccac0]/20">
+          {/* Stock Toggle Checkbox */}
+          <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
               id="isAvailableCheckbox"
@@ -316,9 +272,10 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
             <Button
               type="submit"
               size="sm"
-              className="bg-[#006948] hover:bg-[#005137] text-white text-xs h-9 px-5 font-bold"
+              className="bg-[#006948] hover:bg-[#005137] text-white text-xs h-9 px-5 font-bold gap-1.5"
             >
-              {itemToEdit ? "Simpan Perubahan" : "Tambah Menu"}
+              <CheckCircle2 className="h-4 w-4" />
+              <span>{itemToEdit ? "Simpan Perubahan" : "Tambah Menu"}</span>
             </Button>
           </div>
         </form>

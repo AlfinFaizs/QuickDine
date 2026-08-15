@@ -1,12 +1,11 @@
 "use client";
 // src/features/menu/menu-variant-modal.tsx
-// Modal pengelola opsi varian menu (suhu, level pedas, topping ekstra)
+// Modal pengelola opsi varian menu (suhu, level pedas, topping ekstra) dengan bahasa non-teknis
 
 import { useState } from "react";
 import { X, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatRupiah } from "@/lib/utils";
 import type { DashboardMenuItem, MenuVariantGroup } from "@/features/menu/menu-data";
 
 interface Props {
@@ -29,7 +28,7 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
       id: `vg-${Date.now()}`,
       name: newGroupName.trim(),
       type: newGroupType,
-      required: true,
+      required: newGroupType === "single",
       options: [{ name: "Pilihan Default", extraPrice: 0 }],
     };
     setVariants((prev) => [...prev, newGroup]);
@@ -104,7 +103,7 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
         <div className="px-6 py-2 overflow-y-auto space-y-4 flex-1">
           {variants.length === 0 ? (
             <div className="rounded-xl border border-dashed border-[#bccac0] p-6 text-center text-xs text-[#6d7a72]">
-              Menu ini belum memiliki kelompok varian. Tambahkan kelompok varian di bawah (contoh: Level Pedas, Pilihan Suhu, Topping).
+              Menu ini belum memiliki kelompok varian. Tambahkan kelompok varian di bawah (contoh: Pilihan Tingkat Kepedasan, Suhu Minuman, atau Tambahan Topping).
             </div>
           ) : (
             variants.map((g) => (
@@ -115,8 +114,8 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-[#131b2e]">{g.name}</span>
-                    <span className="text-[10px] font-semibold text-[#006948] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                      {g.type === "single" ? "Wajib Pilih 1 Opsi" : "Bisa Pilih Lebih dari 1"}
+                    <span className="text-[10px] font-semibold text-[#006948] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      {g.type === "single" ? "Wajib Pilih 1 Opsi" : "Bisa Pilih Lebih dari 1 (Opsional)"}
                     </span>
                   </div>
                   <button
@@ -138,10 +137,10 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                         onChange={(e) =>
                           handleOptionChange(g.id, optIdx, "name", e.target.value)
                         }
-                        placeholder="Nama opsi"
+                        placeholder="Nama pilihan (misal: Pedas Sedang)"
                         className="text-xs h-8 flex-1 bg-white"
                       />
-                      <div className="flex items-center gap-1 shrink-0 w-32">
+                      <div className="flex items-center gap-1 shrink-0 w-36">
                         <span className="text-[10px] text-[#6d7a72] font-bold">+Rp</span>
                         <Input
                           type="number"
@@ -154,6 +153,7 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                               parseInt(e.target.value, 10) || 0
                             )
                           }
+                          placeholder="0"
                           className="text-xs h-8 bg-white"
                         />
                       </div>
@@ -173,7 +173,7 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                     className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#006948] hover:underline pt-1"
                   >
                     <Plus className="h-3 w-3" />
-                    <span>Tambah Opsi Pilihan</span>
+                    <span>Tambah Pilihan</span>
                   </button>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
               <Input
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
-                placeholder="Contoh: Level Pedas"
+                placeholder="Contoh: Level Pedas / Topping"
                 className="text-xs h-8 sm:col-span-2"
               />
               <select
@@ -197,8 +197,8 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
                 onChange={(e) => setNewGroupType(e.target.value as "single" | "multiple")}
                 className="rounded-lg border border-[#bccac0]/60 bg-white px-2 py-1 text-xs font-medium text-[#131b2e]"
               >
-                <option value="single">Wajib Pilih 1 Saja</option>
-                <option value="multiple">Bisa Pilih Lebih Dari 1</option>
+                <option value="single">Wajib Pilih 1 Pilihan</option>
+                <option value="multiple">Bisa Pilih Banyak Pilihan</option>
               </select>
             </div>
             <Button
@@ -207,10 +207,10 @@ export function MenuVariantModal({ isOpen, item, onClose, onSaveVariants }: Prop
               variant="outline"
               onClick={handleAddGroup}
               disabled={!newGroupName.trim()}
-              className="text-xs h-8 gap-1 font-semibold"
+              className="text-xs h-8 gap-1 font-semibold text-[#006948] border-[#006948]/30"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Tambahkan Kelompok</span>
+              <span>Tambahkan Kelompok Varian</span>
             </Button>
           </div>
         </div>

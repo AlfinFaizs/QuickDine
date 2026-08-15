@@ -1,9 +1,9 @@
 "use client";
 // src/app/(dashboard)/dashboard/settings/page.tsx
-// Halaman Pengaturan Profil Resto, Jam Operasional, Rekening Payout, & Parameter Waktu Masak
+// Halaman Pengaturan Profil Resto, Jam Operasional, Rekening Payout, & Jadwal Waktu Masak Dapur
 
 import { useState } from "react";
-import { Store, Clock, Landmark, MessageSquare, Save, CheckCircle2, Flame } from "lucide-react";
+import { Store, Clock, Landmark, MessageSquare, Save, Flame, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -25,8 +25,8 @@ export default function DashboardSettingsPage() {
   const [bankAccount, setBankAccount] = useState("8820-1928-33");
   const [accountHolder, setAccountHolder] = useState("PT Rasa Kuliner Nusantara");
 
-  // WhatsApp Fonnte State
-  const [waGroupNumber, setWaGroupNumber] = useState("6281234567890");
+  // WhatsApp Notification State
+  const [waGroupNumber, setWaGroupNumber] = useState("081234567890");
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -35,7 +35,7 @@ export default function DashboardSettingsPage() {
     setIsSaving(true);
     setTimeout(() => {
       setIsSaving(false);
-      toast.success("Seluruh pengaturan resto & parameter operasional berhasil disimpan.", {
+      toast.success("Seluruh pengaturan restoran & operasional berhasil disimpan.", {
         id: "settings-save",
       });
     }, 400);
@@ -49,7 +49,7 @@ export default function DashboardSettingsPage() {
           Pengaturan Restoran &amp; Operasional
         </h1>
         <p className="text-xs sm:text-sm text-[#6d7a72] mt-0.5">
-          Konfigurasi profil restoran, jam buka-tutup, parameter alarm masak dapur, dan rekening payout.
+          Konfigurasi profil restoran, jam buka-tutup, jadwal alarm masak dapur, dan rekening pencairan omset.
         </p>
       </div>
 
@@ -62,7 +62,7 @@ export default function DashboardSettingsPage() {
             </div>
             <div>
               <h2 className="text-sm font-bold text-[#131b2e]">Profil &amp; Kontak Restoran</h2>
-              <p className="text-[11px] text-[#6d7a72]">Informasi publik yang ditampilkan pada halaman katalog dan struk pesanan.</p>
+              <p className="text-[11px] text-[#6d7a72]">Informasi yang ditampilkan kepada pelanggan pada halaman direktori dan bukti pemesanan.</p>
             </div>
           </div>
 
@@ -78,7 +78,7 @@ export default function DashboardSettingsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#131b2e]">Nomor Telepon / WhatsApp</label>
+              <label className="text-xs font-bold text-[#131b2e]">Nomor Telepon / WhatsApp Kasir</label>
               <Input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -89,7 +89,7 @@ export default function DashboardSettingsPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">Alamat Lengkap</label>
+            <label className="text-xs font-bold text-[#131b2e]">Alamat Lengkap Restoran</label>
             <Input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -120,16 +120,16 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
 
-        {/* SECTION 2: Parameter Waktu Masak KDS */}
+        {/* SECTION 2: Jadwal Mulai Masak di Dapur */}
         <div className="rounded-2xl border border-amber-200 bg-amber-50/30 p-6 space-y-4 shadow-2xs">
           <div className="flex items-center gap-2.5 border-b border-amber-200/60 pb-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#fea619] text-[#2a1700]">
               <Flame className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#131b2e]">Estimasi Waktu Persiapan Masak Dapur</h2>
+              <h2 className="text-sm font-bold text-[#131b2e]">Jadwal Mulai Memasak di Dapur</h2>
               <p className="text-[11px] text-[#6d7a72]">
-                Menentukan berapa menit sebelum estimasi kedatangan tamu (ETA) alarm KDS berbunyi agar koki mulai memasak.
+                Menentukan berapa menit sebelum tamu tiba layar tablet dapur berbunyi/menyala agar koki mulai menyalakan kompor.
               </p>
             </div>
           </div>
@@ -137,9 +137,9 @@ export default function DashboardSettingsPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-[#131b2e]">
-                Waktu Persiapan Masak Standar: <span className="text-amber-800 text-sm font-extrabold">{cookTriggerMinutes} Menit</span>
+                Waktu Persiapan Masak: <span className="text-amber-800 text-sm font-extrabold">{cookTriggerMinutes} Menit Sebelum Tamu Tiba</span>
               </label>
-              <span className="text-[11px] text-[#6d7a72]">Rekomendasi: 15–20 Menit</span>
+              <span className="text-[11px] text-[#6d7a72]">Umumnya: 15–20 Menit</span>
             </div>
 
             <input
@@ -153,7 +153,7 @@ export default function DashboardSettingsPage() {
             />
 
             <p className="text-[11px] text-[#6d7a72] leading-relaxed">
-              * Contoh: Jika tamu memilih jam tiba 12:30 dan parameter diatur {cookTriggerMinutes} menit, maka tiket pesanan di KDS akan memicu alarm pada jam {12}:{30 - cookTriggerMinutes} agar makanan matang tepat waktu.
+              * Contoh: Jika tamu memesan untuk jam tiba 12:30 dan Anda mengatur {cookTriggerMinutes} menit, maka layar dapur akan memberi alarm pengingat masak pada jam {12}:{30 - cookTriggerMinutes} agar hidangan selesai hangat saat tamu duduk.
             </p>
 
             <div className="flex items-center gap-2 pt-2 border-t border-amber-200/40">
@@ -165,7 +165,7 @@ export default function DashboardSettingsPage() {
                 className="h-4 w-4 rounded accent-[#006948]"
               />
               <label htmlFor="autoCookCheck" className="text-xs font-semibold text-[#131b2e]">
-                Otomatis ubah status ke &quot;Sedang Dimasak&quot; saat jadwal masak tiba (tanpa klik manual koki).
+                Otomatis ubah status ke &quot;Sedang Dimasak&quot; saat jam masak tiba (tanpa perlu staf klik manual).
               </label>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function DashboardSettingsPage() {
             </div>
             <div>
               <h2 className="text-sm font-bold text-[#131b2e]">Rekening Bank Pencairan Dana (Payout H+1)</h2>
-              <p className="text-[11px] text-[#6d7a72]">Rekening tujuan transfer otomatis hasil penjualan bersih harian.</p>
+              <p className="text-[11px] text-[#6d7a72]">Rekening bank tujuan transfer otomatis hasil penjualan bersih harian Anda.</p>
             </div>
           </div>
 
@@ -210,7 +210,7 @@ export default function DashboardSettingsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#131b2e]">Atas Nama Rekening</label>
+              <label className="text-xs font-bold text-[#131b2e]">Nama Pemilik Rekening</label>
               <Input
                 value={accountHolder}
                 onChange={(e) => setAccountHolder(e.target.value)}
@@ -221,24 +221,24 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
 
-        {/* SECTION 4: WhatsApp Notifikasi Gateway */}
+        {/* SECTION 4: Notifikasi WhatsApp */}
         <div className="rounded-2xl border border-[#bccac0]/30 bg-white p-6 space-y-4 shadow-2xs">
           <div className="flex items-center gap-2.5 border-b border-[#bccac0]/20 pb-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
               <MessageSquare className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#131b2e]">Notifikasi WhatsApp Otomatis ke Dapur</h2>
-              <p className="text-[11px] text-[#6d7a72]">Nomor telepon atau grup WhatsApp staf resto untuk menerima peringatan pesanan baru &amp; kedatangan tamu.</p>
+              <h2 className="text-sm font-bold text-[#131b2e]">Notifikasi WhatsApp untuk Staf Dapur</h2>
+              <p className="text-[11px] text-[#6d7a72]">Nomor kontak atau grup WhatsApp yang menerima pesan otomatis saat ada pesanan baru masuk.</p>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">Nomor WhatsApp / ID Grup Staf Dapur</label>
+            <label className="text-xs font-bold text-[#131b2e]">Nomor WhatsApp / ID Grup Dapur</label>
             <Input
               value={waGroupNumber}
               onChange={(e) => setWaGroupNumber(e.target.value)}
-              placeholder="6281234567890"
+              placeholder="081234567890"
               className="text-xs h-10 font-mono"
             />
           </div>
