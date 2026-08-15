@@ -67,7 +67,9 @@ QuickDine/
 │   │   │
 │   │   ├── (super-admin)/                    // PORTAL SUPER ADMIN PLATFORM
 │   │   │   └── super-admin/
-│   │   │       └── page.tsx                  // Metrik GMV, langganan mitra, revenue SaaS
+│   │   │       ├── layout.tsx                // Header bar Super Admin, logo & tab navigasi
+│   │   │       ├── page.tsx                  // Executive KPI Dashboard & transaksi nasional
+│   │   │       └── tenants/page.tsx          // Manajemen mitra & verifikasi pendaftar baru
 │   │   │
 │   │   ├── api/                              // REST API & WEBHOOKS
 │   │   │   ├── cron/cleanup-locks/route.ts   // Cron un-lock meja expired (>10 mnt)
@@ -129,6 +131,12 @@ QuickDine/
 │   │   │   ├── restaurant-details-data.ts    // Data detail menu, opsi, & meja per resto
 │   │   │   ├── resto-card-skeleton.tsx       // Skeleton shimmer kartu katalog restoran
 │   │   │   └── table-map.tsx                 // Visual denah meja interaktif customer
+│   │   │
+│   │   ├── super-admin/                      // Modul Platform Super Admin & Tenant Verifier
+│   │   │   ├── super-admin-data.ts           // Tipe data & mock dataset mitra & GMV nasional
+│   │   │   ├── super-admin-kpi-cards.tsx     // 4 Kartu KPI eksekutif platform
+│   │   │   ├── tenant-approval-queue.tsx     // Antrean verifikasi calon mitra pendaftar baru
+│   │   │   └── tenant-directory-table.tsx    // Tabel direktori mitra & toggle suspend/active
 │   │   │
 │   │   └── tables/                           // Modul Manajemen Meja Resto & Kasir
 │   │       ├── actions.ts                    // Server actions RPC table locking

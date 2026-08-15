@@ -3,14 +3,6 @@
 
 import ExcelJS from "exceljs";
 
-export interface ExcelColumnDefinition {
-  header: string;
-  key: string;
-  width?: number;
-  isCurrency?: boolean;
-  align?: "left" | "center" | "right";
-}
-
 export interface ExportFinanceExcelParams {
   restaurantName: string;
   reportPeriod: string;
@@ -25,6 +17,24 @@ export interface ExportFinanceExcelParams {
     grossAmount: number;
     platformFee: number;
     netAmount: number;
+    status: string;
+  }>;
+}
+
+export interface ExportSuperAdminTenantsParams {
+  reportPeriod: string;
+  totalTenants: number;
+  activeTenants: number;
+  totalGMV: number;
+  tenants: Array<{
+    id: string;
+    name: string;
+    category: string;
+    ownerName: string;
+    phone: string;
+    tableCount: number;
+    totalGmv: number;
+    bankAccount: string;
     status: string;
   }>;
 }
@@ -76,8 +86,8 @@ export async function exportFinanceToExcel({
     c.font = { bold: true, color: { argb: "FF131B2E" } };
   });
 
-  worksheet.addRow([]); // Row 5 empty spacer
-  worksheet.addRow([]); // Row 6 empty spacer
+  worksheet.addRow([]); // Spacer
+  worksheet.addRow([]); // Spacer
 
   // 3. Table Header (Row 7)
   const headerRow = worksheet.getRow(7);
@@ -129,7 +139,6 @@ export async function exportFinanceToExcel({
 
     row.height = 20;
 
-    // Formatting per cell
     const isEven = idx % 2 === 1;
     row.eachCell((cell, colNumber) => {
       cell.font = { name: "Calibri", size: 10 };
@@ -150,13 +159,11 @@ export async function exportFinanceToExcel({
         right: { style: "thin", color: { argb: "FFE2E8F0" } },
       };
 
-      // Currency Formatting for Gross, Fee, Net (Cols 5, 6, 7)
       if (colNumber === 5 || colNumber === 6 || colNumber === 7) {
         cell.numFmt = '"Rp "#,##0';
         cell.alignment = { vertical: "middle", horizontal: "right" };
       }
 
-      // Center align for ID, Waktu, Metode, Status
       if (colNumber === 1 || colNumber === 2 || colNumber === 4 || colNumber === 8) {
         cell.alignment = { vertical: "middle", horizontal: "center" };
       }
@@ -190,19 +197,17 @@ export async function exportFinanceToExcel({
     }
   });
 
-  // Auto-fit column widths
   worksheet.columns = [
-    { width: 16 }, // ID
-    { width: 18 }, // Waktu
-    { width: 22 }, // Customer
-    { width: 20 }, // Metode
-    { width: 22 }, // Gross
-    { width: 18 }, // Fee
-    { width: 24 }, // Net
-    { width: 16 }, // Status
+    { width: 16 },
+    { width: 18 },
+    { width: 22 },
+    { width: 20 },
+    { width: 22 },
+    { width: 18 },
+    { width: 24 },
+    { width: 16 },
   ];
 
-  // 6. Write Buffer & Trigger Browser Download
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -212,6 +217,145 @@ export async function exportFinanceToExcel({
   link.href = url;
   const fileNameDate = new Date().toISOString().slice(0, 10);
   link.download = `QuickDine_Rekap_Omset_${fileNameDate}.xlsx`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}
+
+// Generator Berkas Excel Rekapitulasi Seluruh Mitra Platform (Super Admin)
+export async function exportSuperAdminTenantsToExcel({
+  reportPeriod,
+  totalTenants,
+  activeTenants,
+  totalGMV,
+  tenants,
+}: ExportSuperAdminTenantsParams): Promise<void> {
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "QuickDine Super Admin";
+  workbook.created = new Date();
+
+  const worksheet = workbook.addWorksheet("Master Direktori Mitra", {
+    views: [{ showGridLines: true }],
+  });
+
+  // Title Block
+  worksheet.mergeCells("A1:H1");
+  const titleCell = worksheet.getCell("A1");
+  titleCell.value = "MASTER DIREKTORI MITRA RESTORAN — QUICKDINE PLATFORM";
+  titleCell.font = { name: "Calibri", size: 14, bold: true, color: { argb: "FF006948" } };
+  titleCell.alignment = { vertical: "middle", horizontal: "left" };
+  worksheet.getRow(1).height = 25;
+
+  worksheet.mergeCells("A2:H2");
+  const subtitleCell = worksheet.getCell("A2");
+  subtitleCell.value = `Periode: ${reportPeriod}  |  Total Mitra: ${totalTenants} (${activeTenants} Aktif)  |  Total GMV: Rp ${totalGMV.toLocaleString(
+    "id-ID"
+  )}`;
+  subtitleCell.font = { name: "Calibri", size: 10, italic: true, color: { argb: "FF555555" } };
+  worksheet.getRow(2).height = 18;
+
+  worksheet.addRow([]); // Spacer
+  worksheet.addRow([]); // Spacer
+
+  // Header Row
+  const headerRow = worksheet.getRow(5);
+  headerRow.values = [
+    "ID Mitra",
+    "Nama Restoran",
+    "Kategori",
+    "Nama Pemilik",
+    "Nomor Kontak",
+    "Jumlah Meja",
+    "Total GMV Transaksi",
+    "Rekening Bank Payout",
+    "Status",
+  ];
+  headerRow.height = 24;
+
+  headerRow.eachCell((cell) => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF006948" },
+    };
+    cell.font = { name: "Calibri", size: 11, bold: true, color: { argb: "FFFFFFFF" } };
+    cell.alignment = { vertical: "middle", horizontal: "center" };
+    cell.border = {
+      top: { style: "thin", color: { argb: "FF004D34" } },
+      bottom: { style: "medium", color: { argb: "FF004D34" } },
+      left: { style: "thin", color: { argb: "FF004D34" } },
+      right: { style: "thin", color: { argb: "FF004D34" } },
+    };
+  });
+
+  // Data Rows
+  tenants.forEach((t, idx) => {
+    const row = worksheet.addRow([
+      t.id,
+      t.name,
+      t.category,
+      t.ownerName,
+      t.phone,
+      t.tableCount,
+      t.totalGmv,
+      t.bankAccount,
+      t.status,
+    ]);
+
+    row.height = 20;
+    const isEven = idx % 2 === 1;
+    row.eachCell((cell, colNumber) => {
+      cell.font = { name: "Calibri", size: 10 };
+      cell.alignment = { vertical: "middle", horizontal: "left" };
+
+      if (isEven) {
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFF8FAF9" },
+        };
+      }
+
+      cell.border = {
+        top: { style: "thin", color: { argb: "FFE2E8F0" } },
+        bottom: { style: "thin", color: { argb: "FFE2E8F0" } },
+        left: { style: "thin", color: { argb: "FFE2E8F0" } },
+        right: { style: "thin", color: { argb: "FFE2E8F0" } },
+      };
+
+      if (colNumber === 7) {
+        cell.numFmt = '"Rp "#,##0';
+        cell.alignment = { vertical: "middle", horizontal: "right" };
+      }
+
+      if (colNumber === 1 || colNumber === 6 || colNumber === 9) {
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+      }
+    });
+  });
+
+  worksheet.columns = [
+    { width: 14 },
+    { width: 28 },
+    { width: 18 },
+    { width: 22 },
+    { width: 18 },
+    { width: 14 },
+    { width: 24 },
+    { width: 30 },
+    { width: 16 },
+  ];
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  const fileNameDate = new Date().toISOString().slice(0, 10);
+  link.download = `QuickDine_Master_Mitra_${fileNameDate}.xlsx`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

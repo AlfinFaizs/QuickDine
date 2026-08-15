@@ -43,7 +43,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 ### C. Core Libraries & Singletons
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
-| [`src/lib/excel-export.ts`](file:///c:/My_Koding/QuickDine/src/lib/excel-export.ts) | **Branch-6** | 192 | Generator berkas spreadsheet Microsoft Excel (.xlsx) resmi berbasis `exceljs` lengkap dengan judul laporan, header hijau zamrud `#006948`, format Rupiah otomatis, border rapi, dan auto-fit width kolom. |
+| [`src/lib/excel-export.ts`](file:///c:/My_Koding/QuickDine/src/lib/excel-export.ts) | **Branch-6/7** | 290 | Generator berkas spreadsheet Microsoft Excel (.xlsx) resmi berbasis `exceljs` untuk rekapitulasi omset harian resto dan master direktori tenant platform Super Admin. |
 | [`src/lib/image-compressor.ts`](file:///c:/My_Koding/QuickDine/src/lib/image-compressor.ts) | **Branch-6** | 68 | Utilitas kompresi foto dan auto-center-crop berbasis HTML5 Canvas di browser untuk mengubah foto kamera/galeri apa saja ke rasio ideal 800×800 px (<100KB). |
 | [`src/lib/prisma.ts`](file:///c:/My_Koding/QuickDine/src/lib/prisma.ts) | Branch-0 | 25 | Inisialisasi singleton Prisma Client generasi ke-7 dengan `@prisma/adapter-pg` untuk mencegah kebocoran koneksi database pada lingkungan Next.js dev & prod. |
 | [`src/lib/sanitize.ts`](file:///c:/My_Koding/QuickDine/src/lib/sanitize.ts) | **Branch-5** | 27 | Utilitas sanitasi input teks dan escaping HTML untuk mencegah serangan XSS serta injeksi konten pada form catatan koki & identitas tamu. |
@@ -94,10 +94,15 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/features/kds/kds-header-stats.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-header-stats.tsx) | Branch-5 | 74 | Bar visual 4 metrik status pesanan dapur (Menunggu Masak, Sedang Dimasak, Siap Saji, Total Aktif). |
 | [`src/features/kds/kds-skeleton.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-skeleton.tsx) | Branch-5 | 41 | Skeleton shimmer loader antrean kartu pesanan dapur KDS. |
 | **Fitur: Menu Management & Variants** | | | |
-| [`src/features/menu/menu-data.ts`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-data.ts) | **Branch-6** | 185 | Definisi interface menu restoran (`DashboardMenuItem`, `MenuCategory`, `MenuVariantGroup`) dan initial mock dataset hidangan. |
-| [`src/features/menu/menu-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-card.tsx) | **Branch-6** | 145 | Komponen kartu hidangan dengan instant switch toggle ketersediaan stok, harga Rupiah, dan tombol aksi kelola varian. |
-| [`src/features/menu/menu-form-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-form-modal.tsx) | **Branch-6** | 175 | Modal form tambah dan ubah menu makanan/minuman resto. |
-| [`src/features/menu/menu-variant-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-variant-modal.tsx) | **Branch-6** | 220 | Modal konfigurasi kelompok varian dan ekstra topping berbayar. |
+| [`src/features/menu/menu-data.ts`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-data.ts) | Branch-6 | 185 | Definisi interface menu restoran (`DashboardMenuItem`, `MenuCategory`, `MenuVariantGroup`) dan initial mock dataset hidangan. |
+| [`src/features/menu/menu-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-card.tsx) | Branch-6 | 180 | Komponen kartu hidangan dengan instant switch toggle ketersediaan stok, multi-photo slider, dan tombol aksi kelola varian. |
+| [`src/features/menu/menu-form-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-form-modal.tsx) | Branch-6 | 280 | Modal form tambah dan ubah menu makanan/minuman resto dengan galeri multi-foto dan auto-crop. |
+| [`src/features/menu/menu-variant-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/menu/menu-variant-modal.tsx) | Branch-6 | 220 | Modal konfigurasi kelompok varian dan ekstra topping berbayar. |
+| **Fitur: Super Admin Platform & Tenant Verification** | | | |
+| [`src/features/super-admin/super-admin-data.ts`](file:///c:/My_Koding/QuickDine/src/features/super-admin/super-admin-data.ts) | **Branch-7** | 250 | Definisi tipe data (`SuperAdminKPI`, `SuperAdminTenant`, `PendingPartnerApplication`) dan mock dataset nasional transaksi & mitra. |
+| [`src/features/super-admin/super-admin-kpi-cards.tsx`](file:///c:/My_Koding/QuickDine/src/features/super-admin/super-admin-kpi-cards.tsx) | **Branch-7** | 90 | Komponen bar 4 metrik KPI eksekutif performa platform nasional. |
+| [`src/features/super-admin/tenant-approval-queue.tsx`](file:///c:/My_Koding/QuickDine/src/features/super-admin/tenant-approval-queue.tsx) | **Branch-7** | 155 | Komponen antrean verifikasi mitra baru dengan aksi 1-Klik Setujui/Tolak dan `ConfirmDialog`. |
+| [`src/features/super-admin/tenant-directory-table.tsx`](file:///c:/My_Koding/QuickDine/src/features/super-admin/tenant-directory-table.tsx) | **Branch-7** | 220 | Tabel master direktori mitra resto dengan filter status, search, dan toggle pembekuan mitra. |
 | **Fitur: Tables Management & Cashier Control** | | | |
 | [`src/features/tables/actions.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/actions.ts) | Branch-0 | 55 | Server Action untuk memanggil RPC database `lock_table_for_checkout` (penguncian meja 10 menit) secara atomik. |
 | [`src/features/tables/tables-data.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/tables-data.ts) | Branch-5 | 63 | Definisi tipe data (`DashboardTable`, `TableStatus`), mock denah meja kasir, dan dictionary konfigurasi visual status (`STATUS_CONFIG`). |
@@ -149,7 +154,9 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/app/(dashboard)/dashboard/finance/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/finance/page.tsx) | **Branch-6** | 130 | **[Branch-6: Dirombak]** Halaman rekapitulasi omset bersih, potongan platform fee transparan, riwayat payout H+1, dan generator ekspor Microsoft Excel (.xlsx) resmi. |
 | [`src/app/(dashboard)/dashboard/settings/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/settings/page.tsx) | **Branch-6** | 220 | **[Branch-6: Dirombak]** Halaman konfigurasi resto, jam operasional, parameter alarm masak $T_{\text{cook}}$ (slider menit), rekening payout bank, dan Fonnte WhatsApp. |
 | **Portal Platform `(super-admin)`** | | | |
-| [`src/app/(super-admin)/super-admin/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/page.tsx) | Branch-0 | 95 | Portal master super admin platform untuk memantau total GMV transaksi, mitra aktif, dan profit platform fee. |
+| [`src/app/(super-admin)/super-admin/layout.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/layout.tsx) | **Branch-7** | 85 | Layout pembungkus Super Admin dengan header bar korporat, navigasi tab interaktif, dan brand badge. |
+| [`src/app/(super-admin)/super-admin/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/page.tsx) | **Branch-7** | 175 | **[Branch-7: Dirombak]** Portal master super admin platform: 4 metrik KPI GMV/profit, log transaksi nasional live, dan ekspor Master Ledger (.xlsx). |
+| [`src/app/(super-admin)/super-admin/tenants/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28super-admin%29/super-admin/tenants/page.tsx) | **Branch-7** | 190 | **[BARU]** Halaman manajemen mitra resto, antrean verifikasi pendaftar baru, dan ekspor master direktori mitra Excel (.xlsx). |
 | **API Endpoints & Root** | | | |
 | [`src/app/api/cron/cleanup-locks/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/cron/cleanup-locks/route.ts) | Branch-0 | 26 | Cron API endpoint untuk membersihkan meja yang melewati batas waktu lock 10 menit kembali menjadi `VACANT`. |
 | [`src/app/api/webhooks/midtrans/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/webhooks/midtrans/route.ts) | Branch-0 | 52 | Webhook API endpoint untuk menerima callback notifikasi status pembayaran dari Midtrans. |
@@ -173,7 +180,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ## 3. Rekapitulasi Audit Batas Baris Kode
 
-- **Total File Kode:** 62 file
+- **Total File Kode:** 67 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
 - **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
-- **Status Kompilasi `npx next build`:** **0 Error (19/19 Rute Lolos Sukses)**.
+- **Status Kompilasi `npx next build`:** **0 Error (20/20 Rute Lolos Sukses)**.
