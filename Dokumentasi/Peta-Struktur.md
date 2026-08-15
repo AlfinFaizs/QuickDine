@@ -1,6 +1,6 @@
 # 🗺️ Peta Struktur Folder & Arsitektur Proyek QuickDine
 
-Dokumen ini berisi **peta struktur folder, pembagian domain arsitektur, dan alur data modular** pada repositori **QuickDine** per Agustus 2026 (pasca **Branch-0 Fondasi + Branch-1 Otentikasi + Branch-2 Pendaftaran Mitra + Branch-3 Alur Pemesanan Customer + Branch-4 Landing & Jelajah + Branch-5 KDS & Meja Kasir**).
+Dokumen ini berisi **peta struktur folder, pembagian domain arsitektur, dan alur data modular** pada repositori **QuickDine** per Agustus 2026 (pasca **Branch-0 s/d Branch-5: Dashboard KDS & Tables**).
 
 Proyek ini mengadopsi arsitektur **Feature-Driven Modular Monolith** dipadukan dengan **Route Groups Next.js 16 (App Router)** untuk memastikan skalabilitas tinggi, kemudahan pelacakan kode, dan isolasi domain yang rapi bagi solo developer maupun tim.
 
@@ -19,7 +19,7 @@ QuickDine/
 │   ├── Branch-2-feat-partner-registration.md // Dokumentasi onboarding mitra & 11 resto
 │   ├── Branch-3-feat-customer-ordering.md    // Dokumentasi alur katalog, meja & checkout
 │   ├── Branch-4-feat-landing-and-explore-page.md // Dokumentasi redesign landing & halaman /jelajah
-│   ├── Branch-5-feat-dashboard-kds-and-tables.md // Dokumentasi KDS dapur realtime & kontrol meja kasir
+│   ├── Branch-5-feat-dashboard-kds-and-tables.md // Dokumentasi KDS dapur & denah meja kasir
 │   ├── Kamus-File.md                         // [ENSIKLOPEDIA] Kamus detail 48+ file kode
 │   └── Peta-Struktur.md                      // [DOKUMEN INI] Peta struktur master pohon folder
 │
@@ -94,10 +94,10 @@ QuickDine/
 │   │       └── input.tsx                     // Input form standar
 │   │
 │   ├── features/                             // 💼 LOGIKA BISNIS PER DOMAIN (Feature-Based)
-│   │   ├── kds/                              // Modul Kitchen Display System Dapur
-│   │   │   ├── kds-data.ts                   // Model data, tipe status kedatangan & mock antrean
-│   │   │   ├── kds-header-stats.tsx          // Header statistik antrean & toggle audio buzzer
-│   │   │   └── kds-order-card.tsx            // Kartu pesanan dapur, alarm masak, grace period
+│   │   ├── kds/                              // Modul Kitchen Display System (Dapur)
+│   │   │   ├── kds-data.ts                   // Tipe data & mock order dapur realtime
+│   │   │   ├── kds-header-stats.tsx          // Bar metrik 4 status order dapur
+│   │   │   └── kds-order-card.tsx            // Kartu pesanan dapur + alarm & grace timer
 │   │   │
 │   │   ├── orders/                           // Modul Pesanan & Keranjang Belanja
 │   │   │   ├── actions.ts                    // Server actions pembuatan order atomik
@@ -115,12 +115,12 @@ QuickDine/
 │   │   │   ├── restaurant-details-data.ts    // Data detail menu, opsi, & meja per resto
 │   │   │   └── table-map.tsx                 // Visual denah meja interaktif customer
 │   │   │
-│   │   └── tables/                           // Modul Manajemen Meja Kasir
+│   │   └── tables/                           // Modul Manajemen Meja Resto & Kasir
 │   │       ├── actions.ts                    // Server actions RPC table locking
-│   │       ├── table-card.tsx                // Kartu meja live (countdown lock, 4 status)
-│   │       ├── table-detail-modal.tsx        // Modal inspeksi pesanan aktif & override status
-│   │       ├── table-walkin-modal.tsx        // Modal check-in tamu walk-in offline
-│   │       └── tables-data.ts                // Model denah meja & pembagian area (Indoor/Outdoor/VIP)
+│   │       ├── table-card.tsx                // Kartu meja individual denah kasir
+│   │       ├── table-detail-modal.tsx        // Modal pop-up aksi check-in, no-show, clear
+│   │       ├── table-walkin-modal.tsx        // Modal input walk-in offline tamu
+│   │       └── tables-data.ts                // Tipe data & mock denah meja kasir
 │   │
 │   ├── services/                             // 🔌 INTEGRASI PIHAK KETIGA (Adapter Pattern)
 │   │   ├── notification/                     // Layanan Notifikasi WhatsApp
@@ -175,10 +175,9 @@ Sistem QuickDine memisahkan tanggung jawab menjadi 4 lapisan terisolasi:
        ▼
 ┌────────────────────────────────────────────────────────┐
 │ 2. Domain Feature Layer (Feature-Driven Architecture)  │
-│    • features/kds      → Kitchen Display & Cooking Alarm│
-│    • features/tables   → 4-State Table & Walk-In Modals │
 │    • features/orders   → Cart Store, Zod Schema, Action│
 │    • features/partner  → Tenant Onboarding Logic       │
+│    • features/tables   → Locking & Status Table Actions│
 │    • features/restaurants → Mock Data & Table Map UI   │
 └────────────────────────────────────────────────────────┘
        │

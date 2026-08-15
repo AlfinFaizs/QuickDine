@@ -1,192 +1,62 @@
-export type TableStatus = "vacant" | "locked" | "reserved" | "occupied" | "maintenance";
-export type TableArea = "Indoor Utama" | "Outdoor Garden" | "VIP Room";
+// src/features/tables/tables-data.ts
+// Tipe data & mock meja untuk halaman Denah Meja Kasir
 
-export interface ActiveTableOrder {
-  orderId: string;
-  orderNumber: string;
-  customerName: string;
-  customerPhone: string;
-  guestCount: number;
-  arrivalTime: string;
-  kitchenStatus: "received" | "cooking" | "ready" | "completed";
-  totalAmount: number;
-  paymentMethod: string;
-  lockRemainingSeconds?: number;
-  seatedSince?: string;
-  items: Array<{ name: string; qty: number; variant?: string }>;
-}
+export type TableStatus = "vacant" | "locked" | "reserved" | "occupied";
 
 export interface DashboardTable {
   id: string;
   number: string;
-  area: TableArea;
   capacity: number;
   status: TableStatus;
-  activeOrder?: ActiveTableOrder;
+  guestName?: string;
+  eta?: string;          // "12:30" untuk reserved, "Sisa 5 mnt" untuk locked
+  orderId?: string;
+  phone?: string;
 }
 
-export const INITIAL_DASHBOARD_TABLES: DashboardTable[] = [
-  {
-    id: "tbl-01",
-    number: "01",
-    area: "Indoor Utama",
-    capacity: 2,
-    status: "vacant",
-  },
-  {
-    id: "tbl-02",
-    number: "02",
-    area: "Indoor Utama",
-    capacity: 4,
-    status: "reserved",
-    activeOrder: {
-      orderId: "ord-102",
-      orderNumber: "QD-8842",
-      customerName: "Sarah Wijaya",
-      customerPhone: "0813-1122-3344",
-      guestCount: 4,
-      arrivalTime: "12:20 WIB",
-      kitchenStatus: "ready",
-      totalAmount: 145000,
-      paymentMethod: "QRIS",
-      items: [
-        { name: "Avocado Coffee Float", qty: 2, variant: "Normal Sweet" },
-        { name: "Matcha Oat Latte", qty: 2, variant: "No Sugar" },
-        { name: "French Fries Bolognese", qty: 1 },
-      ],
-    },
-  },
-  {
-    id: "tbl-03",
-    number: "03",
-    area: "Indoor Utama",
-    capacity: 2,
-    status: "locked",
-    activeOrder: {
-      orderId: "ord-temp-1",
-      orderNumber: "LOCK-391",
-      customerName: "Pelanggan Online (Checkout)",
-      customerPhone: "0819-xxxx-xxxx",
-      guestCount: 2,
-      arrivalTime: "12:45 WIB",
-      kitchenStatus: "received",
-      totalAmount: 58000,
-      paymentMethod: "Menunggu Pembayaran",
-      lockRemainingSeconds: 435, // ~7 minutes left
-      items: [{ name: "Kopi Kenangan Mantan", qty: 2 }],
-    },
-  },
-  {
-    id: "tbl-04",
-    number: "04",
-    area: "Indoor Utama",
-    capacity: 4,
-    status: "reserved",
-    activeOrder: {
-      orderId: "ord-101",
-      orderNumber: "QD-8841",
-      customerName: "Alfin Faiz",
-      customerPhone: "0812-9876-5432",
-      guestCount: 2,
-      arrivalTime: "12:15 WIB",
-      kitchenStatus: "ready",
-      totalAmount: 78000,
-      paymentMethod: "QRIS",
-      items: [
-        { name: "Kopi Kenangan Mantan", qty: 2, variant: "Less Sugar (50%)" },
-        { name: "Toast Coklat Klasik", qty: 1 },
-      ],
-    },
-  },
-  {
-    id: "tbl-05",
-    number: "05",
-    area: "Indoor Utama",
-    capacity: 6,
-    status: "occupied",
-    activeOrder: {
-      orderId: "ord-walkin-1",
-      orderNumber: "WLK-042",
-      customerName: "Keluarga Pak Budi",
-      customerPhone: "-",
-      guestCount: 5,
-      arrivalTime: "11:45 WIB",
-      seatedSince: "40 menit yang lalu",
-      kitchenStatus: "completed",
-      totalAmount: 245000,
-      paymentMethod: "Walk-in Tunai",
-      items: [
-        { name: "Kopi Kenangan Mantan Large", qty: 3 },
-        { name: "Matcha Latte", qty: 2 },
-        { name: "Roti Coklat Klasik", qty: 4 },
-      ],
-    },
-  },
-  {
-    id: "tbl-06",
-    number: "06",
-    area: "Outdoor Garden",
-    capacity: 2,
-    status: "vacant",
-  },
-  {
-    id: "tbl-07",
-    number: "07",
-    area: "Outdoor Garden",
-    capacity: 4,
-    status: "reserved",
-    activeOrder: {
-      orderId: "ord-103",
-      orderNumber: "QD-8843",
-      customerName: "Dimas Pratama",
-      customerPhone: "0877-5566-7788",
-      guestCount: 2,
-      arrivalTime: "12:35 WIB",
-      kitchenStatus: "cooking",
-      totalAmount: 92000,
-      paymentMethod: "Virtual Account",
-      items: [
-        { name: "Caramel Macchiato", qty: 2 },
-        { name: "Croissant Almond", qty: 2 },
-      ],
-    },
-  },
-  {
-    id: "tbl-08",
-    number: "08",
-    area: "Outdoor Garden",
-    capacity: 4,
-    status: "vacant",
-  },
-  {
-    id: "tbl-09",
-    number: "09",
-    area: "VIP Room",
-    capacity: 8,
-    status: "occupied",
-    activeOrder: {
-      orderId: "ord-105",
-      orderNumber: "QD-8845",
-      customerName: "Clarissa Putri & Tim",
-      customerPhone: "0856-7788-9900",
-      guestCount: 6,
-      arrivalTime: "12:10 WIB",
-      seatedSince: "15 menit yang lalu",
-      kitchenStatus: "ready",
-      totalAmount: 310000,
-      paymentMethod: "QRIS",
-      items: [
-        { name: "Hazelnut Choco Milk", qty: 4 },
-        { name: "Americano Ice", qty: 2 },
-        { name: "Platter Snack VIP", qty: 1 },
-      ],
-    },
-  },
-  {
-    id: "tbl-10",
-    number: "10",
-    area: "VIP Room",
-    capacity: 8,
-    status: "vacant",
-  },
+export const INITIAL_TABLES: DashboardTable[] = [
+  { id: "1", number: "01", capacity: 2, status: "occupied", guestName: "Dimas Pratama", eta: "Sedang Makan", phone: "08456789012", orderId: "ord-101" },
+  { id: "2", number: "02", capacity: 4, status: "reserved", guestName: "Budi Santoso", eta: "13:45", phone: "08234567890", orderId: "ord-102" },
+  { id: "3", number: "03", capacity: 2, status: "locked", guestName: "Sedang Checkout", eta: "Sisa 7 mnt" },
+  { id: "4", number: "04", capacity: 4, status: "cooking", guestName: "Alfin Faiz", eta: "12:30", phone: "08123456789", orderId: "ord-103" } as unknown as DashboardTable,
+  { id: "5", number: "05", capacity: 6, status: "vacant" },
+  { id: "6", number: "06", capacity: 2, status: "vacant" },
+  { id: "7", number: "07", capacity: 4, status: "reserved", guestName: "Citra Dewi", eta: "14:15", phone: "08345678901", orderId: "ord-104" },
+  { id: "8", number: "08", capacity: 8, status: "vacant" },
+  { id: "9", number: "09", capacity: 2, status: "occupied", guestName: "Eko Susanto", eta: "Sedang Makan", phone: "08567890123", orderId: "ord-105" },
+  { id: "10", number: "10", capacity: 4, status: "vacant" },
 ];
+
+export const STATUS_CONFIG: Record<
+  TableStatus,
+  { label: string; bg: string; border: string; badge: string; dot: string }
+> = {
+  vacant: {
+    label: "Kosong",
+    bg: "bg-emerald-50",
+    border: "border-emerald-300",
+    badge: "bg-emerald-100 text-emerald-800",
+    dot: "bg-emerald-500",
+  },
+  locked: {
+    label: "Locked (Checkout)",
+    bg: "bg-amber-50",
+    border: "border-amber-300",
+    badge: "bg-amber-100 text-amber-800",
+    dot: "bg-amber-400 animate-pulse",
+  },
+  reserved: {
+    label: "Reserved (Sudah Bayar)",
+    bg: "bg-blue-50",
+    border: "border-blue-300",
+    badge: "bg-blue-100 text-blue-800",
+    dot: "bg-blue-500",
+  },
+  occupied: {
+    label: "Terisi (Sedang Makan)",
+    bg: "bg-slate-50",
+    border: "border-slate-400",
+    badge: "bg-slate-200 text-slate-800",
+    dot: "bg-slate-600",
+  },
+};

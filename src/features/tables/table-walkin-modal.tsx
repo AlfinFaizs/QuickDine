@@ -1,122 +1,81 @@
 "use client";
+// src/features/tables/table-walkin-modal.tsx
+// Modal untuk input tamu walk-in manual kasir
 
 import { useState } from "react";
-import { X, Users, CheckCircle2, UserPlus } from "lucide-react";
+import { X, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DashboardTable } from "./tables-data";
+import type { DashboardTable } from "@/features/tables/tables-data";
 
-interface TableWalkinModalProps {
-  table: DashboardTable | null;
-  isOpen: boolean;
+interface Props {
+  table: DashboardTable;
   onClose: () => void;
-  onConfirmWalkin: (
-    tableId: string,
-    guestName: string,
-    guestCount: number,
-    notes: string
-  ) => void;
+  onConfirm: (tableId: string, guestName: string, phone: string) => void;
 }
 
-export function TableWalkinModal({
-  table,
-  isOpen,
-  onClose,
-  onConfirmWalkin,
-}: TableWalkinModalProps) {
+export function TableWalkInModal({ table, onClose, onConfirm }: Props) {
   const [guestName, setGuestName] = useState("");
-  const [guestCount, setGuestCount] = useState(table ? table.capacity : 2);
-  const [notes, setNotes] = useState("");
-
-  if (!isOpen || !table) return null;
+  const [phone, setPhone] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!guestName.trim()) return;
-    onConfirmWalkin(table.id, guestName.trim(), guestCount, notes.trim());
-    setGuestName("");
-    setNotes("");
-    onClose();
+    onConfirm(table.id, guestName.trim(), phone.trim());
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-[#bccac0]/40 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-[#bccac0]/20 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#006948]/10 text-[#006948]">
-              <UserPlus className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-extrabold text-[#131b2e]">
-                Walk-In Check-In: Meja {table.number}
-              </h3>
-              <p className="text-xs text-[#6d7a72]">
-                {table.area} • Maksimal {table.capacity} Kursi
-              </p>
-            </div>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#bccac0]/30">
+          <div className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5 text-[#006948]" />
+            <h2 className="text-base font-extrabold text-[#131b2e]">
+              Walk-In Meja {table.number}
+            </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-[#6d7a72] hover:bg-slate-100 hover:text-[#131b2e]"
+            className="rounded-full p-1.5 hover:bg-[#f2f3ff] transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 text-[#131b2e]" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          <p className="text-xs text-[#6d7a72]">
+            Isi data tamu walk-in untuk mengunci meja {table.number} secara manual.
+          </p>
+
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">
-              Nama Tamu / Pelanggan Walk-In <span className="text-red-500">*</span>
+            <label className="text-xs font-semibold text-[#131b2e]">
+              Nama Tamu <span className="text-red-500">*</span>
             </label>
-            <Input
-              required
-              placeholder="cth: Bapak Heru / Ibu Maya"
+            <input
+              type="text"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
-              className="text-xs h-10"
-              autoFocus
+              placeholder="Contoh: Bapak Hendra"
+              required
+              className="w-full h-10 rounded-xl border border-[#bccac0]/40 px-3 text-sm text-[#131b2e] placeholder:text-[#6d7a72] focus:border-[#006948] focus:outline-none focus:ring-2 focus:ring-[#006948]/20 transition-all"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">Jumlah Tamu (Pax)</label>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 6, 8]
-                .filter((n) => n <= table.capacity)
-                .map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setGuestCount(n)}
-                    className={`flex-1 rounded-xl py-2 text-xs font-bold border transition-colors ${
-                      guestCount === n
-                        ? "bg-[#006948] text-white border-[#006948]"
-                        : "bg-white text-[#131b2e] border-[#bccac0]/40 hover:bg-[#f2f3ff]"
-                    }`}
-                  >
-                    {n}pax
-                  </button>
-                ))}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#131b2e]">Catatan Tambahan (Opsional)</label>
-            <textarea
-              placeholder="cth: Minta baby chair, bayar tunai di kasir..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
-              className="w-full rounded-xl border border-[#bccac0]/40 p-2.5 text-xs text-[#131b2e] placeholder:text-[#6d7a72] focus:border-[#006948] focus:outline-none focus:ring-2 focus:ring-[#006948]/20"
+            <label className="text-xs font-semibold text-[#131b2e]">
+              No. HP (Opsional)
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="08xxxxxxxxxx"
+              className="w-full h-10 rounded-xl border border-[#bccac0]/40 px-3 text-sm text-[#131b2e] placeholder:text-[#6d7a72] focus:border-[#006948] focus:outline-none focus:ring-2 focus:ring-[#006948]/20 transition-all"
             />
           </div>
 
-          {/* Action buttons */}
-          <div className="pt-3 flex gap-2">
+          <div className="flex gap-2 pt-2">
             <Button
               type="button"
               variant="outline"
@@ -127,10 +86,11 @@ export function TableWalkinModal({
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-[#006948] hover:bg-[#005137] text-white text-xs h-10 font-bold gap-1"
+              disabled={!guestName.trim()}
+              className="flex-1 bg-[#006948] hover:bg-[#005137] text-white font-bold text-xs h-10 gap-1.5"
             >
-              <CheckCircle2 className="h-4 w-4" />
-              <span>Dudukkan Tamu</span>
+              <UserPlus className="h-4 w-4" />
+              Check-In Walk-In
             </Button>
           </div>
         </form>

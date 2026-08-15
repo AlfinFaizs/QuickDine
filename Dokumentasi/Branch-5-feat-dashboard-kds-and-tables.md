@@ -2,92 +2,108 @@
 
 ## Ringkasan Branch
 
-Branch ini berfokus pada pembangunan **Portal Operasional Restoran (Back-Office & Front-of-House)** yang terdiri dari dua modul inti:
-1. **Kitchen Display System (KDS) Real-Time (`/dashboard/kds`)** — Antrean pesanan dapur live, alarm waktu mulai masak, dan penanganan keterlambatan tamu (Grace Period).
-2. **Kontrol Denah Meja Kasir Live (`/dashboard/tables`)** — Visualisasi denah meja interaktif dengan 4 status penuh (*VACANT*, *LOCKED*, *RESERVED*, *OCCUPIED*), check-in tamu walk-in offline, dan modal inspeksi detail pesanan meja.
+Branch ini mengimplementasikan **Portal Operasional Restoran** yang berfokus pada dua modul krusial di sisi dapur dan kasir:
+1. **Kitchen Display System (KDS)** di `/dashboard/kds` — antrean pesanan real-time untuk tim dapur.
+2. **Denah Meja Live & Kontrol Kasir** di `/dashboard/tables` — visual denah meja dengan 4 status penuh dan kontrol walk-in manual.
 
 ---
 
 ## Apa yang Dikerjakan
 
-### 1. Kitchen Display System (KDS) Realtime (`/dashboard/kds`)
-- **Alarm Waktu Masak Otomatis (Cook Trigger Alarm):** Sistem menghitung mundur jam kedatangan pelanggan ($T_{\text{arr}}$). Saat waktu tersisa $\le 15$ menit, kartu pesanan otomatis memunculkan banner oranye/amber menyala: *"Waktunya Masak! (Tiba dlm X mnt)"*.
-- **Grace Period & Keterlambatan Tamu:**
-  - 🟡 **Keterlambatan 1–15 Menit:** Kartu pesanan memunculkan timer kuning *"Tamu Terlambat (+X menit)"*.
-  - 🔴 **Lewat Toleransi (>15 Menit):** Kartu pesanan berkedip merah *"LEWAT BATAS TOLERANSI"* dengan 2 tombol aksi:
-    - **`[Bungkus (Takeaway) & Kosongkan Meja]`** — Mengubah status pesanan menjadi `converted_takeaway` dan membebaskan meja menjadi `VACANT`.
-    - **`[+ Beri Toleransi Tambahan (10 Menit)]`** — Memberikan kelonggaran waktu jika resto sedang sepi.
-- **Dukungan Kustomisasi Menu & Catatan Koki:** Menampilkan opsi varian (suhu, level pedas, jenis susu/gula) dan catatan khusus dapur dalam kotak sorotan khusus.
-- **Tombol Aksi Dapur:**
-  - `[Mulai Masak]` $\rightarrow$ status beralih ke `cooking`
-  - `[Selesai Masak & Siap Saji]` $\rightarrow$ status beralih ke `ready`
-  - `[Tamu Tiba]` $\rightarrow$ konfirmasi tamu duduk, menghentikan timer keterlambatan
-  - `[Selesai Santap]` $\rightarrow$ status beralih ke `completed`
-- **Filter Tab Antrean:** *Semua Pesanan*, *Perlu Dimasak*, *Sedang Dimasak*, *Siap Saji*, *Peringatan Terlambat*, dan *Riwayat Selesai*.
-- **Metrik Realtime & Toggle Audio:** Menghitung total antrean, buzzer alarm suara dapur on/off, dan pencarian instan meja/pesanan/nama pelanggan.
+### 1. Kitchen Display System (KDS) (`/dashboard/kds`)
+- **Header Stats Realtime**: Menampilkan metrik ringkas: *Menunggu Masak*, *Sedang Dimasak*, *Siap Disajikan*, dan *Total Pesanan Aktif*.
+- **Filter Tabs**: Tab filter dinamis (*Semua*, *Menunggu Masak*, *Sedang Dimasak*, *Siap Saji*) dengan indikator jumlah pesanan per status.
+- **Kartu Pesanan Interaktif (`kds-order-card.tsx`)**:
+  - Badge status memasak (`received`, `cooking`, `ready`) dan nomor meja besar.
+  - Nama customer, no HP, dan rincian menu + catatan khusus koki (notes highlighting).
+  - **Hitung Mundur Estimasi Kedatangan Tamu**: Menghitung selisih waktu tiba secara real-time.
+  - **Grace Period (Toleransi Keterlambatan Tamu 15 Menit)**:
+    - 🟡 *Tamu Terlambat (+X menit)*: Banner kuning otomatis jika melewati jam tiba.
+    - 🔴 *Lewat Batas Toleransi (+X menit)*: Banner merah berkedip jika melewati 15 menit keterlambatan.
+  - **Tombol Aksi Dapur**:
+    - `[Mulai Masak Sekarang]` (status: `received` → `cooking`)
+    - `[Tandai Siap Saji]` (status: `cooking` → `ready`)
+    - `[Tamu Tiba ✓]` (Check-in customer saat tiba di meja)
+    - `[Bungkus & Lepas Meja]` (No-Show trigger: bungkus makanan dan bebaskan meja)
+    - `[Beri Toleransi Lagi]` (Memberikan toleransi waktu ekstra bagi tamu)
+- **Tombol Reset Demo**: Mengembalikan pesanan demo ke kondisi awal untuk simulasi.
+
+### 2. Denah Meja Live — Kasir (`/dashboard/tables`)
+- **Indikator 4 Status Penuh**:
+  - 🟢 **VACANT (Kosong)**: Meja siap pakai.
+  - 🟡 **LOCKED (Sedang Checkout)**: Meja dikunci 10 menit oleh sistem customer.
+  - 🔵 **RESERVED (Sudah Bayar)**: Tamu sudah pre-order & bayar, menunggu jam kedatangan.
+  - ⚪ **OCCUPIED (Sedang Makan)**: Tamu aktif berada di meja.
+- **Legend & Ringkasan Metrik**: Bar kartu jumlah meja per masing-masing status.
+- **Kartu Meja Interaktif (`table-card.tsx`)**:
+  - Visual status color-coded, nomor meja, kapasitas kursi.
+  - Informasi tamu pemesan, estimasi jam tiba, nomor HP, dan ID pesanan jika ada.
+- **Modal Input Walk-In Kasir (`table-walkin-modal.tsx`)**:
+  - Jika kasir mengklik meja kosong (VACANT), muncul formulir instan untuk menginput nama tamu & no HP walk-in offline. Status meja otomatis berubah ke OCCUPIED.
+- **Modal Aksi Detail Meja (`table-detail-modal.tsx`)**:
+  - Muncul saat kasir mengklik meja berstatus `reserved`, `occupied`, atau `locked`.
+  - Aksi: `[Tamu Tiba — Check-In Sekarang]`, `[Trigger No-Show — Bungkus & Lepas Meja]`, dan `[Kosongkan Meja (Tamu Selesai)]`.
+
+### 3. Dashboard Layout Enhancement (`layout.tsx`)
+- Menambahkan **Badge Counter Pesanan Aktif** pada sidebar menu KDS dan top header bar.
+- Menambahkan **Mobile Bottom Navigation Bar** untuk kemudahan navigasi staf saat menggunakan perangkat tablet/smartphone kasir.
+- Status badge `KDS Live Online` dengan pulsing indicator.
 
 ---
 
-### 2. Manajemen Denah Meja Kasir Live (`/dashboard/tables`)
-- **4 Status Penuh Meja (Live Status Badges):**
-  - 🟢 **`VACANT` (Kosong):** Meja bersih dan siap menerima tamu baru atau pesanan online.
-  - 🟡 **`LOCKED` (Sedang Checkout):** Meja sedang dikunci oleh pelanggan online dengan timer hitung mundur live 10 menit (`10:00` $\rightarrow$ `00:00`). Meja otomatis un-lock jika waktu habis.
-  - 🔵 **`RESERVED` (Sudah Bayar):** Tamu telah melunasi pre-order online, menampilkan nama tamu, jam estimasi tiba, dan status masakan di dapur.
-  - 🔴 **`OCCUPIED` (Sedang Makan):** Tamu sudah duduk di meja, menampilkan durasi duduk dan daftar pesanan aktif.
-- **Walk-In Check-In Modal (`TableWalkinModal`):** Kasir dapat memasukkan tamu walk-in offline langsung ke meja kosong (Nama, Jumlah Pax 1–8, dan Catatan Tambahan).
-- **Inspeksi Detail Meja Modal (`TableDetailModal`):** Kasir dapat melihat rincian lengkap menu makanan, kontak WhatsApp pelanggan, total pembayaran, dan override status meja manual (*Set Vacant*, *Set Occupied*, *Set Maintenance*).
-- **Filter Area & Metrik Occupancy:** Tab pembagian area (*Semua Area*, *Indoor Utama*, *Outdoor Garden*, *VIP Room*), status filter, dan ringkasan persentase keterisian meja (*Occupancy Rate %*).
-
----
-
-## File yang Tersentuh / Dibuat
+## File Baru & File yang Tersentuh
 
 ### [NEW] `src/features/kds/kds-data.ts`
-Model data TypeScript, tipe status kedatangan (`on_the_way`, `arrived`, `late_grace`, `tolerance_exceeded`), status dapur (`received`, `cooking`, `ready`, `completed`, `converted_takeaway`), serta mock dataset antrean dapur.
+Definisi tipe data TypeScript (`KdsOrder`, `KdsOrderItem`, `KdsOrderStatus`) dan data mock pesanan KDS dengan perhitungan waktu dinamis.
 
 ### [NEW] `src/features/kds/kds-order-card.tsx`
-Komponen modular kartu pesanan dapur dengan styling status dinamis, banner alarm masak, timer keterlambatan, rincian varian menu, tautan WhatsApp tamu, dan tombol aksi tahapan memasak.
+Komponen kartu pesanan dapur modular. Dilengkapi hook penghitung menit sejak order, countdown kedatangan, banner late/grace-period, dan rangkaian tombol aksi.
 
 ### [NEW] `src/features/kds/kds-header-stats.tsx`
-Komponen header statistik live antrean dapur, 4 kartu metrik counter, toggle alarm suara buzzer, dan search input filter.
+Komponen bar 4 statistik status pesanan KDS dengan color coding dan ikon terpadu.
 
 ### [MODIFIED] `src/app/(dashboard)/dashboard/kds/page.tsx`
-Halaman utama KDS (< 200 baris) mengintegrasikan seluruh komponen KDS, filter tabs, transisi status masak, check-in tamu, toleransi, dan no-show trigger.
+Halaman utama KDS yang mengintegrasikan stats, filter tabs, order grid, serta state handlers untuk status progression, check-in, dan no-show.
 
 ### [NEW] `src/features/tables/tables-data.ts`
-Model data denah meja, pembagian area (*Indoor Utama*, *Outdoor Garden*, *VIP Room*), kapasitas kursi, 4 status meja, dan model pesanan aktif meja.
+Definisi tipe data `DashboardTable`, `TableStatus`, mock tables data, dan konfigurasi styling per status (`STATUS_CONFIG`).
 
 ### [NEW] `src/features/tables/table-card.tsx`
-Komponen modular kartu meja kasir dengan live countdown lock 10 menit, badge status 4 warna, preview pesanan aktif, dan tombol cepat aksi (*Walk-In, Tamu Tiba, Kosongkan, Detail*).
+Komponen kartu meja individual untuk denah kasir dengan indikator status visual dan ringkasan info tamu.
 
 ### [NEW] `src/features/tables/table-walkin-modal.tsx`
-Komponen modal form check-in tamu walk-in offline dengan pilihan pax cepat dan validasi kapasitas meja.
+Modal pop-up form input tamu walk-in offline untuk meja kosong.
 
 ### [NEW] `src/features/tables/table-detail-modal.tsx`
-Komponen modal pop-up inspeksi detail meja, breakdown menu makanan, kontak pelanggan, dan tombol override status manual.
+Modal pop-up aksi detail meja untuk check-in reservasi, no-show release, dan clear table.
 
 ### [MODIFIED] `src/app/(dashboard)/dashboard/tables/page.tsx`
-Halaman kontrol denah meja kasir (< 200 baris) dengan top metric cards (*Kosong, Locked, Reserved, Occupied, Occupancy Rate %*), filter area, dan grid denah meja.
+Halaman utama manajemen denah meja kasir yang mengintegrasikan filter, visual grid meja, modal walk-in, dan modal aksi detail.
+
+### [MODIFIED] `src/app/(dashboard)/dashboard/layout.tsx`
+Layout dashboard resto dengan counter pesanan aktif pada sidebar, status live online, dan mobile bottom navigation bar.
 
 ---
 
-## Audit Batas Baris Kode (< 500 Baris)
+## Audit Baris (Kepatuhan < 500 baris)
 
-| File | Baris | Status |
-|---|---|---|
-| `src/features/kds/kds-data.ts` | 165 | ✅ Lolos (< 500 baris) |
-| `src/features/kds/kds-order-card.tsx` | 248 | ✅ Lolos (< 500 baris) |
-| `src/features/kds/kds-header-stats.tsx` | 114 | ✅ Lolos (< 500 baris) |
-| `src/app/(dashboard)/dashboard/kds/page.tsx` | 188 | ✅ Lolos (< 500 baris) |
-| `src/features/tables/tables-data.ts` | 155 | ✅ Lolos (< 500 baris) |
-| `src/features/tables/table-card.tsx` | 208 | ✅ Lolos (< 500 baris) |
-| `src/features/tables/table-walkin-modal.tsx` | 115 | ✅ Lolos (< 500 baris) |
-| `src/features/tables/table-detail-modal.tsx` | 148 | ✅ Lolos (< 500 baris) |
-| `src/app/(dashboard)/dashboard/tables/page.tsx` | 196 | ✅ Lolos (< 500 baris) |
+| File | Jumlah Baris |
+|---|---|
+| `features/kds/kds-data.ts` | 89 |
+| `features/kds/kds-order-card.tsx` | 240 |
+| `features/kds/kds-header-stats.tsx` | 74 |
+| `(dashboard)/dashboard/kds/page.tsx` | 134 |
+| `features/tables/tables-data.ts` | 64 |
+| `features/tables/table-card.tsx` | 83 |
+| `features/tables/table-walkin-modal.tsx` | 89 |
+| `features/tables/table-detail-modal.tsx` | 114 |
+| `(dashboard)/dashboard/tables/page.tsx` | 179 |
+| `(dashboard)/dashboard/layout.tsx` | 143 |
+
+Seluruh file berada jauh di bawah batas 500 baris. ✅
 
 ---
 
-## Verifikasi Kompilasi
+## Verifikasi Build
 
-- `npx next build`: **0 Error (19/19 Rute Terkompilasi Bersih)**
-- `/dashboard/kds` dan `/dashboard/tables` terdaftar sebagai Static (○) pre-rendered pages.
+Build `npx next build` berjalan dengan **0 error**, seluruh 19 routes lolos pre-rendering / dynamic serving dengan sempurna.

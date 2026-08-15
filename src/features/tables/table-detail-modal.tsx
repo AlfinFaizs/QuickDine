@@ -1,195 +1,113 @@
 "use client";
+// src/features/tables/table-detail-modal.tsx
+// Modal aksi detail meja — check-in, no-show, kosongkan
 
-import { 
-  X, 
-  Users, 
-  Clock, 
-  Phone, 
-  Utensils, 
-  DollarSign, 
-  CheckCircle2, 
-  AlertTriangle,
-  RefreshCw
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { X, UserCheck, PackageOpen, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DashboardTable, TableStatus } from "./tables-data";
+import { STATUS_CONFIG, type DashboardTable } from "@/features/tables/tables-data";
 
-interface TableDetailModalProps {
-  table: DashboardTable | null;
-  isOpen: boolean;
+interface Props {
+  table: DashboardTable;
   onClose: () => void;
-  onStatusChange: (tableId: string, status: TableStatus) => void;
+  onAction: (tableId: string, action: "checkin" | "noshow" | "clear") => void;
 }
 
-export function TableDetailModal({
-  table,
-  isOpen,
-  onClose,
-  onStatusChange,
-}: TableDetailModalProps) {
-  if (!isOpen || !table) return null;
-
-  const isVacant = table.status === "vacant";
-  const isLocked = table.status === "locked";
-  const isReserved = table.status === "reserved";
-  const isOccupied = table.status === "occupied";
-  const order = table.activeOrder;
+export function TableDetailModal({ table, onClose, onAction }: Props) {
+  const cfg = STATUS_CONFIG[table.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.vacant;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl border border-[#bccac0]/40 space-y-5 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-[#bccac0]/20 pb-3">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl overflow-hidden">
+        {/* Modal Header */}
+        <div className={`flex items-center justify-between px-5 py-4 border-b ${cfg.bg} ${cfg.border}`}>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-black text-[#131b2e]">
-                Meja {table.number}
-              </h3>
-              <Badge
-                variant={
-                  isVacant
-                    ? "success"
-                    : isLocked
-                    ? "warning"
-                    : isReserved
-                    ? "default"
-                    : "secondary"
-                }
-                className="text-[10px] uppercase font-bold"
-              >
-                {table.status}
-              </Badge>
-            </div>
-            <p className="text-xs text-[#6d7a72] mt-0.5">
-              Area: <strong className="text-[#131b2e]">{table.area}</strong> • Kapasitas: <strong className="text-[#131b2e]">{table.capacity} Orang</strong>
-            </p>
+            <h2 className="text-base font-extrabold text-[#131b2e]">
+              Meja {table.number}
+            </h2>
+            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${cfg.badge}`}>
+              {cfg.label}
+            </span>
           </div>
-
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-[#6d7a72] hover:bg-slate-100 hover:text-[#131b2e]"
+            className="rounded-full p-1.5 hover:bg-black/10 transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 text-[#131b2e]" />
           </button>
         </div>
 
-        {/* Content */}
-        {order ? (
-          <div className="space-y-4 text-xs">
-            {/* Customer Contact Card */}
-            <div className="rounded-xl bg-[#faf8ff] p-3.5 border border-[#bccac0]/30 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[#6d7a72]">Nama Pelanggan:</span>
-                <span className="font-bold text-[#131b2e]">{order.customerName}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#6d7a72]">No. Pesanan:</span>
-                <span className="font-mono font-bold text-[#006948]">#{order.orderNumber}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#6d7a72]">Estimasi Jam Tiba:</span>
-                <span className="font-bold text-[#131b2e] flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-[#006948]" />
-                  {order.arrivalTime}
+        <div className="p-5 space-y-4">
+          {/* Guest Info */}
+          {table.guestName && (
+            <div className="rounded-xl bg-[#f2f3ff] p-3 space-y-1 text-sm">
+              <span className="font-bold text-[#131b2e] block">{table.guestName}</span>
+              {table.eta && (
+                <span className="text-xs text-[#6d7a72]">⏰ ETA: {table.eta}</span>
+              )}
+              {table.phone && (
+                <span className="text-xs text-[#6d7a72] block">📞 {table.phone}</span>
+              )}
+              {table.orderId && (
+                <span className="text-[10px] font-mono text-[#006948]">
+                  #{table.orderId}
                 </span>
-              </div>
-              {order.customerPhone !== "-" && (
-                <div className="flex items-center justify-between pt-1 border-t border-[#bccac0]/20">
-                  <span className="text-[#6d7a72]">WhatsApp:</span>
-                  <a
-                    href={`https://wa.me/${order.customerPhone.replace(/[^0-9]/g, "")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-bold text-[#006948] hover:underline flex items-center gap-1"
-                  >
-                    <Phone className="h-3 w-3" />
-                    {order.customerPhone}
-                  </a>
-                </div>
               )}
             </div>
+          )}
 
-            {/* Ordered Items Summary */}
-            <div className="space-y-2">
-              <h4 className="font-bold text-[#131b2e] flex items-center gap-1.5">
-                <Utensils className="h-4 w-4 text-[#006948]" />
-                <span>Rincian Menu ({order.items.length} Item)</span>
-              </h4>
+          {/* Actions */}
+          <div className="space-y-2">
+            {/* Reserved → Check In */}
+            {table.status === "reserved" && (
+              <Button
+                onClick={() => onAction(table.id, "checkin")}
+                className="w-full bg-[#006948] hover:bg-[#005137] text-white font-bold text-sm h-11 gap-2"
+              >
+                <UserCheck className="h-5 w-5" />
+                Tamu Tiba — Check-In Sekarang
+              </Button>
+            )}
 
-              <div className="rounded-xl border border-[#bccac0]/30 divide-y divide-[#bccac0]/20 overflow-hidden">
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="p-2.5 flex items-center justify-between bg-white">
-                    <div>
-                      <span className="font-bold text-[#131b2e]">{item.qty}x </span>
-                      <span className="text-[#131b2e] font-semibold">{item.name}</span>
-                      {item.variant && (
-                        <p className="text-[11px] text-[#6d7a72] mt-0.5">Opsi: {item.variant}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Reserved/Occupied → No-Show */}
+            {(table.status === "reserved" || table.status === "occupied") && (
+              <Button
+                onClick={() => onAction(table.id, "noshow")}
+                variant="outline"
+                className="w-full text-red-600 border-red-300 hover:bg-red-50 font-bold text-sm h-11 gap-2"
+              >
+                <PackageOpen className="h-5 w-5" />
+                Trigger No-Show — Bungkus &amp; Lepas Meja
+              </Button>
+            )}
 
-            {/* Total Billing */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200">
-              <span className="font-medium">Total Pembayaran ({order.paymentMethod}):</span>
-              <span className="font-black text-sm text-[#006948]">
-                Rp {order.totalAmount.toLocaleString("id-ID")}
-              </span>
-            </div>
+            {/* Occupied/Locked → Clear */}
+            {(table.status === "occupied" || table.status === "locked") && (
+              <Button
+                onClick={() => onAction(table.id, "clear")}
+                variant="outline"
+                className="w-full text-slate-700 border-slate-300 hover:bg-slate-50 font-semibold text-sm h-11 gap-2"
+              >
+                <Trash2 className="h-5 w-5" />
+                Kosongkan Meja (Tamu Selesai)
+              </Button>
+            )}
+
+            {/* Vacant actions — nothing actionable */}
+            {table.status === "vacant" && (
+              <p className="text-sm text-center text-[#6d7a72] py-2">
+                Meja ini kosong dan siap untuk tamu baru.
+              </p>
+            )}
           </div>
-        ) : (
-          <div className="rounded-xl bg-slate-50 p-6 text-center border border-dashed border-[#bccac0]/50 space-y-1">
-            <span className="text-sm font-bold text-[#131b2e]">Meja Tidak Memiliki Pesanan Aktif</span>
-            <p className="text-xs text-[#6d7a72]">
-              Meja ini sedang kosong dan siap digunakan untuk pemesanan baru.
-            </p>
-          </div>
-        )}
 
-        {/* Status Override Buttons */}
-        <div className="border-t border-[#bccac0]/20 pt-4 space-y-2">
-          <label className="text-[11px] font-bold uppercase tracking-wider text-[#6d7a72] block">
-            Override Status Meja Manual:
-          </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <Button
-              size="sm"
-              variant={isVacant ? "default" : "outline"}
-              onClick={() => {
-                onStatusChange(table.id, "vacant");
-                onClose();
-              }}
-              className={`text-xs h-9 ${isVacant ? "bg-[#006948]" : ""}`}
-            >
-              Set Kosong (Vacant)
-            </Button>
-            <Button
-              size="sm"
-              variant={isOccupied ? "default" : "outline"}
-              onClick={() => {
-                onStatusChange(table.id, "occupied");
-                onClose();
-              }}
-              className="text-xs h-9"
-            >
-              Set Terisi (Occupied)
-            </Button>
-            <Button
-              size="sm"
-              variant={table.status === "maintenance" ? "destructive" : "outline"}
-              onClick={() => {
-                onStatusChange(table.id, "maintenance");
-                onClose();
-              }}
-              className="text-xs h-9 text-slate-700"
-            >
-              Maintenance
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="w-full text-xs text-[#6d7a72] h-9"
+          >
+            Tutup
+          </Button>
         </div>
       </div>
     </div>

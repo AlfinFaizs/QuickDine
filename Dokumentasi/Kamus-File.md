@@ -1,6 +1,6 @@
 # 📖 Kamus File Proyek QuickDine (Ensiklopedia Modul)
 
-Dokumen ini berisi **kamus file proyek lengkap dan ensiklopedia modul** pada repositori **QuickDine** per Agustus 2026 (pasca **Branch-0 Fondasi + Branch-1 Otentikasi + Branch-2 Pendaftaran Mitra + Branch-3 Alur Pemesanan Customer + Branch-4 Landing & Jelajah + Branch-5 KDS & Meja Kasir**).
+Dokumen ini berisi **kamus file proyek lengkap dan ensiklopedia modul** pada repositori **QuickDine** per Agustus 2026 (pasca **Branch-0 s/d Branch-5: Dashboard KDS & Tables**).
 
 Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan antar-modul, branch asal, serta status batas panjang baris (<500 baris).
 
@@ -81,15 +81,15 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/features/restaurants/menu-variant-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/menu-variant-modal.tsx) | Branch-3 | 217 | Modal pop-up kustomisasi varian makanan, counter jumlah, catatan koki, dan tombol tambah ke keranjang. |
 | [`src/features/restaurants/jelajah-content.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/jelajah-content.tsx) | Branch-4 | 282 | Komponen konten utama halaman `/jelajah`. Berisi logika search real-time, sort 4 opsi, filter kategori pill, grid restoran 3 kolom, pagination "Tampilkan Lebih Banyak", dan empty state. Dipisah dari `page.tsx` agar bisa dibungkus `<Suspense>` (wajib Next.js 16 karena menggunakan `useSearchParams()`). |
 | **Fitur: Kitchen Display System (KDS)** | | | |
-| [`src/features/kds/kds-data.ts`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-data.ts) | **Branch-5** | 165 | Data types status antrean dapur, status kedatangan tamu (`on_the_way`, `arrived`, `late_grace`, `tolerance_exceeded`), dan mock dataset antrean live. |
-| [`src/features/kds/kds-header-stats.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-header-stats.tsx) | **Branch-5** | 114 | Header statistik antrean dapur, 4 kartu counter status, buzzer audio alarm toggle, dan search bar antrean. |
-| [`src/features/kds/kds-order-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-order-card.tsx) | **Branch-5** | 248 | Komponen kartu pesanan dapur: banner alarm masak, timer keterlambatan kuning/merah, rincian varian menu, tautan WA, dan tombol aksi status. |
-| **Fitur: Tables Management** | | | |
-| [`src/features/tables/tables-data.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/tables-data.ts) | **Branch-5** | 155 | Data types denah meja, pembagian area (*Indoor Utama*, *Outdoor Garden*, *VIP Room*), kapasitas kursi, 4 status meja, dan model pesanan aktif meja. |
-| [`src/features/tables/table-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-card.tsx) | **Branch-5** | 208 | Kartu meja kasir interaktif: countdown timer lock 10m, badge 4 warna, preview nama tamu / menu, dan tombol aksi (*Walk-In, Check-In, Kosongkan, Detail*). |
-| [`src/features/tables/table-walkin-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-walkin-modal.tsx) | **Branch-5** | 115 | Modal pop-up formulir check-in tamu walk-in offline kasir dengan quick selector pax dan catatan koki. |
-| [`src/features/tables/table-detail-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-detail-modal.tsx) | **Branch-5** | 148 | Modal pop-up inspeksi detail meja: rincian menu dipesan, total tagihan, WhatsApp pelanggan, dan override manual status meja. |
+| [`src/features/kds/kds-data.ts`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-data.ts) | **Branch-5** | 89 | Definisi tipe data (`KdsOrder`, `KdsOrderItem`, `KdsOrderStatus`) dan data mock pesanan dapur terstruktur dengan timestamp dinamis. |
+| [`src/features/kds/kds-order-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-order-card.tsx) | **Branch-5** | 240 | Komponen kartu pesanan dapur interaktif dengan timer elapsed, hitung mundur tiba, banner late (+1m) & grace period (+15m), tombol masak, check-in, dan no-show trigger. |
+| [`src/features/kds/kds-header-stats.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-header-stats.tsx) | **Branch-5** | 74 | Bar visual 4 metrik status pesanan dapur (Menunggu Masak, Sedang Dimasak, Siap Saji, Total Aktif). |
+| **Fitur: Tables Management & Cashier Control** | | | |
 | [`src/features/tables/actions.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/actions.ts) | Branch-0 | 55 | Server Action untuk memanggil RPC database `lock_table_for_checkout` (penguncian meja 10 menit) secara atomik. |
+| [`src/features/tables/tables-data.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/tables-data.ts) | **Branch-5** | 64 | Definisi tipe data (`DashboardTable`, `TableStatus`), mock denah meja kasir, dan dictionary konfigurasi visual status (`STATUS_CONFIG`). |
+| [`src/features/tables/table-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-card.tsx) | **Branch-5** | 83 | Komponen kartu meja individual kasir dengan color-coded 4 status, info tamu, ETA, no HP, dan kapasitas kursi. |
+| [`src/features/tables/table-walkin-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-walkin-modal.tsx) | **Branch-5** | 89 | Modal pop-up input data tamu walk-in offline untuk meja kosong (VACANT). |
+| [`src/features/tables/table-detail-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-detail-modal.tsx) | **Branch-5** | 114 | Modal pop-up aksi detail meja kasir (Check-In Tamu Tiba, Trigger No-Show Bungkus, Kosongkan Meja Selesai). |
 
 ---
 
@@ -125,9 +125,9 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/app/(auth)/login/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28auth%29/login/page.tsx) | Branch-1 | 492 | Halaman login Google 1-click, registrasi customer dengan validasi 8-karakter, dan switcher portal staf resto. |
 | [`src/app/auth/callback/route.ts`](file:///c:/My_Koding/QuickDine/src/app/auth/callback/route.ts) | Branch-1 | 24 | Handler pertukaran kode OAuth Google / Magic Link menjadi sesi otentikasi user aktif. |
 | **Portal Resto `(dashboard)`** | | | |
-| [`src/app/(dashboard)/dashboard/layout.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/layout.tsx) | Branch-0 / 2 | 115 | Sidebar layout dashboard resto dengan BrandLogo dan indikator status online KDS. |
-| [`src/app/(dashboard)/dashboard/kds/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/kds/page.tsx) | Branch-0 / **5** | 188 | **[Branch-5: Dirombak Penuh]** Layar KDS antrean dapur realtime: filter tab status, search bar, cook trigger alarm, grace period, check-in tamu, toleransi, dan no-show takeaway trigger. |
-| [`src/app/(dashboard)/dashboard/tables/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/tables/page.tsx) | Branch-0 / **5** | 196 | **[Branch-5: Dirombak Penuh]** Layar kasir kontrol live denah meja: 4 status meja penuh, tab filter area (*Indoor, Outdoor, VIP*), occupancy rate, walk-in modal, dan detail modal. |
+| [`src/app/(dashboard)/dashboard/layout.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/layout.tsx) | Branch-0 / 2 / **5** | 143 | Layout dashboard resto dengan BrandLogo, badge counter pesanan aktif pada menu KDS & header bell, status KDS Live online, dan bottom navigation mobile. |
+| [`src/app/(dashboard)/dashboard/kds/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/kds/page.tsx) | Branch-0 / **5** | 134 | **[Branch-5: Dirombak]** Layar Kitchen Display System dapur: antrean pesanan real-time, filter tabs status, kartu pesanan dengan alarm masak & grace period late timer, check-in, dan demo reset. |
+| [`src/app/(dashboard)/dashboard/tables/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/tables/page.tsx) | Branch-0 / **5** | 179 | **[Branch-5: Dirombak]** Layar kontrol denah meja kasir: legend 4 status penuh, metrik ringkasan, grid meja interaktif, modal walk-in check-in offline, dan modal aksi detail meja. |
 | [`src/app/(dashboard)/dashboard/menu/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/menu/page.tsx) | Branch-0 | 75 | Halaman manajemen master menu resto dan toggle ketersediaan stok habis. |
 | [`src/app/(dashboard)/dashboard/finance/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/finance/page.tsx) | Branch-0 | 80 | Halaman rekap omset bersih harian dan riwayat pencairan saldo (*Payout H+1*). |
 | [`src/app/(dashboard)/dashboard/settings/page.tsx`](file:///c:/My_Koding/QuickDine/src/app/%28dashboard%29/dashboard/settings/page.tsx) | Branch-0 | 78 | Halaman konfigurasi resto, jam operasional, dan parameter `cook_trigger_minutes`. |
