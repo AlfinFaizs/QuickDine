@@ -14,7 +14,9 @@ import {
   EyeOff,
   Store,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  Check,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,11 +61,18 @@ function LoginForm() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isRegisteredSuccess, setIsRegisteredSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const supabase = createClient();
+
+  // Password validation checks for register mode
+  const hasMinLength = password.length >= 8;
+  const hasLetterAndNumber = /[A-Za-z]/.test(password) && /[0-9]/.test(password);
+  const isPasswordMatch = password.length > 0 && password === confirmPassword;
 
   // 1. Google 1-Click OAuth Login
   const handleGoogleLogin = async () => {
@@ -89,13 +98,28 @@ function LoginForm() {
       return;
     }
 
+    if (customerMode === "register") {
+      if (!fullName.trim()) {
+        toast.error("Nama lengkap wajib diisi.");
+        return;
+      }
+      if (!hasMinLength) {
+        toast.error("Kata sandi minimal 8 karakter.");
+        return;
+      }
+      if (!hasLetterAndNumber) {
+        toast.error("Kata sandi harus mengandung kombinasi huruf dan angka.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Konfirmasi kata sandi tidak cocok.");
+        return;
+      }
+    }
+
     startTransition(async () => {
       try {
         if (customerMode === "register") {
-          if (!fullName) {
-            toast.error("Nama lengkap wajib diisi.");
-            return;
-          }
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -224,6 +248,8 @@ function LoginForm() {
                 onClick={() => {
                   setIsRegisteredSuccess(false);
                   setCustomerMode("login");
+                  setPassword("");
+                  setConfirmPassword("");
                 }}
                 className="w-full text-xs"
               >
@@ -242,18 +268,24 @@ function LoginForm() {
                 <span>Lanjutkan dengan Google</span>
               </button>
 
-              {/* Divider */}
-              <div className="relative flex items-center justify-center">
-                <div className="w-full border-t border-[#bccac0]/30" />
-                <span className="bg-white px-3 text-[11px] text-[#6d7a72]">atau dengan email</span>
-                <div className="w-full border-t border-[#bccac0]/30" />
+              {/* Horizontal Divider with Centered Label */}
+              <div className="relative flex items-center py-1">
+                <div className="flex-grow border-t border-[#bccac0]/30" />
+                <span className="shrink-0 px-3 text-[11px] font-medium text-[#6d7a72] whitespace-nowrap">
+                  atau dengan email
+                </span>
+                <div className="flex-grow border-t border-[#bccac0]/30" />
               </div>
 
               {/* Login / Register Toggle Tabs */}
               <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#eaedff] p-1 text-xs font-semibold">
                 <button
                   type="button"
-                  onClick={() => setCustomerMode("login")}
+                  onClick={() => {
+                    setCustomerMode("login");
+                    setPassword("");
+                    setConfirmPassword("");
+                  }}
                   className={`rounded-lg py-2 transition-all ${
                     customerMode === "login"
                       ? "bg-white text-[#006948] shadow-2xs"
@@ -264,7 +296,11 @@ function LoginForm() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setCustomerMode("register")}
+                  onClick={() => {
+                    setCustomerMode("register");
+                    setPassword("");
+                    setConfirmPassword("");
+                  }}
                   className={`rounded-lg py-2 transition-all ${
                     customerMode === "register"
                       ? "bg-white text-[#006948] shadow-2xs"
@@ -317,9 +353,9 @@ function LoginForm() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Minimal 6 karakter"
+                      placeholder={customerMode === "register" ? "Kombinasi huruf & angka" : "••••••••"}
                       required
-                      minLength={6}
+                      minLength={customerMode === "register" ? 8 : 6}
                       className="pl-10 pr-10"
                     />
                     <button
@@ -331,6 +367,53 @@ function LoginForm() {
                     </button>
                   </div>
                 </div>
+
+                {/* Confirm Password (Only in Register Mode) */}
+                {customerMode === "register" && (
+                  <>
+                    <div className="space-y-1.5 text-left">
+                      <label className="text-xs font-semibold text-[#131b2e]">Konfirmasi Kata Sandi</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6d7a72]" />
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Ulangi kata sandi"
+                          required
+                          className="pl-10 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6d7a72] hover:text-[#131b2e]"
+                        >
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Password Requirements Checklist */}
+                    {password.length > 0 && (
+                      <div className="rounded-xl bg-[#faf8ff] p-3 border border-[#bccac0]/30 space-y-1.5 text-[11px]">
+                        <div className={`flex items-center gap-1.5 ${hasMinLength ? "text-emerald-700 font-medium" : "text-[#6d7a72]"}`}>
+                          {hasMinLength ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <X className="h-3.5 w-3.5 text-slate-400" />}
+                          <span>Minimal 8 karakter</span>
+                        </div>
+                        <div className={`flex items-center gap-1.5 ${hasLetterAndNumber ? "text-emerald-700 font-medium" : "text-[#6d7a72]"}`}>
+                          {hasLetterAndNumber ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <X className="h-3.5 w-3.5 text-slate-400" />}
+                          <span>Kombinasi huruf dan angka</span>
+                        </div>
+                        {confirmPassword.length > 0 && (
+                          <div className={`flex items-center gap-1.5 ${isPasswordMatch ? "text-emerald-700 font-medium" : "text-red-600"}`}>
+                            {isPasswordMatch ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <X className="h-3.5 w-3.5 text-red-500" />}
+                            <span>{isPasswordMatch ? "Konfirmasi kata sandi cocok" : "Kata sandi belum sama"}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
 
                 <Button
                   type="submit"
@@ -418,6 +501,7 @@ function LoginForm() {
               setIsStaffPortal(true);
               setEmail("");
               setPassword("");
+              setConfirmPassword("");
             }}
             className="inline-flex items-center gap-1.5 text-xs text-[#6d7a72] hover:text-[#006948] font-medium transition-colors"
           >
@@ -431,6 +515,7 @@ function LoginForm() {
               setIsStaffPortal(false);
               setEmail("");
               setPassword("");
+              setConfirmPassword("");
             }}
             className="inline-flex items-center gap-1.5 text-xs text-[#6d7a72] hover:text-[#006948] font-medium transition-colors"
           >
