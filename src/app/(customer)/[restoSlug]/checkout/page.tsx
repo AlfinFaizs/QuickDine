@@ -9,15 +9,12 @@ import {
   Table2, 
   CreditCard, 
   QrCode, 
-  ShieldCheck, 
   Phone, 
   User, 
   Clock, 
   Check, 
   AlertTriangle,
-  Lock,
-  ChevronRight,
-  Info
+  CalendarClock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,11 +26,11 @@ interface CheckoutPageProps {
   params: Promise<{ restoSlug: string }>;
 }
 
-const ARRIVAL_OPTIONS = [
-  { label: "15 Menit lagi", minutes: 15 },
-  { label: "30 Menit lagi", minutes: 30 },
-  { label: "45 Menit lagi", minutes: 45 },
-  { label: "60 Menit lagi", minutes: 60 },
+const QUICK_ARRIVAL_OPTIONS = [
+  { label: "15 Mnt lagi", minutes: 15 },
+  { label: "30 Mnt lagi", minutes: 30 },
+  { label: "45 Mnt lagi", minutes: 45 },
+  { label: "60 Mnt lagi", minutes: 60 },
 ];
 
 export default function CheckoutPage({ params }: CheckoutPageProps) {
@@ -50,7 +47,9 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
   // Form State
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [arrivalMode, setArrivalMode] = useState<"quick" | "custom">("quick");
   const [selectedArrivalMinutes, setSelectedArrivalMinutes] = useState(30);
+  const [customArrivalTime, setCustomArrivalTime] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"qris" | "va">("qris");
   const [agreedPolicy, setAgreedPolicy] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -74,7 +73,19 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
   const platformFee = paymentMethod === "qris" ? 1500 : 5500;
   const grandTotal = subtotal + platformFee;
 
-  // If cart is empty or no table selected, redirect back
+  // Calculate target arrival display string
+  const getArrivalSummary = () => {
+    if (arrivalMode === "custom" && customArrivalTime) {
+      return `Pukul ${customArrivalTime} WIB`;
+    }
+    const now = new Date();
+    const arrivalDate = new Date(now.getTime() + selectedArrivalMinutes * 60000);
+    const hours = String(arrivalDate.getHours()).padStart(2, "0");
+    const mins = String(arrivalDate.getMinutes()).padStart(2, "0");
+    return `Pukul ${hours}:${mins} WIB (${selectedArrivalMinutes} menit lagi)`;
+  };
+
+  // If cart is empty or no table selected, show notice
   if (items.length === 0 || !selectedTable) {
     return (
       <div className="min-h-screen bg-[#faf8ff] flex items-center justify-center p-4">
@@ -104,13 +115,16 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
       toast.error("Mohon lengkapi nama dan nomor WhatsApp Anda.");
       return;
     }
+    if (arrivalMode === "custom" && !customArrivalTime) {
+      toast.error("Mohon tentukan jam rencana kedatangan Anda.");
+      return;
+    }
     if (!agreedPolicy) {
       toast.error("Mohon setujui ketentuan pembatalan & toleransi kedatangan.");
       return;
     }
 
     startTransition(async () => {
-      // Simulate Order Creation & Payment Success
       const orderId = `QD-${Date.now().toString().slice(-6)}`;
       toast.success("Pembayaran berhasil diverifikasi!");
       clearCart();
@@ -190,30 +204,81 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
                 </p>
               </div>
 
-              {/* Arrival Time Picker */}
-              <div className="pt-2">
-                <label className="text-xs font-semibold text-[#131b2e] flex items-center gap-1.5 mb-2">
-                  <Clock className="h-3.5 w-3.5 text-[#006948]" />
-                  <span>Estimasi Tiba di Restoran</span>
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {ARRIVAL_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.minutes}
-                      type="button"
-                      onClick={() => setSelectedArrivalMinutes(opt.minutes)}
-                      className={`p-2.5 rounded-xl border text-xs font-semibold text-center transition-all ${
-                        selectedArrivalMinutes === opt.minutes
-                          ? "border-[#006948] bg-emerald-50 text-[#006948] ring-1 ring-[#006948]"
-                          : "border-[#bccac0]/40 text-[#131b2e] hover:bg-[#faf8ff]"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
+              {/* Arrival Time Picker (Quick vs Custom Time) */}
+              <div className="pt-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-[#131b2e] flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-[#006948]" />
+                    <span>Rencana Jam Tiba di Restoran</span>
+                  </label>
+                  <span className="text-[11px] font-bold text-[#006948]">
+                    {getArrivalSummary()}
+                  </span>
                 </div>
-                <p className="text-[10px] text-emerald-800 bg-emerald-50/60 p-2 rounded-lg border border-emerald-200/50 mt-2">
-                  💡 Koki akan mulai memasak hidangan 15 menit sebelum jam kedatangan Anda.
+
+                {/* Mode Selector Tabs */}
+                <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#eaedff] p-1 text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setArrivalMode("quick")}
+                    className={`rounded-lg py-1.5 transition-all ${
+                      arrivalMode === "quick"
+                        ? "bg-white text-[#006948] shadow-2xs"
+                        : "text-[#6d7a72] hover:text-[#131b2e]"
+                    }`}
+                  >
+                    ⚡ Pilihan Cepat
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setArrivalMode("custom")}
+                    className={`rounded-lg py-1.5 transition-all ${
+                      arrivalMode === "custom"
+                        ? "bg-white text-[#006948] shadow-2xs"
+                        : "text-[#6d7a72] hover:text-[#131b2e]"
+                    }`}
+                  >
+                    🕒 Pilih Jam Spesifik
+                  </button>
+                </div>
+
+                {arrivalMode === "quick" ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                    {QUICK_ARRIVAL_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.minutes}
+                        type="button"
+                        onClick={() => setSelectedArrivalMinutes(opt.minutes)}
+                        className={`p-2.5 rounded-xl border text-xs font-semibold text-center transition-all ${
+                          selectedArrivalMinutes === opt.minutes
+                            ? "border-[#006948] bg-emerald-50 text-[#006948] ring-1 ring-[#006948]"
+                            : "border-[#bccac0]/40 text-[#131b2e] hover:bg-[#faf8ff]"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="pt-1">
+                    <div className="relative">
+                      <CalendarClock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6d7a72]" />
+                      <Input
+                        type="time"
+                        value={customArrivalTime}
+                        onChange={(e) => setCustomArrivalTime(e.target.value)}
+                        required={arrivalMode === "custom"}
+                        className="pl-10"
+                      />
+                    </div>
+                    <p className="text-[10px] text-[#6d7a72] mt-1">
+                      Tentukan jam tiba Anda hari ini (minimal 15 menit dari sekarang).
+                    </p>
+                  </div>
+                )}
+
+                <p className="text-[10px] text-emerald-800 bg-emerald-50/60 p-2.5 rounded-lg border border-emerald-200/50">
+                  💡 <strong>Koki Dapur:</strong> Makanan mulai dimasak tepat <strong>15 menit</strong> sebelum jam tiba agar tersaji hangat saat Anda duduk.
                 </p>
               </div>
             </div>
@@ -332,7 +397,7 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
                 required
               />
               <span className="text-[11px] text-[#6d7a72] leading-relaxed">
-                Saya menyetujui pesanan pre-order ini bersifat <strong>non-refundable</strong>. Jika terlambat lebih dari 15 menit, makanan dibungkus (takeaway) dan meja dibuka kembali untuk tamu umum.
+                Saya menyetujui pesanan pre-order ini bersifat <strong>non-refundable</strong>. Jika terlambat lebih dari 15 menit dari jam tiba yang dipilih, makanan dibungkus (takeaway) dan meja dibuka kembali untuk umum.
               </span>
             </label>
 
