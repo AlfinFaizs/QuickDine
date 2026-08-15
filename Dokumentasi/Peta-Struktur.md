@@ -67,9 +67,11 @@ QuickDine/
 │   │   │
 │   │   ├── (super-admin)/                    // PORTAL SUPER ADMIN PLATFORM
 │   │   │   └── super-admin/
-│   │   │       ├── layout.tsx                // Header bar Super Admin, logo & tab navigasi
-│   │   │       ├── page.tsx                  // Executive KPI Dashboard & transaksi nasional
-│   │   │       └── tenants/page.tsx          // Manajemen mitra & verifikasi pendaftar baru
+│   │   │       ├── layout.tsx                // Sidebar kiri Super Admin, logo & navigasi
+│   │   │       ├── page.tsx                  // Executive KPI Dashboard & transaksi live
+│   │   │       ├── verifikasi/page.tsx       // Khusus antrean verifikasi pendaftar baru
+│   │   │       ├── tenants/page.tsx          // Khusus direktori seluruh mitra restoran
+│   │   │       └── payouts/page.tsx          // Khusus monitoring transfer payout bank H+1
 │   │   │
 │   │   ├── api/                              // REST API & WEBHOOKS
 │   │   │   ├── cron/cleanup-locks/route.ts   // Cron un-lock meja expired (>10 mnt)
