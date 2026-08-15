@@ -90,14 +90,14 @@ Layout dashboard resto dengan counter pesanan aktif pada sidebar, status live on
 | File | Jumlah Baris |
 |---|---|
 | `features/kds/kds-data.ts` | 89 |
-| `features/kds/kds-order-card.tsx` | 240 |
+| `features/kds/kds-order-card.tsx` | 246 |
 | `features/kds/kds-header-stats.tsx` | 74 |
 | `(dashboard)/dashboard/kds/page.tsx` | 134 |
-| `features/tables/tables-data.ts` | 64 |
+| `features/tables/tables-data.ts` | 63 |
 | `features/tables/table-card.tsx` | 83 |
 | `features/tables/table-walkin-modal.tsx` | 89 |
 | `features/tables/table-detail-modal.tsx` | 114 |
-| `(dashboard)/dashboard/tables/page.tsx` | 179 |
+| `(dashboard)/dashboard/tables/page.tsx` | 192 |
 | `(dashboard)/dashboard/layout.tsx` | 143 |
 
 Seluruh file berada jauh di bawah batas 500 baris. ✅
