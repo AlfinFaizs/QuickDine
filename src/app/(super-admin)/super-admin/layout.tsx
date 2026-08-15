@@ -18,7 +18,7 @@ const SUPER_ADMIN_NAV = [
     name: "Mitra Restoran",
     href: "/super-admin/tenants",
     icon: Store,
-    badge: "3 Baru",
+    badge: "10 Baru",
   },
 ];
 
