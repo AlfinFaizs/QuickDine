@@ -44,6 +44,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/lib/prisma.ts`](file:///c:/My_Koding/QuickDine/src/lib/prisma.ts) | Branch-0 | 25 | Inisialisasi singleton Prisma Client generasi ke-7 dengan `@prisma/adapter-pg` untuk mencegah kebocoran koneksi database pada lingkungan Next.js dev & prod. |
+| [`src/lib/sanitize.ts`](file:///c:/My_Koding/QuickDine/src/lib/sanitize.ts) | **Branch-5** | 27 | Utilitas sanitasi input teks dan escaping HTML untuk mencegah serangan XSS serta injeksi konten pada form catatan koki & identitas tamu. |
 | [`src/lib/utils.ts`](file:///c:/My_Koding/QuickDine/src/lib/utils.ts) | Branch-0 | 16 | Fungsi utilitas umum: `formatRupiah(number)` untuk format mata uang IDR dan helper `cn()` (clsx + tailwind-merge) untuk manipulasi class Tailwind. |
 | [`src/lib/supabase/client.ts`](file:///c:/My_Koding/QuickDine/src/lib/supabase/client.ts) | Branch-0 | 12 | Factory instansiasi Supabase Browser Client (`createBrowserClient`) menggunakan Public Anon Key untuk Client Components. |
 | [`src/lib/supabase/server.ts`](file:///c:/My_Koding/QuickDine/src/lib/supabase/server.ts) | Branch-0 | 38 | Factory instansiasi Supabase Server Client (`createServerClient`) berbasis Next.js `cookies()` untuk Server Components, Server Actions, dan Route Handlers. |
@@ -77,19 +78,22 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | **Fitur: Restaurant Catalog & Tables** | | | |
 | [`src/features/restaurants/mock-data.ts`](file:///c:/My_Koding/QuickDine/src/features/restaurants/mock-data.ts) | Branch-2 | 221 | Dataset modular 11 restoran & kafe populer Indonesia beserta filter 11 kategori kuliner dan status meja live. |
 | [`src/features/restaurants/restaurant-details-data.ts`](file:///c:/My_Koding/QuickDine/src/features/restaurants/restaurant-details-data.ts) | Branch-3 | 401 | Database mock detail menu makanan, harga, opsi varian (suhu, level pedas, gula, topping), dan denah meja untuk seluruh 11 restoran. |
+| [`src/features/restaurants/resto-card-skeleton.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/resto-card-skeleton.tsx) | **Branch-5** | 49 | Komponen skeleton shimmer loader untuk kartu katalog restoran dan grid pencarian `/jelajah`. |
 | [`src/features/restaurants/table-map.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/table-map.tsx) | Branch-3 | 135 | Komponen interaktif visual denah meja dengan 3 indikator status (Tersedia, Sedang Dipesan, Terisi). |
 | [`src/features/restaurants/menu-variant-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/menu-variant-modal.tsx) | Branch-3 | 217 | Modal pop-up kustomisasi varian makanan, counter jumlah, catatan koki, dan tombol tambah ke keranjang. |
 | [`src/features/restaurants/jelajah-content.tsx`](file:///c:/My_Koding/QuickDine/src/features/restaurants/jelajah-content.tsx) | Branch-4 | 282 | Komponen konten utama halaman `/jelajah`. Berisi logika search real-time, sort 4 opsi, filter kategori pill, grid restoran 3 kolom, pagination "Tampilkan Lebih Banyak", dan empty state. Dipisah dari `page.tsx` agar bisa dibungkus `<Suspense>` (wajib Next.js 16 karena menggunakan `useSearchParams()`). |
 | **Fitur: Kitchen Display System (KDS)** | | | |
 | [`src/features/kds/kds-data.ts`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-data.ts) | **Branch-5** | 89 | Definisi tipe data (`KdsOrder`, `KdsOrderItem`, `KdsOrderStatus`) dan data mock pesanan dapur terstruktur dengan timestamp dinamis. |
-| [`src/features/kds/kds-order-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-order-card.tsx) | **Branch-5** | 246 | Komponen kartu pesanan dapur interaktif dengan timer elapsed, hitung mundur tiba, banner late (+1m) & grace period (+15m), tombol masak, check-in, dan no-show trigger. |
+| [`src/features/kds/kds-order-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-order-card.tsx) | **Branch-5** | 280 | Komponen kartu pesanan dapur interaktif dengan timer elapsed, hitung mundur tiba, banner late (+1m) & grace period (+15m), modal konfirmasi aksi, tombol masak, check-in, dan no-show trigger. |
 | [`src/features/kds/kds-header-stats.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-header-stats.tsx) | **Branch-5** | 74 | Bar visual 4 metrik status pesanan dapur (Menunggu Masak, Sedang Dimasak, Siap Saji, Total Aktif). |
+| [`src/features/kds/kds-skeleton.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-skeleton.tsx) | **Branch-5** | 41 | Skeleton shimmer loader antrean kartu pesanan dapur KDS. |
 | **Fitur: Tables Management & Cashier Control** | | | |
 | [`src/features/tables/actions.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/actions.ts) | Branch-0 | 55 | Server Action untuk memanggil RPC database `lock_table_for_checkout` (penguncian meja 10 menit) secara atomik. |
 | [`src/features/tables/tables-data.ts`](file:///c:/My_Koding/QuickDine/src/features/tables/tables-data.ts) | **Branch-5** | 63 | Definisi tipe data (`DashboardTable`, `TableStatus`), mock denah meja kasir, dan dictionary konfigurasi visual status (`STATUS_CONFIG`). |
 | [`src/features/tables/table-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-card.tsx) | **Branch-5** | 83 | Komponen kartu meja individual kasir dengan color-coded 4 status, info tamu, ETA, no HP, dan kapasitas kursi. |
 | [`src/features/tables/table-walkin-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-walkin-modal.tsx) | **Branch-5** | 89 | Modal pop-up input data tamu walk-in offline untuk meja kosong (VACANT). |
-| [`src/features/tables/table-detail-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-detail-modal.tsx) | **Branch-5** | 114 | Modal pop-up aksi detail meja kasir (Check-In Tamu Tiba, Trigger No-Show Bungkus, Kosongkan Meja Selesai). |
+| [`src/features/tables/table-detail-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/table-detail-modal.tsx) | **Branch-5** | 165 | Modal pop-up aksi detail meja kasir terintegrasi ConfirmDialog (Check-In Tamu Tiba, Trigger No-Show Bungkus, Kosongkan Meja Selesai). |
+| [`src/features/tables/tables-skeleton.tsx`](file:///c:/My_Koding/QuickDine/src/features/tables/tables-skeleton.tsx) | **Branch-5** | 35 | Skeleton shimmer loader denah kartu meja kasir. |
 
 ---
 
@@ -106,6 +110,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/components/ui/badge.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/badge.tsx) | Branch-0 | 36 | Komponen label badge (success, warning, destructive, outline). |
 | [`src/components/ui/card.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/card.tsx) | Branch-0 | 55 | Komponen kontainer kartu modular (CardHeader, CardTitle, CardContent, CardFooter). |
 | [`src/components/ui/confirm-dialog.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/confirm-dialog.tsx) | **Branch-5** | 108 | Dialog modal konfirmasi 2-langkah dengan debounce, keyboard ESC trap, dan varian bahaya/peringatan untuk melindungi aksi destruktif (Kosongkan Meja, No-Show, Selesai). |
+| [`src/components/ui/skeleton.tsx`](file:///c:/My_Koding/QuickDine/src/components/ui/skeleton.tsx) | **Branch-5** | 16 | Komponen primitif skeleton shimmer pulse menggunakan utility Tailwind untuk state loading elegan. |
 
 ---
 
@@ -157,7 +162,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ## 3. Rekapitulasi Audit Batas Baris Kode
 
-- **Total File Kode:** 48 file
+- **Total File Kode:** 53 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
 - **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
 - **Status Kompilasi `npx next build`:** **0 Error (19/19 Rute Lolos Sukses)**.

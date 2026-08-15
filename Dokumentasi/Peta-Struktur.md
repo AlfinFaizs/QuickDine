@@ -92,13 +92,15 @@ QuickDine/
 │   │       ├── button.tsx                    // Komponen tombol kustom
 │   │       ├── card.tsx                      // Kontainer kartu modular
 │   │       ├── confirm-dialog.tsx            // Dialog konfirmasi 2-langkah aksi krusial/destruktif
-│   │       └── input.tsx                     // Input form standar
+│   │       ├── input.tsx                     // Input form standar
+│   │       └── skeleton.tsx                  // Primitive shimmer skeleton loader pulse
 │   │
 │   ├── features/                             // LOGIKA BISNIS PER DOMAIN (Feature-Based)
 │   │   ├── kds/                              // Modul Kitchen Display System (Dapur)
 │   │   │   ├── kds-data.ts                   // Tipe data & mock order dapur realtime
 │   │   │   ├── kds-header-stats.tsx          // Bar metrik 4 status order dapur
-│   │   │   └── kds-order-card.tsx            // Kartu pesanan dapur + alarm & grace timer
+│   │   │   ├── kds-order-card.tsx            // Kartu pesanan dapur + alarm & grace timer
+│   │   │   └── kds-skeleton.tsx              // Skeleton shimmer loader antrean kartu KDS
 │   │   │
 │   │   ├── orders/                           // Modul Pesanan & Keranjang Belanja
 │   │   │   ├── actions.ts                    // Server actions pembuatan order atomik
@@ -114,6 +116,7 @@ QuickDine/
 │   │   │   ├── menu-variant-modal.tsx        // Pop-up varian makanan & catatan koki
 │   │   │   ├── mock-data.ts                  // Data direktori 11 restoran Indonesia
 │   │   │   ├── restaurant-details-data.ts    // Data detail menu, opsi, & meja per resto
+│   │   │   ├── resto-card-skeleton.tsx       // Skeleton shimmer kartu katalog restoran
 │   │   │   └── table-map.tsx                 // Visual denah meja interaktif customer
 │   │   │
 │   │   └── tables/                           // Modul Manajemen Meja Resto & Kasir
@@ -121,7 +124,8 @@ QuickDine/
 │   │       ├── table-card.tsx                // Kartu meja individual denah kasir
 │   │       ├── table-detail-modal.tsx        // Modal pop-up aksi check-in, no-show, clear
 │   │       ├── table-walkin-modal.tsx        // Modal input walk-in offline tamu
-│   │       └── tables-data.ts                // Tipe data & mock denah meja kasir
+│   │       ├── tables-data.ts                // Tipe data & mock denah meja kasir
+│   │       └── tables-skeleton.tsx           // Skeleton shimmer loader denah meja kasir
 │   │
 │   ├── services/                             // INTEGRASI PIHAK KETIGA (Adapter Pattern)
 │   │   ├── notification/                     // Layanan Notifikasi WhatsApp
@@ -134,6 +138,7 @@ QuickDine/
 │   │
 │   ├── lib/                                  // UTILITY & SINGLETON CORE
 │   │   ├── prisma.ts                         // Singleton Prisma Client v7 (@prisma/adapter-pg)
+│   │   ├── sanitize.ts                       // Utility sanitasi input & pencegahan XSS
 │   │   ├── utils.ts                          // Helper formatting Rupiah & clsx merge
 │   │   └── supabase/                         // Konfigurasi Supabase
 │   │       ├── admin.ts                      // Service Role Client (bypass RLS / webhooks)
