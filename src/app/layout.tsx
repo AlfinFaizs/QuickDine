@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   description: "Platform reservasi meja live dan pre-order kuliner tanpa antre.",
   icons: {
     icon: "/icon.png",
-    apple: "/apple-icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
