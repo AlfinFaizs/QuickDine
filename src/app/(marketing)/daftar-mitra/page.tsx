@@ -15,7 +15,6 @@ import {
   Phone, 
   Mail, 
   Lock, 
-  Sparkles,
   ShieldCheck,
   Clock
 } from "lucide-react";
@@ -389,7 +388,7 @@ export default function DaftarMitraPage() {
                   isLoading={isPending}
                   className="flex-1 h-11 bg-[#006948] hover:bg-[#005137] text-white text-xs font-bold gap-1.5"
                 >
-                  <Sparkles className="h-4 w-4" />
+                  <CheckCircle2 className="h-4 w-4" />
                   <span>Selesaikan & Buka Dashboard</span>
                 </Button>
               </div>

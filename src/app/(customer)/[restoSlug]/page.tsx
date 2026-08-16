@@ -12,7 +12,6 @@ import {
   Check, 
   Table2, 
   ShoppingBag,
-  Sparkles,
   Info,
   Images
 } from "lucide-react";

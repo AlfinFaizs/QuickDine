@@ -6,7 +6,8 @@ import { useState } from "react";
 import {
   Search,
   ArrowRight,
-  Sparkles,
+  ShieldCheck,
+  Store,
   Star,
   MapPin,
   Clock,
@@ -73,7 +74,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center text-center space-y-7 max-w-3xl mx-auto">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 rounded-full bg-[#006948]/10 px-4 py-1.5 text-xs font-semibold text-[#006948] border border-[#006948]/20">
-              <Sparkles className="h-3.5 w-3.5" />
+              <ShieldCheck className="h-3.5 w-3.5" />
               <span>Platform Reservasi Meja &amp; Pre-Order No. 1 di Indonesia</span>
             </div>
 
@@ -271,7 +272,7 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/5 blur-2xl" />
           <div className="relative z-10 max-w-2xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-xs font-semibold backdrop-blur-md border border-white/20">
-              <Sparkles className="h-3.5 w-3.5 text-[#fea619]" />
+              <Store className="h-3.5 w-3.5 text-[#fea619]" />
               <span>Kemitraan Restoran QuickDine</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">

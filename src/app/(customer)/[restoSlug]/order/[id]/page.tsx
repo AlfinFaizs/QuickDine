@@ -6,7 +6,7 @@ import {
   CheckCircle2, 
   Clock, 
   ChefHat, 
-  Sparkles, 
+  Utensils, 
   MapPin, 
   Navigation, 
   ArrowLeft,
@@ -19,7 +19,7 @@ import { formatRupiah } from "@/lib/utils";
 const STEPPERS = [
   { id: "received", label: "Pesanan Diterima", icon: CheckCircle2, desc: "Dapur telah menerima pesanan Anda" },
   { id: "cooking", label: "Sedang Dimasak", icon: ChefHat, desc: "Koki sedang menyiapkan hidangan hangat" },
-  { id: "ready", label: "Siap Disajikan", icon: Sparkles, desc: "Makanan siap di meja saat Anda tiba" },
+  { id: "ready", label: "Siap Disajikan", icon: Utensils, desc: "Makanan siap di meja saat Anda tiba" },
   { id: "completed", label: "Selesai", icon: CheckCircle2, desc: "Selamat menikmati hidangan!" },
 ];
 

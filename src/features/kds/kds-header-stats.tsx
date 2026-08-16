@@ -2,7 +2,7 @@
 // src/features/kds/kds-header-stats.tsx
 // Bar statistik header KDS
 
-import { ChefHat, Clock, Sparkles, Bell } from "lucide-react";
+import { ChefHat, Clock, CheckCircle2, Bell } from "lucide-react";
 import type { KdsOrder } from "@/features/kds/kds-data";
 
 interface Props {
@@ -35,7 +35,7 @@ export function KdsHeaderStats({ orders }: Props) {
     {
       label: "Siap Disajikan",
       value: ready,
-      icon: Sparkles,
+      icon: CheckCircle2,
       bg: "bg-[#006948]/5 border-[#006948]/20",
       text: "text-[#006948]",
       iconColor: "text-[#006948]",

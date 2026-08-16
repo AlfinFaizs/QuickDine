@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { X, Upload, RefreshCw, CheckCircle2, Sparkles, Star, Plus } from "lucide-react";
+import { X, Upload, RefreshCw, CheckCircle2, Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { processAndCompressImage } from "@/lib/image-compressor";
@@ -246,7 +246,7 @@ export function MenuFormModal({ isOpen, itemToEdit, onClose, onSave }: Props) {
             />
 
             <p className="text-[10px] text-[#6d7a72] leading-tight flex items-center gap-1 pt-0.5">
-              <Sparkles className="h-3 w-3 text-[#006948] shrink-0" />
+              <CheckCircle2 className="h-3 w-3 text-[#006948] shrink-0" />
               <span>Semua foto otomatis dipotong tengah ke rasio persegi 800×800 px (di bawah 100KB).</span>
             </p>
           </div>

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import {
   Clock,
   Flame,
-  Sparkles,
+  CheckCircle2,
   Check,
   PackageOpen,
   PhoneCall,
@@ -225,7 +225,7 @@ export function KdsOrderCard({
                 onClick={() => onUpdateStatus(order.id, "ready")}
                 className="w-full bg-[#006948] hover:bg-[#005137] text-white font-bold text-xs h-10 gap-1.5"
               >
-                <Sparkles className="h-4 w-4" />
+                <CheckCircle2 className="h-4 w-4" />
                 <span>Tandai Siap Saji</span>
               </Button>
             )}
