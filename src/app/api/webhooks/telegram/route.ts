@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       await telegramService.sendRawTelegramMessage(chatId, replyText, inlineKeyboard);
     }
 
-    // 3. Perintah /start (Panduan Informatif & Cara Hubungkan Bot)
+    // 3. Perintah /start (Panduan Informatif, Cara Hubungkan Bot, & Daftar Perintah)
     else if (rawText === "/start" || rawText.startsWith("/start@")) {
       const isGroup =
         message?.chat?.type === "group" || message?.chat?.type === "supergroup";
@@ -84,9 +84,13 @@ export async function POST(request: NextRequest) {
         ? [
             `<b>BOT NOTIFIKASI RESTORAN QUICKDINE</b>`,
             `━━━━━━━━━━━━━━━━━━━━`,
-            `Bot ini telah berhasil bergabung ke grup dapur restoran Anda.`,
+            `Bot ini telah terhubung di grup dapur restoran Anda.`,
             ``,
-            `Ketik <b>/id</b> untuk melihat Chat ID grup ini yang perlu disalin ke dashboard pengaturan restoran.`,
+            `<b>Perintah yang Tersedia:</b>`,
+            `• <b>/id</b> — Menampilkan Chat ID grup untuk pengaturan dashboard`,
+            `• <b>/status</b> — Memeriksa status kesehatan koneksi bot & server`,
+            `━━━━━━━━━━━━━━━━━━━━`,
+            `Setiap pesanan lunas akan otomatis diteruskan ke grup ini secara real-time.`,
           ].join("\n")
         : [
             `<b>QUICKDINE NOTIFICATION SERVICE</b>`,
@@ -97,6 +101,10 @@ export async function POST(request: NextRequest) {
             `1. Tambahkan bot ini ke Grup Telegram staf/koki restoran Anda.`,
             `2. Ketik <b>/id</b> di dalam grup tersebut untuk mendapatkan Chat ID.`,
             `3. Masukkan Chat ID ke menu Pengaturan Restoran di website QuickDine.`,
+            ``,
+            `<b>Perintah yang Tersedia:</b>`,
+            `• <b>/id</b> — Menampilkan Chat ID Anda / grup`,
+            `• <b>/status</b> — Memeriksa status kesehatan koneksi server`,
             `━━━━━━━━━━━━━━━━━━━━`,
             `Setiap pesanan lunas akan otomatis diteruskan ke grup dapur secara real-time.`,
           ].join("\n");
