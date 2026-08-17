@@ -93,6 +93,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/features/finance/finance-ledger-table.tsx`](file:///c:/My_Koding/QuickDine/src/features/finance/finance-ledger-table.tsx) | **Branch-6** | 170 | Tabel buku kas transaksi penjualan resto dengan filter metode pembayaran, search, dan baris total kalkulasi ringkasan. |
 | **Fitur: Kitchen Display System (KDS)** | | | |
 | [`src/features/kds/kds-data.ts`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-data.ts) | Branch-5 | 89 | Definisi tipe data (`KdsOrder`, `KdsOrderItem`, `KdsOrderStatus`) dan data mock pesanan dapur terstruktur dengan timestamp dinamis. |
+| [`src/features/kds/kds-actions.ts`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-actions.ts) | **Branch-10** | 63 | **[BARU]** Server Actions KDS untuk update status pesanan dan memicu RPC `set_table_occupied` saat masak serta `release_table` saat selesai. |
 | [`src/features/kds/kds-order-card.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-order-card.tsx) | Branch-5 | 280 | Komponen kartu pesanan dapur interaktif dengan timer elapsed, hitung mundur tiba, banner late (+1m) & grace period (+15m), modal konfirmasi aksi, tombol masak, check-in, dan no-show trigger. |
 | [`src/features/kds/kds-header-stats.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-header-stats.tsx) | Branch-5 | 74 | Bar visual 4 metrik status pesanan dapur (Menunggu Masak, Sedang Dimasak, Siap Saji, Total Aktif). |
 | [`src/features/kds/kds-skeleton.tsx`](file:///c:/My_Koding/QuickDine/src/features/kds/kds-skeleton.tsx) | Branch-5 | 41 | Skeleton shimmer loader antrean kartu pesanan dapur KDS. |
@@ -173,18 +174,20 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 ### H. Aset Publik & Konfigurasi Root
 | File | Branch | Peran & Rincian Fungsi |
 |---|---|---|
-| [`public/favicon.ico`](file:///c:/My_Koding/QuickDine/public/favicon.ico) | Branch-2 | Favicon browser format ico. |
-| [`public/icon.png`](file:///c:/My_Koding/QuickDine/public/icon.png) | Branch-2 | Ikon resmi shield hijau QuickDine resolusi tinggi dengan latar belakang transparan. |
-| [`public/images/logo.png`](file:///c:/My_Koding/QuickDine/public/images/logo.png) | Branch-2 | Master file gambar logo QuickDine. |
-| [`AGENTS.md`](file:///c:/My_Koding/QuickDine/AGENTS.md) | Branch-0 | Aturan dan batasan koding utama AI pair programming (<500 baris/file, Feature-Driven Architecture). |
-| [`package.json`](file:///c:/My_Koding/QuickDine/package.json) | Branch-0 | Daftar dependensi proyek (Next.js 16, React 19, Supabase, Prisma 7, Zustand, Tailwind 4, Lucide). |
-| [`tsconfig.json`](file:///c:/My_Koding/QuickDine/tsconfig.json) | Branch-0 | Konfigurasi path aliases `@/*` TypeScript. |
+| [`prisma/seed.ts`](file:///c:/My_Koding/QuickDine/prisma/seed.ts) | **Branch-10** | 225 | **[BARU]** Skrip seeder otomatis untuk inisialisasi master data restoran, meja, menu, dan eksekusi 4 RPC functions ke Supabase. |
+| [`public/favicon.ico`](file:///c:/My_Koding/QuickDine/public/favicon.ico) | Branch-2 | 0 | Favicon browser format ico. |
+| [`public/icon.png`](file:///c:/My_Koding/QuickDine/public/icon.png) | Branch-2 | 0 | Ikon resmi shield hijau QuickDine resolusi tinggi dengan latar belakang transparan. |
+| [`public/images/logo.png`](file:///c:/My_Koding/QuickDine/public/images/logo.png) | Branch-2 | 0 | Master file gambar logo QuickDine. |
+| [`AGENTS.md`](file:///c:/My_Koding/QuickDine/AGENTS.md) | Branch-0 | 72 | Aturan dan batasan koding utama AI pair programming (<500 baris/file, Feature-Driven Architecture). |
+| [`package.json`](file:///c:/My_Koding/QuickDine/package.json) | Branch-0 | 46 | Daftar dependensi proyek (Next.js 16, React 19, Supabase, Prisma 7, Zustand, Tailwind 4, Lucide). |
+| [`tsconfig.json`](file:///c:/My_Koding/QuickDine/tsconfig.json) | Branch-0 | 30 | Konfigurasi path aliases `@/*` TypeScript. |
 
 ---
 
 ## 3. Rekapitulasi Audit Batas Baris Kode
 
-- **Total File Kode:** 71 file
+- **Total File Kode:** 73 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
 - **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
 - **Status Kompilasi `npx next build`:** **0 Error (21/21 Rute Lolos Sukses)**.
+- **Status Database:** 100% Terhubung & Terisi Data Asli (*Connected & Seeded*).
