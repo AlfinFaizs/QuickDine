@@ -75,46 +75,38 @@ export async function POST(request: NextRequest) {
       await telegramService.sendRawTelegramMessage(chatId, replyText, inlineKeyboard);
     }
 
-    // 3. Perintah /start (Panduan Informatif, Cara Hubungkan Bot, & Daftar Perintah)
+    // 3. Perintah /start (Panduan Lengkap, Cara Menghubungkan, & Daftar Perintah)
     else if (rawText === "/start" || rawText.startsWith("/start@")) {
       const isGroup =
         message?.chat?.type === "group" || message?.chat?.type === "supergroup";
 
-      const replyText = isGroup
-        ? [
-            `<b>BOT NOTIFIKASI RESTORAN QUICKDINE</b>`,
-            `━━━━━━━━━━━━━━━━━━━━`,
-            `Bot ini telah terhubung di grup dapur restoran Anda.`,
-            ``,
-            `<b>Perintah yang Tersedia:</b>`,
-            `• <b>/id</b> — Menampilkan Chat ID grup untuk pengaturan dashboard`,
-            `• <b>/status</b> — Memeriksa status kesehatan koneksi bot & server`,
-            `━━━━━━━━━━━━━━━━━━━━`,
-            `Setiap pesanan lunas akan otomatis diteruskan ke grup ini secara real-time.`,
-          ].join("\n")
-        : [
-            `<b>QUICKDINE NOTIFICATION SERVICE</b>`,
-            `━━━━━━━━━━━━━━━━━━━━`,
-            `Layanan resmi bot pengantar notifikasi pesanan masuk, alarm persiapan memasak di dapur, dan rincian transaksi restoran.`,
-            ``,
-            `<b>Panduan Penggunaan:</b>`,
-            `1. Tambahkan bot ini ke Grup Telegram staf/koki restoran Anda.`,
-            `2. Ketik <b>/id</b> di dalam grup tersebut untuk mendapatkan Chat ID.`,
-            `3. Masukkan Chat ID ke menu Pengaturan Restoran di website QuickDine.`,
-            ``,
-            `<b>Perintah yang Tersedia:</b>`,
-            `• <b>/id</b> — Menampilkan Chat ID Anda / grup`,
-            `• <b>/status</b> — Memeriksa status kesehatan koneksi server`,
-            `━━━━━━━━━━━━━━━━━━━━`,
-            `Setiap pesanan lunas akan otomatis diteruskan ke grup dapur secara real-time.`,
-          ].join("\n");
+      const replyText = [
+        `<b>LAYANAN NOTIFIKASI RESTORAN QUICKDINE</b>`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `Bot ini bertugas meneruskan pesanan masuk, alarm persiapan memasak di dapur, dan rincian transaksi restoran secara real-time.`,
+        ``,
+        `<b>Panduan Menghubungkan ke Restoran Anda:</b>`,
+        `1. Di ${isGroup ? "grup ini" : "grup dapur Anda"}, ketik perintah <b>/id</b> untuk mendapatkan Chat ID.`,
+        `2. Salin angka ID tersebut dan masukkan ke menu <b>Pengaturan Restoran</b> di dashboard web QuickDine.`,
+        `3. Setelah tersimpan, seluruh pesanan lunas dari pelanggan akan otomatis masuk ke grup ini beserta tombol aksi cepat ke dapur.`,
+        ``,
+        `<b>Perintah yang Tersedia:</b>`,
+        `• <b>/id</b> — Menampilkan Chat ID grup (format salin 1 sentuhan)`,
+        `• <b>/status</b> — Memeriksa status kesehatan koneksi server dan bot`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `<i>Ketik /id sekarang untuk melihat nomor ID ${isGroup ? "grup ini" : "Anda"}.</i>`,
+      ].join("\n");
 
       const inlineKeyboard = {
         inline_keyboard: [
           [
             {
-              text: "Buka Website QuickDine",
-              url: appUrl,
+              text: "Buka Pengaturan Resto",
+              url: `${appUrl}/dashboard/settings`,
+            },
+            {
+              text: "Buka Layar Dapur (KDS)",
+              url: `${appUrl}/dashboard/kds`,
             },
           ],
         ],
