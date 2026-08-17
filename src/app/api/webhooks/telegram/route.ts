@@ -3,6 +3,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import { getTelegramNotificationService } from "@/services/notification";
+import { formatWIBTime } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
         `<b>STATUS LAYANAN QUICKDINE BOT</b>`,
         `━━━━━━━━━━━━━━━━━━━━`,
         `Koneksi: <b>Aktif & Normal</b>`,
-        `Waktu Server: <b>${new Date().toLocaleTimeString("id-ID")} WIB</b>`,
+        `Waktu Server: <b>${formatWIBTime()} WIB</b>`,
         `Layanan: <b>Notifikasi Dapur & Kasir</b>`,
         `━━━━━━━━━━━━━━━━━━━━`,
         `Sistem siap menerima pesanan masuk dan meneruskan struk ke grup ini secara real-time.`,

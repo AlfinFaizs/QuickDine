@@ -7,6 +7,7 @@ import {
   ReceiptPayload,
   DailySummaryPayload,
 } from "./notification.interface";
+import { formatWIBTime } from "@/lib/utils";
 
 export class TelegramNotificationService implements INotificationService {
   private botToken: string;
@@ -84,7 +85,7 @@ export class TelegramNotificationService implements INotificationService {
       `━━━━━━━━━━━━━━━━━━━━`,
       `Restoran: <b>${restaurantName}</b>`,
       `Status Layanan: <b>Terhubung Aktif ke Dapur</b>`,
-      `Waktu Pengujian: <b>${new Date().toLocaleTimeString("id-ID")} WIB</b>`,
+      `Waktu Pengujian: <b>${formatWIBTime()} WIB</b>`,
       `━━━━━━━━━━━━━━━━━━━━`,
       `Grup ini siap menerima notifikasi pesanan dan alarm jadwal persiapan masak.`,
     ].join("\n");
