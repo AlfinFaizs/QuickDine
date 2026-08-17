@@ -60,7 +60,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
 | [`src/services/notification/notification.interface.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/notification.interface.ts) | Branch-0 | 38 | Interface kontrak pengiriman notifikasi (Telegram/WhatsApp) agar mudah diganti penyedianya tanpa merusak kode pemanggil. |
-| [`src/services/notification/telegram.service.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/telegram.service.ts) | **Branch-8** | 152 | Service adapter pengiriman notifikasi terformat HTML resmi ke Telegram Bot API untuk dapur restoran dengan mode simulator aman. |
+| [`src/services/notification/telegram.service.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/telegram.service.ts) | **Branch-9** | 195 | Service adapter pengiriman notifikasi Telegram dengan tipografi bersih, dukungan `reply_markup` inline keyboard, dan tombol navigasi ke dashboard dapur. |
 | [`src/services/notification/fonnte.service.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/fonnte.service.ts) | Branch-0 | 48 | Implementasi adapter Fonnte WhatsApp API untuk mengirim notifikasi pesanan ke customer dan notifikasi alarm dapur ke resto. |
 | [`src/services/notification/index.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/index.ts) | **Branch-8** | 30 | Factory module penyedia singleton notifikasi Telegram (`getTelegramNotificationService`) dan WhatsApp. |
 | [`src/services/payment/fee-calculator.ts`](file:///c:/My_Koding/QuickDine/src/services/payment/fee-calculator.ts) | Branch-0 | 30 | Kalkulator platform fee otomatis: QRIS (+Rp 1.500) vs Virtual Account (+Rp 5.500) serta pembagian net balance untuk saldo mitra resto. |
@@ -163,7 +163,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | **API Endpoints & Root** | | | |
 | [`src/app/api/cron/cleanup-locks/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/cron/cleanup-locks/route.ts) | Branch-0 | 26 | Cron API endpoint untuk membersihkan meja yang melewati batas waktu lock 10 menit kembali menjadi `VACANT`. |
 | [`src/app/api/webhooks/midtrans/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/webhooks/midtrans/route.ts) | **Branch-8** | 138 | Webhook API endpoint untuk menerima callback notifikasi status pembayaran dari Midtrans terintegrasi pemicu notifikasi Telegram. |
-| [`src/app/api/webhooks/telegram/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/webhooks/telegram/route.ts) | **Branch-8** | 65 | Webhook receiver untuk membalas perintah Telegram Bot (`/id`, `/start`) secara mandiri di grup dapur. |
+| [`src/app/api/webhooks/telegram/route.ts`](file:///c:/My_Koding/QuickDine/src/app/api/webhooks/telegram/route.ts) | **Branch-9** | 145 | Webhook receiver pintar untuk membalas perintah Telegram Bot (`/id`, `/status`, `/help`, `/start`) dengan tombol URL interaktif ke dashboard. |
 | [`src/app/layout.tsx`](file:///c:/My_Koding/QuickDine/src/app/layout.tsx) | Branch-0 / 2 | 35 | Root HTML Layout Next.js, definisi metadata SEO, favicon `/icon.png`, dan font Inter. |
 | [`src/app/globals.css`](file:///c:/My_Koding/QuickDine/src/app/globals.css) | Branch-0 | 45 | Konfigurasi CSS Tailwind v4, token warna Emerald Green `#006948`, dan base styling. |
 | [`src/app/providers.tsx`](file:///c:/My_Koding/QuickDine/src/app/providers.tsx) | Branch-0 | 25 | Provider wrapper untuk TanStack QueryClient dan notifikasi toast Sonner. |
