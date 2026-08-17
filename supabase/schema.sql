@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS restaurants (
     slug                 VARCHAR(100) UNIQUE NOT NULL,
     phone_whatsapp       VARCHAR(20) NOT NULL,
     owner_phone          VARCHAR(20) NOT NULL,
+    telegram_chat_id     VARCHAR(100),
     wa_group_id          VARCHAR(100),
     bank_name            VARCHAR(50),
     bank_account_number  VARCHAR(50),
@@ -293,5 +294,31 @@ BEGIN
 
   GET DIAGNOSTICS v_count = ROW_COUNT;
   RETURN v_count;
+END;
+$$;
+
+-- Set Table to Occupied (dipanggil saat customer check-in / pesanan aktif di meja)
+CREATE OR REPLACE FUNCTION set_table_occupied(p_table_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE restaurant_tables
+  SET status = 'occupied', locked_until = NULL
+  WHERE id = p_table_id AND status = 'reserved';
+END;
+$$;
+
+-- Set Table to Vacant (dipanggil saat order_status = completed atau staf mereset meja)
+CREATE OR REPLACE FUNCTION release_table(p_table_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE restaurant_tables
+  SET status = 'vacant', locked_until = NULL
+  WHERE id = p_table_id;
 END;
 $$;

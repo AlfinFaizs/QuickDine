@@ -33,6 +33,7 @@ export interface Restaurant {
   slug: string;
   phone_whatsapp: string;
   owner_phone: string;
+  telegram_chat_id?: string | null;
   wa_group_id?: string | null;
   bank_name?: string | null;
   bank_account_number?: string | null;

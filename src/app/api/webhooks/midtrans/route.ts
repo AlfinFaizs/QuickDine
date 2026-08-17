@@ -85,24 +85,29 @@ export async function POST(request: NextRequest) {
       const telegramService = getTelegramNotificationService();
       const restaurantName = order.restaurant?.name || "Restoran QuickDine";
       const tableNumber = order.table?.table_number || "Tanpa Meja";
-      const telegramChatId = order.restaurant?.telegram_chat_id || "-100234567890";
+      // Gunakan telegram_chat_id dari data resto (kolom resmi)
+      const telegramChatId = order.restaurant?.telegram_chat_id || "";
 
-      const orderItems = (order.items || []).map((i: { menu_name?: string; name?: string; quantity: number; notes?: string }) => ({
-        name: i.menu_name || i.name || "Menu Makanan",
+      const orderItems = (order.items || []).map((i: { item_name?: string; quantity: number; special_notes?: string }) => ({
+        name: i.item_name || "Menu Makanan",
         quantity: i.quantity || 1,
-        notes: i.notes || "",
+        notes: i.special_notes || "",
       }));
 
-      await telegramService.sendToCashierGroup(telegramChatId, {
-        orderId: order.id.substring(0, 8).toUpperCase(),
-        restaurantName,
-        tableNumber,
-        customerName: order.customer_name,
-        customerPhone: order.customer_phone,
-        arrivalTime: order.arrival_time,
-        items: orderItems.length > 0 ? orderItems : [{ name: "Paket Hidangan Resto", quantity: 1 }],
-        totalAmount: order.total_amount,
-      });
+      if (telegramChatId) {
+        await telegramService.sendToCashierGroup(telegramChatId, {
+          orderId: order.id.substring(0, 8).toUpperCase(),
+          restaurantName,
+          tableNumber,
+          customerName: order.customer_name,
+          customerPhone: order.customer_phone,
+          arrivalTime: order.arrival_time,
+          items: orderItems.length > 0 ? orderItems : [{ name: "Paket Hidangan Resto", quantity: 1 }],
+          totalAmount: order.total_amount,
+        });
+      } else {
+        console.warn(`[MIDTRANS WEBHOOK] Restoran ${restaurantName} belum mengisi telegram_chat_id. Notifikasi dilewati.`);
+      }
 
       // 7. Kirim Notifikasi WA (Opsional Backup)
       if (order.restaurant?.wa_group_id) {
