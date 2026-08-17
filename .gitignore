@@ -44,14 +44,6 @@ next-env.d.ts
 # prisma generated
 /src/generated/prisma
 
-# Internal project documentation & PRD
-PRD/
-Dokumentasi/
-
-# AI agent configurations & tools
-AGENTS.md
-CLAUDE.md
-.agents/
+# editor & tool artifacts
 .claude/
 .windsurf/
-skills-lock.json
