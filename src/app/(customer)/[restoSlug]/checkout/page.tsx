@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatRupiah } from "@/lib/utils";
 import { useCartStore } from "@/features/orders/cart-store";
+import { PaymentSimulatorModal } from "@/features/orders/payment-simulator-modal";
 import { toast } from "sonner";
 
 interface CheckoutPageProps {
@@ -58,6 +59,8 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
 
   // 10-Minute Lock Timer Countdown (600 seconds)
   const [timeLeft, setTimeLeft] = useState(600);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [pendingOrderId, setPendingOrderId] = useState("");
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -88,15 +91,17 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
   };
 
   // If cart is empty or no table selected, show notice
-  if (items.length === 0 || !selectedTable) {
+  if (!selectedTable || items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#faf8ff] flex items-center justify-center p-4">
-        <div className="rounded-3xl border border-[#bccac0]/40 bg-white p-8 max-w-md text-center space-y-4 shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-600">
-            <AlertTriangle className="h-7 w-7" />
+      <div className="flex min-h-[70vh] flex-col items-center justify-center p-4 text-center">
+        <div className="max-w-md rounded-3xl border border-[#bccac0]/30 bg-white p-8 shadow-md space-y-4">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-700">
+            <AlertTriangle className="h-6 w-6" />
           </div>
-          <div className="space-y-1">
-            <h2 className="text-lg font-bold text-[#131b2e]">Keranjang Belum Siap</h2>
+          <div>
+            <h1 className="text-base font-bold text-[#131b2e]">
+              Pesanan atau Meja Belum Dipilih
+            </h1>
             <p className="text-xs text-[#6d7a72]">
               Silakan pilih meja dan menu makanan di halaman restoran terlebih dahulu.
             </p>
@@ -126,12 +131,56 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
       return;
     }
 
-    startTransition(async () => {
-      const orderId = `QD-${Date.now().toString().slice(-6)}`;
-      toast.success("Pembayaran berhasil diverifikasi!", { id: "checkout-success" });
+    const orderId = `QD-${Date.now().toString().slice(-6)}`;
+    setPendingOrderId(orderId);
+    setIsSimulatorOpen(true);
+  };
+
+  const handleSimulateSuccess = async () => {
+    try {
+      // Trigger Webhook API Midtrans
+      await fetch("/api/webhooks/midtrans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: pendingOrderId,
+          transaction_status: "settlement",
+          fraud_status: "accept",
+          gross_amount: grandTotal.toString(),
+          payment_type: paymentMethod === "qris" ? "qris" : "bank_transfer",
+          transaction_time: new Date().toISOString(),
+        }),
+      });
+
+      toast.success("Pembayaran Berhasil! Pesanan dikirim ke dapur & meja terisi.", {
+        id: "checkout-success",
+      });
       clearCart();
-      router.push(`/${restoSlug}/order/${orderId}`);
-    });
+      router.push(`/${restoSlug}/order/${pendingOrderId}`);
+    } catch {
+      toast.error("Gagal memproses simulasi pembayaran.");
+    }
+  };
+
+  const handleSimulateCancel = async () => {
+    try {
+      await fetch("/api/webhooks/midtrans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: pendingOrderId,
+          transaction_status: "expire",
+          gross_amount: grandTotal.toString(),
+        }),
+      });
+
+      toast.warning("Simulasi pembayaran dibatalkan / expired. Meja dilepaskan kembali.", {
+        id: "checkout-cancel",
+      });
+      setIsSimulatorOpen(false);
+    } catch {
+      setIsSimulatorOpen(false);
+    }
   };
 
   return (
@@ -408,7 +457,6 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
 
             <Button
               type="submit"
-              isLoading={isPending}
               className="w-full h-12 bg-[#006948] hover:bg-[#005137] text-white font-extrabold text-xs gap-2 shadow-lg"
             >
               <span>Bayar & Kunci Meja Sekarang</span>
@@ -418,6 +466,18 @@ export default function CheckoutPage({ params }: CheckoutPageProps) {
           </div>
         </form>
       </div>
+
+      {/* Midtrans Sandbox Payment Simulator Modal */}
+      <PaymentSimulatorModal
+        isOpen={isSimulatorOpen}
+        orderId={pendingOrderId}
+        restaurantName={restoSlug.replace(/-/g, " ").toUpperCase()}
+        totalAmount={grandTotal}
+        paymentMethod={paymentMethod === "qris" ? "qris" : "bca_va"}
+        onSimulateSuccess={handleSimulateSuccess}
+        onSimulateCancel={handleSimulateCancel}
+        onClose={() => setIsSimulatorOpen(false)}
+      />
     </div>
   );
 }

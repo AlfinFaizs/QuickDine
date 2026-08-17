@@ -59,9 +59,10 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 ### D. External Services & Adapters (Adapter Pattern)
 | File | Branch | Baris | Peran & Rincian Fungsi |
 |---|---|---|---|
-| [`src/services/notification/notification.interface.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/notification.interface.ts) | Branch-0 | 18 | Interface kontrak pengiriman notifikasi (WhatsApp/SMS/Email) agar mudah diganti penyedianya tanpa merusak kode pemanggil. |
+| [`src/services/notification/notification.interface.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/notification.interface.ts) | Branch-0 | 38 | Interface kontrak pengiriman notifikasi (Telegram/WhatsApp) agar mudah diganti penyedianya tanpa merusak kode pemanggil. |
+| [`src/services/notification/telegram.service.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/telegram.service.ts) | **Branch-8** | 152 | Service adapter pengiriman notifikasi terformat HTML resmi ke Telegram Bot API untuk dapur restoran dengan mode simulator aman. |
 | [`src/services/notification/fonnte.service.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/fonnte.service.ts) | Branch-0 | 48 | Implementasi adapter Fonnte WhatsApp API untuk mengirim notifikasi pesanan ke customer dan notifikasi alarm dapur ke resto. |
-| [`src/services/notification/index.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/index.ts) | Branch-0 | 14 | Factory module penyedia singleton notifikasi WhatsApp. |
+| [`src/services/notification/index.ts`](file:///c:/My_Koding/QuickDine/src/services/notification/index.ts) | **Branch-8** | 30 | Factory module penyedia singleton notifikasi Telegram (`getTelegramNotificationService`) dan WhatsApp. |
 | [`src/services/payment/fee-calculator.ts`](file:///c:/My_Koding/QuickDine/src/services/payment/fee-calculator.ts) | Branch-0 | 30 | Kalkulator platform fee otomatis: QRIS (+Rp 1.500) vs Virtual Account (+Rp 5.500) serta pembagian net balance untuk saldo mitra resto. |
 | [`src/services/payment/midtrans.service.ts`](file:///c:/My_Koding/QuickDine/src/services/payment/midtrans.service.ts) | Branch-0 | 75 | Adapter integrasi Midtrans Snap API untuk membuat token transaksi pembayaran dan verifikasi signature webhook. |
 
@@ -75,8 +76,10 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 | [`src/features/orders/schema.ts`](file:///c:/My_Koding/QuickDine/src/features/orders/schema.ts) | Branch-0 | 28 | Skema validasi Zod untuk payload formulir checkout pesanan. |
 | [`src/features/orders/cart-store.ts`](file:///c:/My_Koding/QuickDine/src/features/orders/cart-store.ts) | Branch-3 | 121 | Zustand persistent store mengelola data keranjang belanja customer (item, varian, catatan khusus koki, nomor meja terpilih, dan subtotal). |
 | [`src/features/orders/floating-cart-bar.tsx`](file:///c:/My_Koding/QuickDine/src/features/orders/floating-cart-bar.tsx) | Branch-3 | 86 | Komponen sticky bar mengambang di bawah layar menampilkan counter item, subtotal, validasi pemilihan meja, dan tombol aksi checkout. |
+| [`src/features/orders/payment-simulator-modal.tsx`](file:///c:/My_Koding/QuickDine/src/features/orders/payment-simulator-modal.tsx) | **Branch-8** | 180 | Modal simulator sandbox Midtrans untuk QRIS & Virtual Account dengan pemicu webhook simulasi lunas & expired. |
 | **Fitur: Partner Onboarding** | | | |
 | [`src/features/partner/actions.ts`](file:///c:/My_Koding/QuickDine/src/features/partner/actions.ts) | Branch-2 | 112 | Server Action pendaftaran mitra resto, create user di Supabase Auth, set JWT custom claims (`role: 'owner'`), dan generate 10 meja default. |
+| [`src/features/partner/notification-actions.ts`](file:///c:/My_Koding/QuickDine/src/features/partner/notification-actions.ts) | **Branch-8** | 28 | Server Action untuk memicu pengujian notifikasi bot Telegram ke grup staf dapur restoran. |
 | **Fitur: Restaurant Catalog & Tables** | | | |
 | [`src/features/restaurants/mock-data.ts`](file:///c:/My_Koding/QuickDine/src/features/restaurants/mock-data.ts) | Branch-2 | 221 | Dataset modular 11 restoran & kafe populer Indonesia beserta filter 11 kategori kuliner dan status meja live. |
 | [`src/features/restaurants/restaurant-details-data.ts`](file:///c:/My_Koding/QuickDine/src/features/restaurants/restaurant-details-data.ts) | Branch-3 | 401 | Database mock detail menu makanan, harga, opsi varian (suhu, level pedas, gula, topping), dan denah meja untuk seluruh 11 restoran. |
@@ -180,7 +183,7 @@ Setiap file diuraikan secara detail mencakup peran fungsional, ketergantungan an
 
 ## 3. Rekapitulasi Audit Batas Baris Kode
 
-- **Total File Kode:** 67 file
+- **Total File Kode:** 70 file
 - **File Melebihi 500 Baris:** **0 File (100% Lolos Batas Aman)**
 - **File Terbesar Saat Ini:** `src/app/(auth)/login/page.tsx` (488 baris).
 - **Status Kompilasi `npx next build`:** **0 Error (20/20 Rute Lolos Sukses)**.

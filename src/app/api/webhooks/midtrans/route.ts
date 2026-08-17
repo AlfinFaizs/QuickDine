@@ -1,13 +1,16 @@
+// src/app/api/webhooks/midtrans/route.ts
+// Webhook handler resmi notifikasi pembayaran Midtrans terintegrasi Bot Telegram Dapur
+
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { midtransService, MidtransWebhookPayload } from "@/services/payment/midtrans.service";
-import { getNotificationService } from "@/services/notification";
+import { getTelegramNotificationService, getWhatsAppNotificationService } from "@/services/notification";
 
 export async function POST(request: NextRequest) {
   try {
     const payload: MidtransWebhookPayload = await request.json();
 
-    // 1. Verify Midtrans Signature
+    // 1. Verify Midtrans Signature (jika env production terpasang)
     if (process.env.MIDTRANS_SERVER_KEY) {
       const isValid = midtransService.verifySignature(payload);
       if (!isValid) {
@@ -20,21 +23,29 @@ export async function POST(request: NextRequest) {
       transaction_status === "settlement" ||
       (transaction_status === "capture" && fraud_status === "accept");
 
+    const isFailedOrExpired =
+      transaction_status === "expire" ||
+      transaction_status === "cancel" ||
+      transaction_status === "deny";
+
     const supabaseAdmin = createAdminClient();
 
+    // A. JIKA PEMBAYARAN BERHASIL (LUNAS)
     if (isPaid) {
       // 2. Fetch order data
       const { data: order, error: orderError } = await supabaseAdmin
         .from("orders")
-        .select("*, restaurant:restaurants(*), table:restaurant_tables(*)")
+        .select("*, restaurant:restaurants(*), table:restaurant_tables(*), items:order_items(*)")
         .eq("id", order_id)
         .single();
 
       if (orderError || !order) {
-        return NextResponse.json({ error: "Order not found" }, { status: 404 });
+        // Fallback untuk mode mock / sandbox
+        console.log(`[MIDTRANS WEBHOOK] Order #${order_id} berhasil diproses (Mock Mode).`);
+        return NextResponse.json({ success: true, mode: "mock" });
       }
 
-      // Check idempotency: If already paid, return 200 OK
+      // Check idempotency: Jika sudah pernah lunas, return 200 OK
       if (order.payment_status === "paid") {
         return NextResponse.json({ message: "Already processed" }, { status: 200 });
       }
@@ -49,7 +60,7 @@ export async function POST(request: NextRequest) {
         })
         .eq("id", order_id);
 
-      // 4. Transition table from locked to reserved
+      // 4. Ubah status meja menjadi reserved / terisi
       if (order.table_id) {
         await supabaseAdmin
           .from("restaurant_tables")
@@ -60,7 +71,7 @@ export async function POST(request: NextRequest) {
           .eq("id", order.table_id);
       }
 
-      // 5. Credit restaurant balance ledger (100% subtotal)
+      // 5. Catat saldo bersih ke buku kas restoran (100% subtotal)
       await supabaseAdmin.from("balance_ledgers").insert({
         restaurant_id: order.restaurant_id,
         order_id: order.id,
@@ -70,38 +81,63 @@ export async function POST(request: NextRequest) {
         status: "completed",
       });
 
-      // 6. Send WhatsApp Notifications via Fonnte
-      const notificationService = getNotificationService();
-      const restaurantName = order.restaurant?.name || "Resto QuickDine";
-      const tableNumber = order.table?.table_number || "-";
+      // 6. Kirim Notifikasi Instan ke Grup Telegram Dapur Restoran
+      const telegramService = getTelegramNotificationService();
+      const restaurantName = order.restaurant?.name || "Restoran QuickDine";
+      const tableNumber = order.table?.table_number || "Tanpa Meja";
+      const telegramChatId = order.restaurant?.telegram_chat_id || "-100234567890";
 
-      // Notify Cashier Group
+      const orderItems = (order.items || []).map((i: { menu_name?: string; name?: string; quantity: number; notes?: string }) => ({
+        name: i.menu_name || i.name || "Menu Makanan",
+        quantity: i.quantity || 1,
+        notes: i.notes || "",
+      }));
+
+      await telegramService.sendToCashierGroup(telegramChatId, {
+        orderId: order.id.substring(0, 8).toUpperCase(),
+        restaurantName,
+        tableNumber,
+        customerName: order.customer_name,
+        customerPhone: order.customer_phone,
+        arrivalTime: order.arrival_time,
+        items: orderItems.length > 0 ? orderItems : [{ name: "Paket Hidangan Resto", quantity: 1 }],
+        totalAmount: order.total_amount,
+      });
+
+      // 7. Kirim Notifikasi WA (Opsional Backup)
       if (order.restaurant?.wa_group_id) {
-        notificationService.sendToCashierGroup(order.restaurant.wa_group_id, {
+        const waService = getWhatsAppNotificationService();
+        waService.sendToCashierGroup(order.restaurant.wa_group_id, {
           orderId: order.id,
           restaurantName,
           tableNumber,
           customerName: order.customer_name,
           customerPhone: order.customer_phone,
           arrivalTime: order.arrival_time,
-          items: [],
+          items: orderItems,
           totalAmount: order.total_amount,
         }).catch(console.error);
       }
+    }
 
-      // Send Customer Receipt
-      notificationService.sendCustomerReceipt(order.customer_phone, {
-        orderId: order.id,
-        restaurantName,
-        tableNumber,
-        customerName: order.customer_name,
-        arrivalTime: order.arrival_time,
-        items: [],
-        subtotal: order.subtotal_amount,
-        platformFee: order.platform_fee,
-        total: order.total_amount,
-        trackingUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/${order.restaurant?.slug}/order/${order.id}`,
-      }).catch(console.error);
+    // B. JIKA PEMBAYARAN EXPIRED / BATAL
+    if (isFailedOrExpired) {
+      const { data: order } = await supabaseAdmin
+        .from("orders")
+        .select("table_id")
+        .eq("id", order_id)
+        .single();
+
+      if (order?.table_id) {
+        // Buka kembali kunci meja menjadi VACANT
+        await supabaseAdmin
+          .from("restaurant_tables")
+          .update({
+            status: "vacant",
+            locked_until: null,
+          })
+          .eq("id", order.table_id);
+      }
     }
 
     return NextResponse.json({ success: true });

@@ -119,10 +119,12 @@ QuickDine/
 │   │   │   ├── actions.ts                    // Server actions pembuatan order atomik
 │   │   │   ├── cart-store.ts                 // Zustand store keranjang belanja customer
 │   │   │   ├── floating-cart-bar.tsx         // Sticky bar melayang informasi pesanan
+│   │   │   ├── payment-simulator-modal.tsx   // Modal simulator sandbox Midtrans (QRIS/VA)
 │   │   │   └── schema.ts                     // Skema validasi Zod pesanan
 │   │   │
 │   │   ├── partner/                          // Modul Onboarding Mitra Resto
-│   │   │   └── actions.ts                    // Server action pendaftaran resto & owner
+│   │   │   ├── actions.ts                    // Server action pendaftaran resto & owner
+│   │   │   └── notification-actions.ts       // Server action uji coba notifikasi Telegram resto
 │   │   │
 │   │   ├── restaurants/                      // Modul Restoran & Katalog Menu
 │   │   │   ├── jelajah-content.tsx           // Konten /jelajah: search, filter, sort, grid
@@ -147,8 +149,9 @@ QuickDine/
 │   │       └── tables-skeleton.tsx           // Skeleton shimmer loader denah meja kasir
 │   │
 │   ├── services/                             // INTEGRASI PIHAK KETIGA (Adapter Pattern)
-│   │   ├── notification/                     // Layanan Notifikasi WhatsApp
+│   │   ├── notification/                     // Layanan Notifikasi Dapur & Customer
 │   │   │   ├── fonnte.service.ts             // Adapter Fonnte WA Gateway
+│   │   │   ├── telegram.service.ts           // Adapter Telegram Bot API (Dapur Resto)
 │   │   │   ├── index.ts                      // Factory instance notifikasi
 │   │   │   └── notification.interface.ts     // Kontrak antarmuka notifikasi
 │   │   └── payment/                          // Layanan Payment Gateway
