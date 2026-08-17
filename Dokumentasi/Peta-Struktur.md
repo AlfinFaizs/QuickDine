@@ -73,7 +73,8 @@ QuickDine/
 │   │   │
 │   │   ├── api/                              // REST API & WEBHOOKS
 │   │   │   ├── cron/cleanup-locks/route.ts   // Cron un-lock meja expired (>10 mnt)
-│   │   │   └── webhooks/midtrans/route.ts    // Webhook verifikasi pembayaran Midtrans
+│   │   │   ├── webhooks/midtrans/route.ts    // Webhook verifikasi pembayaran Midtrans
+│   │   │   └── webhooks/telegram/route.ts    // Webhook receiver perintah bot Telegram (/id, /start)
 │   │   │
 │   │   ├── auth/callback/route.ts            // Handler callback OAuth Google & Magic Link
 │   │   ├── apple-icon.png                    // Icon iOS WebClip
